@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kartik Gaikwad | Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+</head>
+<body>
+
+    <div id="character-workspace">
+        <div id="stickman-wrapper">
+            <div id="monitor-glow"></div>
+            
+            <svg id="stickman" viewBox="0 0 100 120">
+                <g id="head-group">
+                    <circle cx="50" cy="30" r="10" stroke="white" stroke-width="2" fill="none"/>
+                    <circle id="eye-l" cx="47" cy="28" r="1" fill="cyan"/>
+                    <circle id="eye-r" cx="53" cy="28" r="1" fill="cyan"/>
+                </g>
+                <line x1="50" y1="40" x2="50" y2="70" stroke="white" stroke-width="2" />
+                <line id="arm-l" x1="50" y1="45" x2="35" y2="60" stroke="white" stroke-width="2" />
+                <line id="arm-r" x1="50" y1="45" x2="65" y2="60" stroke="white" stroke-width="2" />
+                <line id="leg-l" x1="50" y1="70" x2="40" y2="95" stroke="white" stroke-width="2" />
+                <line id="leg-r" x1="50" y1="70" x2="60" y2="95" stroke="white" stroke-width="2" />
+                
+                <g id="desk-prop" opacity="0">
+                    <rect x="20" y="85" width="60" height="5" fill="#333" />
+                    <rect x="35" y="70" width="30" height="15" fill="#222" stroke="white" stroke-width="1" />
+                </g>
+            </svg>
+        </div>
+    </div>
+
+    <main>
+        <section id="hero">
+            <div class="content">
+                <p class="tagline">Math Enthusiast • Student Developer</p>
+                <h1>KARTIK GAIKWAD</h1>
+                <p class="desc">Crafting a focused portfolio with motion, clarity, and ambition.</p>
+                <div class="stats-mini">
+                    <span>96.5% JEE Math</span>
+                    <span>93% Class 10</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="about">
+            <div class="content-right">
+                <h2>About Me</h2>
+                <p>Built on academic consistency and curiosity-driven coding. I’ve consistently performed strongly in mathematics, including a <b>International Rank 791</b> in SOF IMO.</p>
+                <div class="skill-tags">
+                    <span>C++</span><span>Assembly</span><span>DSA</span><span>HTML</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="projects">
+            <div class="content-left">
+                <h2>Selected Work</h2>
+                <div class="project-card">
+                    <h3>01. Voice-Driven Calculator</h3>
+                    <p>MIT App Inventor | Accessibility | Logic</p>
+                </div>
+                <div class="project-card">
+                    <h3>02. Foundation Core CS</h3>
+                    <p>C++ Problem Solving | Assembly Language</p>
+                </div>
+                <div class="project-card">
+                    <h3>03. Portfolio Rebuild</h3>
+                    <p>Motion UI | Personal Branding</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="journey">
+            <div class="content-center">
+                <h2>Journey</h2>
+                <div class="timeline">
+                    <div class="time-item"><b>2021:</b> Early Exploration</div>
+                    <div class="time-item"><b>2022-25:</b> Academic Strength</div>
+                    <div class="time-item active"><b>NOW:</b> The Leap</div>
+                </div>
+            </div>
+        </section>
+
+        <footer id="contact">
+            <h2>Let's Talk</h2>
+            <div class="links">
+                <a href="#">GitHub</a>
+                <a href="#">LinkedIn</a>
+                <a href="mailto:kartikgaikwad250@gmail.com">Email</a>
+            </div>
+        </footer>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
