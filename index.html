@@ -3,95 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kartik Gaikwad | Portfolio</title>
+    <title>Kartik Gaikwad | Developer & Math Enthusiast</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 </head>
 <body>
 
-    <div id="character-workspace">
-        <div id="stickman-wrapper">
+    <div id="canvas-wrapper">
+        <div id="character-container">
             <div id="monitor-glow"></div>
             
-            <svg id="stickman" viewBox="0 0 100 120">
-                <g id="head-group">
-                    <circle cx="50" cy="30" r="10" stroke="white" stroke-width="2" fill="none"/>
-                    <circle id="eye-l" cx="47" cy="28" r="1" fill="cyan"/>
-                    <circle id="eye-r" cx="53" cy="28" r="1" fill="cyan"/>
+            <svg id="stickman" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+                <g id="desk-setup" opacity="0">
+                    <line x1="20" y1="90" x2="80" y2="90" stroke="#333" stroke-width="3" /> <rect x="35" y="70" width="30" height="20" fill="none" stroke="white" stroke-width="1.5" /> <line x1="50" y1="90" x2="50" y2="95" stroke="white" stroke-width="1" /> </g>
+
+                <g id="head">
+                    <circle cx="50" cy="30" r="10" stroke="white" stroke-width="2" fill="#0a0a0a"/>
+                    <circle id="eye-l" cx="47" cy="28" r="1" fill="#00f2ff"/>
+                    <circle id="eye-r" cx="53" cy="28" r="1" fill="#00f2ff"/>
                 </g>
-                <line x1="50" y1="40" x2="50" y2="70" stroke="white" stroke-width="2" />
-                <line id="arm-l" x1="50" y1="45" x2="35" y2="60" stroke="white" stroke-width="2" />
-                <line id="arm-r" x1="50" y1="45" x2="65" y2="60" stroke="white" stroke-width="2" />
-                <line id="leg-l" x1="50" y1="70" x2="40" y2="95" stroke="white" stroke-width="2" />
-                <line id="leg-r" x1="50" y1="70" x2="60" y2="95" stroke="white" stroke-width="2" />
-                
-                <g id="desk-prop" opacity="0">
-                    <rect x="20" y="85" width="60" height="5" fill="#333" />
-                    <rect x="35" y="70" width="30" height="15" fill="#222" stroke="white" stroke-width="1" />
-                </g>
+
+                <path id="spine" d="M50,40 L50,70" stroke="white" stroke-width="2" fill="none" />
+                <path id="arms" d="M35,55 L50,45 L65,55" stroke="white" stroke-width="2" fill="none" />
+                <path id="legs" d="M40,95 L50,70 L60,95" stroke="white" stroke-width="2" fill="none" />
             </svg>
         </div>
     </div>
 
     <main>
         <section id="hero">
-            <div class="content">
-                <p class="tagline">Math Enthusiast • Student Developer</p>
-                <h1>KARTIK GAIKWAD</h1>
-                <p class="desc">Crafting a focused portfolio with motion, clarity, and ambition.</p>
-                <div class="stats-mini">
-                    <span>96.5% JEE Math</span>
-                    <span>93% Class 10</span>
+            <div class="glass-card">
+                <p class="accent-text">Scholarship Aspirant</p>
+                <h1>KARTIK <br> GAIKWAD</h1>
+                <p>96.5 JEE Math Percentile | International Rank 791 (IMO)</p>
+                <div class="cta-row">
+                    <a href="#projects" class="btn">View Projects</a>
+                    <a href="https://github.com/kartik-009-k" target="_blank">GitHub ↗</a>
                 </div>
             </div>
         </section>
 
         <section id="about">
-            <div class="content-right">
-                <h2>About Me</h2>
-                <p>Built on academic consistency and curiosity-driven coding. I’ve consistently performed strongly in mathematics, including a <b>International Rank 791</b> in SOF IMO.</p>
-                <div class="skill-tags">
-                    <span>C++</span><span>Assembly</span><span>DSA</span><span>HTML</span>
+            <div class="content-box right">
+                <h2 class="section-title">Academic Profile</h2>
+                <p>Consistency meets curiosity. From 93% in Class 10 to a deep dive into C++ and Assembly.</p>
+                <div class="stats-grid">
+                    <div class="stat"><h3>92</h3><p>IMO %ile</p></div>
+                    <div class="stat"><h3>96.5</h3><p>JEE Math</p></div>
                 </div>
             </div>
         </section>
 
         <section id="projects">
-            <div class="content-left">
-                <h2>Selected Work</h2>
-                <div class="project-card">
-                    <h3>01. Voice-Driven Calculator</h3>
-                    <p>MIT App Inventor | Accessibility | Logic</p>
+            <div class="content-box left">
+                <h2 class="section-title">Selected Work</h2>
+                <div class="project">
+                    <span>01</span>
+                    <div>
+                        <h4>Voice-Driven Calculator</h4>
+                        <p>MIT App Inventor | High-precision logic.</p>
+                    </div>
                 </div>
-                <div class="project-card">
-                    <h3>02. Foundation Core CS</h3>
-                    <p>C++ Problem Solving | Assembly Language</p>
-                </div>
-                <div class="project-card">
-                    <h3>03. Portfolio Rebuild</h3>
-                    <p>Motion UI | Personal Branding</p>
+                <div class="project">
+                    <span>02</span>
+                    <div>
+                        <h4>Core CS Foundations</h4>
+                        <p>Assembly & Data Structures exploration.</p>
+                    </div>
                 </div>
             </div>
         </section>
 
         <section id="journey">
-            <div class="content-center">
-                <h2>Journey</h2>
+            <div class="content-box center">
+                <h2 class="section-title">The Journey</h2>
                 <div class="timeline">
-                    <div class="time-item"><b>2021:</b> Early Exploration</div>
-                    <div class="time-item"><b>2022-25:</b> Academic Strength</div>
-                    <div class="time-item active"><b>NOW:</b> The Leap</div>
+                    <div class="tl-item"><span>2021</span><p>Early Apps</p></div>
+                    <div class="tl-item"><span>2025</span><p>Academic Peak</p></div>
+                    <div class="tl-item active"><span>NOW</span><p>Refocusing</p></div>
                 </div>
             </div>
         </section>
 
         <footer id="contact">
-            <h2>Let's Talk</h2>
-            <div class="links">
-                <a href="#">GitHub</a>
-                <a href="#">LinkedIn</a>
-                <a href="mailto:kartikgaikwad250@gmail.com">Email</a>
+            <div class="footer-content">
+                <h2>Let's build something.</h2>
+                <div class="social-links">
+                    <a href="mailto:kartikgaikwad250@gmail.com">Email</a>
+                    <a href="https://www.linkedin.com/in/kartik-gaikwad-3079a1286/">LinkedIn</a>
+                </div>
             </div>
         </footer>
     </main>
