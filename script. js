@@ -1,0 +1,44 @@
+gsap.registerPlugin(ScrollTrigger);
+
+// 1. MOUSE TRACKING (Head follows cursor)
+window.addEventListener('mousemove', (e) => {
+    const x = (e.clientX / window.innerWidth - 0.5) * 20;
+    const y = (e.clientY / window.innerHeight - 0.5) * 20;
+    
+    gsap.to("#head-group", {
+        x: x,
+        y: y,
+        duration: 0.5,
+        ease: "power2.out"
+    });
+});
+
+// 2. SCROLL ANIMATIONS (The Scenes)
+const tl = gsap.timeline({
+    scrollTrigger: {
+        trigger: "main",
+        start: "top top",
+        end: "bottom bottom",
+        scrub: 1
+    }
+});
+
+// SCENE 1: Move to Left (About Section)
+tl.to("#stickman-wrapper", {
+    left: "20%",
+    duration: 1
+})
+
+// SCENE 2: The Desk Setup (Projects Section)
+.to("#desk-prop", { opacity: 1, duration: 0.2 })
+.to("#monitor-glow", { opacity: 0.5, onStart: () => {
+    document.getElementById('monitor-glow').classList.add('flicker');
+}}, "<")
+.to("#leg-l", { attr: { x2: 30, y2: 80 }, duration: 0.5 }, "<")
+.to("#leg-r", { attr: { x2: 70, y2: 80 }, duration: 0.5 }, "<")
+
+// SCENE 3: Move to Side for Timeline
+.to("#stickman-wrapper", {
+    left: "80%",
+    duration: 1
+});
