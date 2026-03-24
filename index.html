@@ -3,101 +3,229 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kartik Gaikwad | Developer & Math Enthusiast</title>
+    <title>Kartik Gaikwad | Motion Portfolio</title>
+    <meta name="description" content="Kartik Gaikwad portfolio with motion-driven storytelling, academic highlights, and technical projects.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" defer></script>
+    <script src="script.js" defer></script>
 </head>
 <body>
+    <div class="page-glow glow-left"></div>
+    <div class="page-glow glow-right"></div>
+    <div class="cursor-orb" aria-hidden="true"></div>
 
-    <div id="canvas-wrapper">
-        <div id="character-container">
-            <div id="monitor-glow"></div>
-            
-            <svg id="stickman" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
-                <g id="desk-setup" opacity="0">
-                    <line x1="20" y1="90" x2="80" y2="90" stroke="#333" stroke-width="3" /> <rect x="35" y="70" width="30" height="20" fill="none" stroke="white" stroke-width="1.5" /> <line x1="50" y1="90" x2="50" y2="95" stroke="white" stroke-width="1" /> </g>
-
-                <g id="head">
-                    <circle cx="50" cy="30" r="10" stroke="white" stroke-width="2" fill="#0a0a0a"/>
-                    <circle id="eye-l" cx="47" cy="28" r="1" fill="#00f2ff"/>
-                    <circle id="eye-r" cx="53" cy="28" r="1" fill="#00f2ff"/>
-                </g>
-
-                <path id="spine" d="M50,40 L50,70" stroke="white" stroke-width="2" fill="none" />
-                <path id="arms" d="M35,55 L50,45 L65,55" stroke="white" stroke-width="2" fill="none" />
-                <path id="legs" d="M40,95 L50,70 L60,95" stroke="white" stroke-width="2" fill="none" />
-            </svg>
+    <div class="browser-shell">
+        <div class="browser-topbar">
+            <div class="traffic-lights">
+                <span class="light red"></span>
+                <span class="light yellow"></span>
+                <span class="light green"></span>
+            </div>
+            <div class="browser-address">kartikgaikwad.dev / motion-portfolio</div>
+            <div class="browser-pill">Open to build</div>
         </div>
-    </div>
 
-    <main>
-        <section id="hero">
-            <div class="glass-card">
-                <p class="accent-text">Scholarship Aspirant</p>
-                <h1>KARTIK <br> GAIKWAD</h1>
-                <p>96.5 JEE Math Percentile | International Rank 791 (IMO)</p>
-                <div class="cta-row">
-                    <a href="#projects" class="btn">View Projects</a>
-                    <a href="https://github.com/kartik-009-k" target="_blank">GitHub ↗</a>
-                </div>
+        <header class="site-header">
+            <a href="#hero" class="brand">KG</a>
+            <a href="mailto:kartikgaikwad250@gmail.com" class="header-mail">kartikgaikwad250@gmail.com</a>
+            <nav>
+                <a href="#about">About</a>
+                <a href="#projects">Work</a>
+                <a href="#journey">Journey</a>
+                <a href="#contact">Contact</a>
+            </nav>
+        </header>
+
+        <div id="canvas-wrapper" aria-hidden="true">
+            <div id="character-container">
+                <div class="character-halo"></div>
+                <div class="character-floor"></div>
+                <svg id="stickman-scene" viewBox="0 0 360 430" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="screenGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#ff7bd5" />
+                            <stop offset="100%" stop-color="#53f6ff" />
+                        </linearGradient>
+                    </defs>
+
+                    <g id="desk-setup" opacity="0">
+                        <rect x="190" y="160" width="84" height="58" rx="8" class="desk-monitor screen" />
+                        <rect x="220" y="220" width="24" height="10" rx="4" class="desk-monitor" />
+                        <line x1="80" y1="242" x2="290" y2="242" class="desk-line" />
+                        <line x1="100" y1="242" x2="88" y2="330" class="desk-line" />
+                        <line x1="266" y1="242" x2="278" y2="330" class="desk-line" />
+                    </g>
+
+                    <g id="stickman">
+                        <ellipse id="character-shadow" cx="170" cy="355" rx="76" ry="20" />
+                        <path id="torso" d="M130 312 Q170 290 210 312 L232 388 L108 388 Z" />
+                        <rect id="neck" x="156" y="116" width="28" height="18" rx="7" />
+                        <g id="head-group">
+                            <path id="cap-top" d="M106 82 Q170 30 234 82 L234 116 L106 116 Z" />
+                            <path id="cap-brim" d="M106 116 Q170 102 234 116" />
+                            <circle id="head-outline" cx="170" cy="136" r="66" />
+                            <circle id="ear-l" cx="104" cy="144" r="18" />
+                            <circle id="ear-r" cx="236" cy="144" r="18" />
+                            <circle id="eye-l-white" cx="146" cy="136" r="18" />
+                            <circle id="eye-r-white" cx="194" cy="136" r="18" />
+                            <circle id="eye-l" cx="146" cy="140" r="8" />
+                            <circle id="eye-r" cx="194" cy="140" r="8" />
+                            <rect id="brow-l" x="122" y="104" width="46" height="10" rx="5" />
+                            <rect id="brow-r" x="172" y="104" width="46" height="10" rx="5" />
+                            <path id="nose" d="M170 142 Q160 164 170 170 Q180 164 170 142" />
+                            <rect id="mouth-frame" x="126" y="182" width="88" height="34" rx="17" />
+                            <path id="mouth-line" d="M138 199 H202" />
+                        </g>
+                        <path id="arm-l" d="M130 324 Q106 274 98 214" />
+                        <path id="arm-r" d="M210 324 Q244 278 246 222" />
+                    </g>
+                </svg>
             </div>
-        </section>
+        </div>
 
-        <section id="about">
-            <div class="content-box right">
-                <h2 class="section-title">Academic Profile</h2>
-                <p>Consistency meets curiosity. From 93% in Class 10 to a deep dive into C++ and Assembly.</p>
-                <div class="stats-grid">
-                    <div class="stat"><h3>92</h3><p>IMO %ile</p></div>
-                    <div class="stat"><h3>96.5</h3><p>JEE Math</p></div>
+        <main>
+            <section id="hero" class="panel hero-panel">
+                <div class="hero-copy reveal">
+                    <p class="eyebrow">Hello! I'm</p>
+                    <h1>KARTIK<br>GAIKWAD</h1>
+                    <p class="hero-tag">Math-first student, builder, and future engineer.</p>
                 </div>
-            </div>
-        </section>
-
-        <section id="projects">
-            <div class="content-box left">
-                <h2 class="section-title">Selected Work</h2>
-                <div class="project">
-                    <span>01</span>
-                    <div>
-                        <h4>Voice-Driven Calculator</h4>
-                        <p>MIT App Inventor | High-precision logic.</p>
+                <div class="hero-side reveal">
+                    <p class="eyebrow">A scholarship-focused</p>
+                    <h2>LOGIC<br><span>ENGINEER</span></h2>
+                    <div class="hero-stats">
+                        <article><span>JEE Math</span><strong>96.5%</strong></article>
+                        <article><span>Class 10</span><strong>93%</strong></article>
+                        <article><span>IMO Rank</span><strong>791</strong></article>
                     </div>
                 </div>
-                <div class="project">
-                    <span>02</span>
-                    <div>
-                        <h4>Core CS Foundations</h4>
-                        <p>Assembly & Data Structures exploration.</p>
+            </section>
+
+            <section id="about" class="panel split-panel">
+                <div class="panel-title reveal">
+                    <p class="eyebrow">About Me</p>
+                    <h2>Academic precision + technical curiosity.</h2>
+                </div>
+                <div class="about-card reveal framed-card">
+                    <p>
+                        I started coding as a hobby, but mathematics pushed me toward structure, discipline,
+                        and cleaner engineering thinking. My profile is built on consistency, logic building,
+                        and performing well when the problems get harder.
+                    </p>
+                    <p>
+                        International Rank 791 in SOF IMO Grade 9, 92 percentile in Olympiads, and expected 90%+
+                        in Class 12 reflect that mix of academic focus and technical momentum.
+                    </p>
+                </div>
+            </section>
+
+            <section id="stack" class="panel work-panel">
+                <div class="work-heading reveal">
+                    <p class="eyebrow">What I Do</p>
+                    <h2>Foundation across <span>code, logic,</span> and systems.</h2>
+                </div>
+                <div class="capability-grid">
+                    <article class="capability-card reveal framed-card active">
+                        <h3>Languages</h3>
+                        <p>C++, HTML, and Assembly language programming with a fundamentals-first mindset.</p>
+                        <div class="chip-row">
+                            <span>C++</span><span>HTML</span><span>Assembly</span>
+                        </div>
+                    </article>
+                    <article class="capability-card reveal framed-card">
+                        <h3>Concepts</h3>
+                        <p>Data structures, algorithmic thinking, and logic building shaped by competitive math.</p>
+                        <div class="chip-row">
+                            <span>DSA</span><span>Logic</span><span>Problem Solving</span>
+                        </div>
+                    </article>
+                    <article class="capability-card reveal framed-card">
+                        <h3>Platforms</h3>
+                        <p>MIT App Inventor for rapid ideas, experimentation, and accessibility-centered builds.</p>
+                        <div class="chip-row">
+                            <span>MIT AI2</span><span>Voice UI</span><span>Prototype</span>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <section id="projects" class="panel split-panel projects-panel">
+                <div class="panel-title reveal">
+                    <p class="eyebrow">My Work</p>
+                    <h2>Selected projects with a motion-first presentation.</h2>
+                </div>
+                <div class="project-showcase reveal framed-card">
+                    <article class="project-item active-project">
+                        <span class="project-index">01</span>
+                        <div>
+                            <h3>Voice-Driven Calculator</h3>
+                            <p>Accessibility-focused math tool with speech input/output and precision-oriented logic.</p>
+                        </div>
+                    </article>
+                    <article class="project-item">
+                        <span class="project-index">02</span>
+                        <div>
+                            <h3>Core CS Foundations</h3>
+                            <p>Assembly and C++ practice for low-level understanding and disciplined implementation.</p>
+                        </div>
+                    </article>
+                    <article class="project-item">
+                        <span class="project-index">03</span>
+                        <div>
+                            <h3>Portfolio Rebuild</h3>
+                            <p>The current banger phase using layout, branding, motion, and storytelling.</p>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <section id="journey" class="panel timeline-panel">
+                <div class="panel-title reveal">
+                    <p class="eyebrow">My Career & Experience</p>
+                    <h2>Momentum timeline.</h2>
+                </div>
+                <div class="timeline-grid reveal">
+                    <div class="timeline-years">
+                        <div><span>2021</span><p>Early exploration</p></div>
+                        <div><span>2022–2025</span><p>Academic intensity</p></div>
+                        <div><span>NOW</span><p>Refocusing</p></div>
+                    </div>
+                    <div class="timeline-line">
+                        <span class="line-glow top"></span>
+                        <span class="line-glow mid"></span>
+                        <span class="line-glow bottom"></span>
+                    </div>
+                    <div class="timeline-copy">
+                        <p>Started with voice apps and curiosity-driven experiments.</p>
+                        <p>Focused heavily on competitive math, exams, and structured problem solving.</p>
+                        <p>Now building a stronger portfolio for scholarships, admissions, and serious tech programs.</p>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
+        </main>
 
-        <section id="journey">
-            <div class="content-box center">
-                <h2 class="section-title">The Journey</h2>
-                <div class="timeline">
-                    <div class="tl-item"><span>2021</span><p>Early Apps</p></div>
-                    <div class="tl-item"><span>2025</span><p>Academic Peak</p></div>
-                    <div class="tl-item active"><span>NOW</span><p>Refocusing</p></div>
+        <footer id="contact" class="contact-panel">
+            <div class="contact-heading reveal">
+                <p class="eyebrow">Contact</p>
+                <h2>Let’s build something ambitious.</h2>
+            </div>
+            <div class="contact-grid reveal">
+                <div>
+                    <p class="contact-label">Social</p>
+                    <a href="https://github.com/kartik-009-k" target="_blank" rel="noreferrer">GitHub ↗</a>
+                    <a href="https://www.linkedin.com/in/kartik-gaikwad-3079a1286/" target="_blank" rel="noreferrer">LinkedIn ↗</a>
+                    <a href="mailto:kartikgaikwad250@gmail.com">Email ↗</a>
                 </div>
-            </div>
-        </section>
-
-        <footer id="contact">
-            <div class="footer-content">
-                <h2>Let's build something.</h2>
-                <div class="social-links">
-                    <a href="mailto:kartikgaikwad250@gmail.com">Email</a>
-                    <a href="https://www.linkedin.com/in/kartik-gaikwad-3079a1286/">LinkedIn</a>
+                <div>
+                    <p class="contact-label">Designed for</p>
+                    <p>Scholarships, admissions, internships, and future engineering opportunities.</p>
                 </div>
             </div>
         </footer>
-    </main>
-
-    <script src="script.js"></script>
+    </div>
 </body>
 </html>
