@@ -1,0 +1,7 @@
+Drop your wallpaper in this folder and name it exactly:
+
+    wallpaper.png     (or wallpaper.jpg / wallpaper.jpeg / wallpaper.webp)
+
+It is picked up automatically: no code changes needed.
+Tip: 1920x1080 or larger, ideally under 2 MB. It is shown centered and scaled to cover the screen.
+Once it exists, it becomes the default desktop and appears as "My Wallpaper" in Special > menu.

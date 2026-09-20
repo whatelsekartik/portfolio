@@ -1,0 +1,108 @@
+@import "tailwindcss";
+
+:root {
+  --mac-bg: #d6d6d6;
+  --mac-window: #dfdfdf;
+  --mac-border: #0a0a0a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  font-family: "Pixelify Sans", "Geneva", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: grayscale;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@layer base {
+  button {
+    cursor: default;
+  }
+
+  :focus-visible {
+    outline: 2px dotted #000;
+    outline-offset: 1px;
+  }
+}
+
+/* Menus, titles and icon labels use the pixel "Chicago-style" face. */
+.font-chicago {
+  font-family: "Pixelify Sans", "Silkscreen", monospace;
+}
+
+/* Inputs and text you might want to copy stay selectable. */
+input,
+textarea,
+.select-text {
+  user-select: text;
+}
+
+/* Striped title bar of the active window. */
+.scanline-title {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    #000 0px,
+    #000 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+::selection {
+  background: #000;
+  color: #fff;
+}
+
+/* Chunky classic scrollbars. */
+.mac-scroll::-webkit-scrollbar,
+.mac-scroll-dark::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+}
+.mac-scroll::-webkit-scrollbar-track {
+  background: #fff;
+  background-image: repeating-conic-gradient(#000 0% 25%, #fff 0% 50%);
+  background-size: 2px 2px;
+  border-left: 1px solid #000;
+}
+.mac-scroll::-webkit-scrollbar-thumb {
+  background: #d6d6d6;
+  border: 1px solid #000;
+  box-shadow: inset 1px 1px 0 #fff;
+}
+.mac-scroll-dark::-webkit-scrollbar-track {
+  background: #0b0d0b;
+  border-left: 1px solid #333;
+}
+.mac-scroll-dark::-webkit-scrollbar-thumb {
+  background: #333;
+  border: 1px solid #555;
+}
+
+@keyframes boot-progress {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
