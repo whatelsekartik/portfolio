@@ -1,7 +1,10 @@
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import { useWindowManager } from "../context/WindowManagerContext";
 import { getDir, normName, resolvePath, slugName } from "../data/fileSystem";
-import { education, experience, profile, projects, readmeText, skillGroups, socials } from "../data/portfolioData";
+import { aiContext } from "../data/aiContext";
+import { ai, education, experience, profile, projects, readmeText, skillGroups, socials } from "../data/portfolioData";
+import { askAssistant, type ChatMessage } from "../utils/assistant";
+import { BACKEND_URL } from "../utils/backend";
 import type { AppId } from "../types";
 import { useOpenApp } from "./appDefs";
 
@@ -23,7 +26,7 @@ type ThemeName = keyof typeof THEMES;
 const COMMANDS = [
   "help", "about", "whoami", "skills", "projects", "experience", "education", "contact", "resume",
   "ls", "cd", "pwd", "cat", "open", "github", "linkedin", "neofetch", "theme", "date", "echo",
-  "history", "clear", "exit",
+  "history", "clear", "exit", "ask", "chat",
 ];
 
 /** Names that `open` understands, mapped to the window they open. */
@@ -58,6 +61,24 @@ function Linkified({ text }: { text: string }) {
   );
 }
 
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const EXIT_WORDS = ["exit", "quit", "/exit", "/quit", "bye"];
+const MAX_QUESTION = 500;
+
+/** Animated "thinking…" line shown while the assistant is answering. */
+function Thinking({ label }: { label: string }) {
+  const [dots, setDots] = useState(1);
+  useEffect(() => {
+    const t = setInterval(() => setDots((d) => (d % 3) + 1), 350);
+    return () => clearInterval(t);
+  }, []);
+  return (
+    <div role="status" aria-live="polite">
+      {label} is thinking{".".repeat(dots)}
+    </div>
+  );
+}
+
 const bar = (level: number) => "█".repeat(level) + "░".repeat(10 - level);
 const pad = (s: string, n: number) => s.padEnd(n, " ");
 
@@ -73,12 +94,17 @@ export default function TerminalApp({ windowId }: { windowId: string }) {
   const [history, setHistory] = useState<string[]>([]);
   const [histIdx, setHistIdx] = useState<number | null>(null);
   const [theme, setTheme] = useState<ThemeName>("green");
+  const [chatMode, setChatMode] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const convo = useRef<ChatMessage[]>([]);
+  const alive = useRef(true);
   const nextId = useRef(2);
   const bootTime = useRef(Date.now());
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const promptFor = (path: string[]) => `${profile.handle}@macintosh:~${path.length ? "/" + path.join("/") : ""}$`;
+  const promptFor = (path: string[]) =>
+    chatMode ? "you>" : `${profile.handle}@macintosh:~${path.length ? "/" + path.join("/") : ""}$`;
   const t = THEMES[theme];
 
   useEffect(() => {
@@ -87,8 +113,16 @@ export default function TerminalApp({ windowId }: { windowId: string }) {
   }, [lines]);
 
   useEffect(() => {
-    inputRef.current?.focus();
+    alive.current = true;
+    return () => {
+      alive.current = false;
+    };
   }, []);
+
+  // Put the cursor back in the input after each answer (and on first open).
+  useEffect(() => {
+    if (!busy) inputRef.current?.focus();
+  }, [busy]);
 
   function push(kind: Kind, texts: string[], prompt?: string) {
     setLines((prev) => [
@@ -122,12 +156,60 @@ export default function TerminalApp({ windowId }: { windowId: string }) {
     return info.map((row, i) => `${art[i] ?? "                "}${row}`);
   }
 
+  /** Reveals the reply a few characters at a time, like a slow terminal. */
+  async function typeOut(text: string) {
+    const id = nextId.current++;
+    const full = `${ai.name}: ${text}`;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setLines((prev) => [...prev, { id, kind: "out", text: full }]);
+      return;
+    }
+    setLines((prev) => [...prev, { id, kind: "out", text: "" }]);
+    const step = Math.max(2, Math.ceil(full.length / 90));
+    for (let i = step; i < full.length + step; i += step) {
+      if (!alive.current) return;
+      const shown = full.slice(0, i);
+      setLines((prev) => prev.map((l) => (l.id === id ? { ...l, text: shown } : l)));
+      await sleep(18);
+    }
+  }
+
+  async function ask(question: string) {
+    const q = question.trim().slice(0, MAX_QUESTION);
+    if (!q) return push("err", ["ask: what would you like to know? Try: ask what has he built?"]);
+    if (!BACKEND_URL) {
+      return push("err", ["The AI assistant isn't connected yet. (Site owner: see README > AI assistant.)"]);
+    }
+    setBusy(true);
+    const messages: ChatMessage[] = [...convo.current, { role: "user" as const, content: q }].slice(-8);
+    try {
+      const reply = await askAssistant(messages, aiContext());
+      convo.current = [...messages, { role: "assistant" as const, content: reply }].slice(-8);
+      if (alive.current) await typeOut(reply);
+    } catch (e) {
+      if (alive.current) push("err", [e instanceof Error ? e.message : "Something went wrong. Try again."]);
+    } finally {
+      if (alive.current) setBusy(false);
+    }
+  }
+
   function run(raw: string) {
     const line = raw.trim();
     push("in", [raw], promptFor(cwd));
     if (!line) return;
     setHistory((h) => [...h, line]);
     setHistIdx(null);
+
+    // In chat mode everything you type goes to the assistant.
+    if (chatMode) {
+      if (EXIT_WORDS.includes(line.toLowerCase())) {
+        setChatMode(false);
+        push("out", ["Left chat mode."]);
+      } else {
+        void ask(line);
+      }
+      return;
+    }
 
     const [cmdRaw, ...args] = line.split(/\s+/);
     const cmd = cmdRaw.toLowerCase();
@@ -149,6 +231,8 @@ export default function TerminalApp({ windowId }: { windowId: string }) {
           "  cat <file>       print a file     pwd        where am I",
           "  open <name>      open a window (open readme, open skills...)",
           "  github, linkedin open the profile in a new tab",
+          "  ask <question>   ask the AI assistant about me",
+          "  chat             talk to the AI assistant (type exit to leave)",
           "  neofetch         system info",
           "  theme <name>     green | amber | white",
           "  date, echo, history, clear, exit",
@@ -261,6 +345,22 @@ export default function TerminalApp({ windowId }: { windowId: string }) {
         break;
       }
 
+      case "ask":
+        void ask(arg);
+        break;
+
+      case "chat":
+        if (!BACKEND_URL) {
+          push("err", ["The AI assistant isn't connected yet. (Site owner: see README > AI assistant.)"]);
+        } else {
+          setChatMode(true);
+          push("out", [
+            `${ai.name} online. Ask me anything about ${profile.name} — projects, skills, experience.`,
+            'Type "exit" to go back to the shell.',
+          ]);
+        }
+        break;
+
       case "neofetch":
         push("out", neofetch());
         break;
@@ -307,7 +407,9 @@ export default function TerminalApp({ windowId }: { windowId: string }) {
         break;
 
       default:
-        push("err", [`sh: command not found: ${cmdRaw}. Type "help" for a list.`]);
+        push("err", [
+          `sh: command not found: ${cmdRaw}. Type "help" for a list${BACKEND_URL ? ', or ask the assistant: ask <question>' : ""}.`,
+        ]);
     }
   }
 
@@ -318,6 +420,7 @@ export default function TerminalApp({ windowId }: { windowId: string }) {
   }
 
   function complete() {
+    if (chatMode) return;
     const parts = input.split(/\s+/);
     const last = parts[parts.length - 1] ?? "";
     let candidates: string[];
@@ -388,6 +491,9 @@ export default function TerminalApp({ windowId }: { windowId: string }) {
             )}
           </div>
         ))}
+        {busy ? (
+          <Thinking label={ai.name} />
+        ) : (
         <form onSubmit={onSubmit} className="flex items-baseline gap-2">
           <label htmlFor="term-input" className="shrink-0" style={{ color: t.dim }}>
             {promptFor(cwd)}
@@ -404,9 +510,11 @@ export default function TerminalApp({ windowId }: { windowId: string }) {
             spellCheck={false}
             aria-label="Terminal input"
             className="min-w-0 flex-1 bg-transparent outline-none"
+            maxLength={chatMode ? MAX_QUESTION : 200}
             style={{ caretColor: t.color, font: "inherit", color: "inherit", textShadow: "inherit" }}
           />
         </form>
+        )}
       </div>
       {/* CRT scanlines */}
       <div

@@ -2,6 +2,10 @@ Drop your wallpaper in this folder and name it exactly:
 
     wallpaper.png     (or wallpaper.jpg / wallpaper.jpeg / wallpaper.webp)
 
-It is picked up automatically: no code changes needed.
-Tip: 1920x1080 or larger, ideally under 2 MB. It is shown centered and scaled to cover the screen.
-Once it exists, it becomes the default desktop and appears as "My Wallpaper" in Special > menu.
+It is picked up automatically: no code changes needed. Visitors see the
+"Welcome to Macintosh" boot screen with a progress bar until it has downloaded.
+
+Big file? Run   npm run optimize-wallpaper
+It converts the image to a compact WebP (max 2560x1440) and keeps your original
+next to it as wallpaper-original.* (not committed to git). A 7 MB wallpaper
+usually becomes 200-800 KB with no visible difference.

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
-import { guestbook } from "../data/portfolioData";
+import { BACKEND_URL, backendGet, backendPost } from "../utils/backend";
 
 interface Entry {
   name: string;
@@ -8,14 +8,15 @@ interface Entry {
 }
 
 // Where messages live: a Google Sheet via a small Google Apps Script web app
-// (see backend/google-apps-script.gs). Empty = this device only.
-const ENDPOINT: string = guestbook.endpoint || import.meta.env.VITE_GUESTBOOK_URL || "";
+// (see backend/google-apps-script.gs). No backend URL = this device only.
+const ENDPOINT = BACKEND_URL;
 
 const MAX_NAME = 40;
 const MAX_MESSAGE = 280;
 const COOLDOWN_MS = 30_000;
 const LOCAL_KEY = "mac-portfolio-guestbook";
 const LAST_POST_KEY = "mac-portfolio-guestbook-last";
+const CACHE_KEY = "mac-portfolio-guestbook-cache";
 
 const WELCOME: Entry = { name: "System 7", message: "Welcome to the guestbook! Sign below.", date: "1991-05-13" };
 
@@ -33,6 +34,17 @@ function loadLocal(): Entry[] {
   return [WELCOME];
 }
 
+/** Last messages seen from the backend, shown instantly while fresh ones load. */
+function loadCached(): Entry[] {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(CACHE_KEY) ?? "null");
+    if (Array.isArray(parsed)) return parsed;
+  } catch {
+    /* ignore */
+  }
+  return [];
+}
+
 function secondsLeft(): number {
   try {
     const last = Number(localStorage.getItem(LAST_POST_KEY) ?? 0);
@@ -43,7 +55,7 @@ function secondsLeft(): number {
 }
 
 export default function GuestbookApp() {
-  const [entries, setEntries] = useState<Entry[]>(ENDPOINT ? [] : loadLocal);
+  const [entries, setEntries] = useState<Entry[]>(ENDPOINT ? loadCached : loadLocal);
   const [loading, setLoading] = useState(Boolean(ENDPOINT));
   const [loadError, setLoadError] = useState(false);
   const [name, setName] = useState("");
@@ -58,11 +70,15 @@ export default function GuestbookApp() {
     setLoading(true);
     setLoadError(false);
     try {
-      const res = await fetch(ENDPOINT, { cache: "no-store" });
-      const data = await res.json();
+      const data = await backendGet<{ ok?: boolean; entries?: Entry[] }>();
       if (!alive.current) return;
       if (!data.ok || !Array.isArray(data.entries)) throw new Error("bad response");
       setEntries(data.entries);
+      try {
+        localStorage.setItem(CACHE_KEY, JSON.stringify(data.entries));
+      } catch {
+        /* ignore */
+      }
     } catch {
       if (alive.current) setLoadError(true);
     } finally {
@@ -96,13 +112,11 @@ export default function GuestbookApp() {
 
     try {
       if (ENDPOINT) {
-        // Form-encoded body = a "simple" request, so the browser sends no CORS preflight
-        // (Google Apps Script can't answer preflights).
-        const res = await fetch(ENDPOINT, {
-          method: "POST",
-          body: new URLSearchParams({ name: cleanName, message: cleanMessage, website: trap }),
+        const data = await backendPost<{ ok?: boolean; error?: string }>({
+          name: cleanName,
+          message: cleanMessage,
+          website: trap,
         });
-        const data = await res.json();
         if (!data.ok) throw new Error(data.error || "Could not save your message.");
       } else {
         const next = [entry, ...entries];
@@ -180,7 +194,7 @@ export default function GuestbookApp() {
         </div>
       </form>
 
-      {loading && <p className="text-black/60">Loading messages…</p>}
+      {loading && entries.length === 0 && <p className="text-black/60">Loading messages…</p>}
       {loadError && (
         <p className="text-[#b00020]">
           Couldn't load the messages right now. Try Refresh in a moment.

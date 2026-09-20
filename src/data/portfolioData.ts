@@ -323,12 +323,19 @@ export const desktop = {
 };
 
 // ---------------------------------------------------------------------------
-// Guestbook — visitor messages are stored in a Google Sheet.
-// Setup steps are in README.md ("Guestbook backend"). Paste the web app URL
-// (it ends in /exec) below. Leave it empty to keep messages on the visitor's
-// own device only.
+// Backend — one Google Apps Script web app powers the guestbook (Google Sheet)
+// and the AI assistant in Terminal.exe (Groq). Setup: README.md.
+// Paste the web app URL (it ends in /exec). Leave it empty and the guestbook
+// keeps messages on the visitor's device only, and the AI assistant stays off.
+// The Groq API key is NOT stored here or in GitHub: it lives in the script's
+// private settings (see README, "AI assistant").
 // ---------------------------------------------------------------------------
 
-export const guestbook = {
+export const backend = {
   endpoint: "",
+};
+
+export const ai = {
+  /** Name shown when the assistant replies in Terminal.exe. */
+  name: "Assistant",
 };

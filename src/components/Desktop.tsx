@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { memo, useEffect } from "react";
 import MenuBar from "./MenuBar";
 import Window from "./Window";
 import DesktopIcon from "./DesktopIcon";
@@ -7,9 +7,9 @@ import { useWindowManager } from "../context/WindowManagerContext";
 import { useSystem } from "../context/SystemContext";
 import { APPS, useOpenApp } from "../apps/appDefs";
 import { renderAppContent } from "../apps/AppRegistry";
-import { getWallpaper } from "../data/wallpapers";
+import { wallpaperStyle } from "../data/wallpapers";
 import { useCoarsePointer } from "../utils/useCoarsePointer";
-import type { AppId } from "../types";
+import type { AppId, WindowInstance } from "../types";
 
 // Order on the desktop: top-right first, then down (and wrapping left on short screens).
 const DESKTOP_APPS: AppId[] = [
@@ -25,9 +25,18 @@ const DESKTOP_APPS: AppId[] = [
   "resume",
 ];
 
+// Window contents only re-render when their own window changes, so dragging or
+// resizing one window doesn't re-render every open app (e.g. the Terminal).
+const WindowBody = memo(
+  function WindowBody({ win }: { win: WindowInstance }) {
+    return renderAppContent(win);
+  },
+  (a, b) => a.win.id === b.win.id && a.win.appId === b.win.appId && a.win.payload === b.win.payload
+);
+
 export default function Desktop() {
   const { windows } = useWindowManager();
-  const { wallpaperId, trashEmpty, isShutDown } = useSystem();
+  const { wallpaperId, customWallpaperSrc, trashEmpty, isShutDown } = useSystem();
   const openApp = useOpenApp();
   const coarse = useCoarsePointer();
 
@@ -39,7 +48,7 @@ export default function Desktop() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const style = getWallpaper(wallpaperId).style;
+  const style = wallpaperStyle(wallpaperId, customWallpaperSrc);
 
   return (
     <div className="fixed inset-0 overflow-hidden" style={style}>
@@ -68,7 +77,7 @@ export default function Desktop() {
       {/* Windows */}
       {windows.map((win) => (
         <Window key={win.id} win={win}>
-          {renderAppContent(win)}
+          <WindowBody win={win} />
         </Window>
       ))}
 

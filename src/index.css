@@ -100,6 +100,18 @@ textarea,
   }
 }
 
+/* Boot bar when the wallpaper size isn't known: marching stripes. */
+.boot-indeterminate {
+  background-image: repeating-linear-gradient(90deg, #000 0 8px, #fff 8px 16px);
+  background-size: 32px 100%;
+  animation: boot-march 0.5s steps(4) infinite;
+}
+@keyframes boot-march {
+  to {
+    background-position: 32px 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;

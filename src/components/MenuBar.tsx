@@ -31,7 +31,7 @@ const DIVIDER: MenuItem = { divider: true, label: "" };
 
 export default function MenuBar() {
   const { windows, activeWindowId, closeWindow } = useWindowManager();
-  const { wallpaperId, setWallpaperId, shutDown } = useSystem();
+  const { wallpaperId, setWallpaperId, shutDown, customWallpaperSrc } = useSystem();
   const openApp = useOpenApp();
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -101,10 +101,12 @@ export default function MenuBar() {
       items: [
         { label: "Empty Trash…", action: () => openApp("trash") },
         DIVIDER,
-        ...wallpapers.map((w) => ({
-          label: `${w.id === wallpaperId ? "✓ " : "\u00a0\u00a0 "}${w.name}`,
-          action: () => setWallpaperId(w.id),
-        })),
+        ...wallpapers
+          .filter((w) => w.id !== "custom" || customWallpaperSrc)
+          .map((w) => ({
+            label: `${w.id === wallpaperId ? "✓ " : "\u00a0\u00a0 "}${w.name}`,
+            action: () => setWallpaperId(w.id),
+          })),
         DIVIDER,
         { label: "Restart", action: () => window.location.reload() },
         { label: "Shut Down", action: shutDown },

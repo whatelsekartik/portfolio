@@ -1,20 +1,24 @@
+import { lazy, Suspense } from "react";
 import type { WindowInstance } from "../types";
 import AboutApp from "./AboutApp";
-import TerminalApp from "./TerminalApp";
-import FinderApp from "./FinderApp";
-import TextFileApp from "./TextFileApp";
-import ProjectsApp from "./ProjectsApp";
-import ProjectDetailApp from "./ProjectDetailApp";
-import SkillsApp from "./SkillsApp";
-import EducationApp from "./EducationApp";
-import ExperienceApp from "./ExperienceApp";
-import TrashApp from "./TrashApp";
-import ContactApp from "./ContactApp";
-import ResumeApp from "./ResumeApp";
-import GuestbookApp from "./GuestbookApp";
 import { readmeText } from "../data/portfolioData";
 
-export function renderAppContent(win: WindowInstance) {
+// Only About opens on load, so every other app is split into its own chunk
+// and downloaded the first time it's opened.
+const TerminalApp = lazy(() => import("./TerminalApp"));
+const FinderApp = lazy(() => import("./FinderApp"));
+const TextFileApp = lazy(() => import("./TextFileApp"));
+const ProjectsApp = lazy(() => import("./ProjectsApp"));
+const ProjectDetailApp = lazy(() => import("./ProjectDetailApp"));
+const SkillsApp = lazy(() => import("./SkillsApp"));
+const EducationApp = lazy(() => import("./EducationApp"));
+const ExperienceApp = lazy(() => import("./ExperienceApp"));
+const TrashApp = lazy(() => import("./TrashApp"));
+const ContactApp = lazy(() => import("./ContactApp"));
+const ResumeApp = lazy(() => import("./ResumeApp"));
+const GuestbookApp = lazy(() => import("./GuestbookApp"));
+
+function content(win: WindowInstance) {
   switch (win.appId) {
     case "about":
       return <AboutApp />;
@@ -47,4 +51,10 @@ export function renderAppContent(win: WindowInstance) {
     default:
       return <div className="p-4">Nothing here yet.</div>;
   }
+}
+
+export function renderAppContent(win: WindowInstance) {
+  return (
+    <Suspense fallback={<div className="p-4 text-[14px] text-black/60">Loading…</div>}>{content(win)}</Suspense>
+  );
 }

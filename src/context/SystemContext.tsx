@@ -2,6 +2,8 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 import { defaultWallpaperId, wallpapers } from "../data/wallpapers";
 
 interface SystemValue {
+  /** The downloaded custom wallpaper (an object URL), if you added one. */
+  customWallpaperSrc?: string;
   wallpaperId: string;
   setWallpaperId: (id: string) => void;
   trashEmpty: boolean;
@@ -23,7 +25,7 @@ function loadWallpaper(): string {
   return defaultWallpaperId;
 }
 
-export function SystemProvider({ children }: { children: ReactNode }) {
+export function SystemProvider({ children, customWallpaperSrc }: { children: ReactNode; customWallpaperSrc?: string }) {
   const [wallpaperId, setWallpaperId] = useState(loadWallpaper);
   const [trashEmpty, setTrashEmpty] = useState(false);
   const [isShutDown, setIsShutDown] = useState(false);
@@ -40,8 +42,8 @@ export function SystemProvider({ children }: { children: ReactNode }) {
   const shutDown = useCallback(() => setIsShutDown(true), []);
 
   const value = useMemo(
-    () => ({ wallpaperId, setWallpaperId, trashEmpty, emptyTrash, isShutDown, shutDown }),
-    [wallpaperId, trashEmpty, emptyTrash, isShutDown, shutDown]
+    () => ({ customWallpaperSrc, wallpaperId, setWallpaperId, trashEmpty, emptyTrash, isShutDown, shutDown }),
+    [customWallpaperSrc, wallpaperId, trashEmpty, emptyTrash, isShutDown, shutDown]
   );
 
   return <SystemContext.Provider value={value}>{children}</SystemContext.Provider>;
