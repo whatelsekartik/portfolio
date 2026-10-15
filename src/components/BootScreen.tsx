@@ -30,26 +30,26 @@ export default function BootScreen({ assets, onDone }: { assets: BootAssets; onD
       onClick={() => ready && onDone()}
       role="status"
       aria-live="polite"
-      className={`fixed inset-0 z-[99999] flex flex-col items-center justify-center gap-5 bg-[#d8d8d8] transition-opacity duration-500 ${
+      className={`fixed inset-0 z-[99999] flex flex-col items-center justify-center gap-5 bg-[#f1e8d6] transition-opacity duration-500 ${
         fading ? "opacity-0" : "opacity-100"
       } ${ready ? "cursor-pointer" : "cursor-progress"}`}
     >
       <IconHappyMac className="h-24 w-24" />
-      <p className="font-chicago text-[20px] text-black">Welcome to Macintosh</p>
+      <p className="font-chicago text-[20px] text-[#29271f]">Welcome to Macintosh</p>
 
-      <div className="h-3 w-56 overflow-hidden border-2 border-black bg-white p-[1px]">
+      <div className="h-3 w-56 overflow-hidden border-2 border-[#29271f] bg-[#fbf7ee] p-[1px]">
         {assets.hasWallpaper ? (
           pct === null ? (
             <div className="boot-indeterminate h-full w-full" />
           ) : (
-            <div className="h-full bg-black" style={{ width: `${pct}%` }} />
+            <div className="h-full bg-[#a96520]" style={{ width: `${pct}%` }} />
           )
         ) : (
-          <div className="h-full bg-black" style={{ animation: "boot-progress 1.6s steps(16) forwards" }} />
+          <div className="h-full bg-[#a96520]" style={{ animation: "boot-progress 1.6s steps(16) forwards" }} />
         )}
       </div>
 
-      <p className="font-chicago text-[13px] text-black/60">
+      <p className="font-chicago text-[13px] text-[#625d50]">
         {downloading
           ? pct === null
             ? "Loading your desktop…"
@@ -66,7 +66,7 @@ export default function BootScreen({ assets, onDone }: { assets: BootAssets; onD
             e.stopPropagation();
             assets.skip();
           }}
-          className="font-chicago border-2 border-black bg-[#dfdfdf] px-3 py-1 text-[13px] shadow-[2px_2px_0_rgba(0,0,0,0.6)] hover:bg-black hover:text-white"
+          className="font-chicago border-2 border-[#625d50] bg-[#fbf7ee] px-3 py-1 text-[13px] shadow-[2px_2px_0_rgba(41,39,31,0.25)] hover:bg-[#a96520] hover:text-[#fffaf0]"
         >
           Continue without wallpaper
         </button>
