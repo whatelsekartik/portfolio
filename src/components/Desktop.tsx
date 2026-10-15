@@ -82,8 +82,8 @@ export default function Desktop() {
       ))}
 
       <div
-        className="font-chicago pointer-events-none absolute bottom-2 left-3 text-[13px] text-white"
-        style={{ textShadow: "1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000" }}
+        className="pointer-events-none absolute bottom-2 left-3 rounded border border-[#8c8068] bg-[#fffaf0]/95 px-2 py-1 text-[13px] font-medium text-[#29271f]"
+        
       >
         {coarse ? "Tap an icon to open it" : "Double-click an icon to open it · drag title bars to move windows"}
       </div>
