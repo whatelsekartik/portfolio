@@ -3,12 +3,12 @@
 :root {
   color-scheme: light;
   --mac-bg: #f1e8d6;
-  --mac-window: #fbf7ee;
+  --mac-window: #fffaf0;
   --mac-border: #302d25;
   --paper: #f1e8d6;
-  --paper-light: #fbf7ee;
+  --paper-light: #fffaf0;
   --ink: #29271f;
-  --ink-muted: #625d50;
+  --ink-muted: #514c40;
   --amber: #a96520;
   --amber-light: #dca45e;
   --olive: #66704a;
@@ -23,8 +23,9 @@ body {
   overflow: hidden;
   background: var(--paper);
   color: var(--ink);
-  font-family: "VT323", "Geneva", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 18px;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   user-select: none;
@@ -36,9 +37,15 @@ body {
   :focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
 }
 
-/* Retain pixel character in the chrome while keeping body copy legible. */
-.font-chicago { font-family: "Pixelify Sans", "VT323", monospace; }
-input, textarea, .select-text { user-select: text; }
+/* Keep the old-Mac structure, not the old-Mac pixel font, for reading. */
+.font-chicago {
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+}
+
+input, textarea, select, .select-text { user-select: text; }
+input, textarea, select, button { font-family: inherit; }
 
 .scanline-title {
   background-image: repeating-linear-gradient(
@@ -52,35 +59,64 @@ input, textarea, .select-text { user-select: text; }
 
 ::selection { background: #a96520; color: #fffaf0; }
 
+.mac-scroll {
+  background-color: #fffaf0;
+  color: #29271f;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+  scrollbar-color: #cabb9e #f8f1e4;
+  scrollbar-width: auto;
+}
+.mac-scroll-dark {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
 .mac-scroll::-webkit-scrollbar,
 .mac-scroll-dark::-webkit-scrollbar { width: 14px; height: 14px; }
 
 .mac-scroll::-webkit-scrollbar-track {
   background: #f8f1e4;
-  background-image: repeating-conic-gradient(#d5c6ab 0% 25%, #fbf7ee 0% 50%);
+  background-image: repeating-conic-gradient(#d5c6ab 0% 25%, #fffaf0 0% 50%);
   background-size: 3px 3px;
   border-left: 1px solid #8c8068;
 }
-
 .mac-scroll::-webkit-scrollbar-thumb {
   background: #dfd1b8;
   border: 1px solid #756951;
   box-shadow: inset 1px 1px 0 #fffaf0;
 }
-
 .mac-scroll-dark::-webkit-scrollbar-track { background: #39382d; border-left: 1px solid #625d50; }
 .mac-scroll-dark::-webkit-scrollbar-thumb { background: #847452; border: 1px solid #c7b58e; }
 
-@keyframes boot-progress { 0% { width: 0%; } 100% { width: 100%; } }
+/* Arbitrary utility font sizes are used by the original app components. Bump
+   their smallest labels so metadata stays readable without overwhelming body copy. */
+.mac-scroll [class~="text-[12px]"] { font-size: 13px !important; line-height: 1.4 !important; }
+.mac-scroll [class~="text-[13px]"] { font-size: 14px !important; line-height: 1.45 !important; }
+.mac-scroll [class~="text-[14px]"] { font-size: 15px !important; line-height: 1.55 !important; }
+.mac-scroll [class~="text-[15px]"] { font-size: 15px !important; line-height: 1.55 !important; }
+.mac-scroll [class~="text-black/60"],
+.mac-scroll [class~="text-black/55"],
+.mac-scroll [class~="text-black/50"],
+.mac-scroll [class~="text-black/45"],
+.mac-scroll [class~="text-black/40"] { color: #514c40 !important; }
+.mac-scroll [class~="text-black/35"],
+.mac-scroll [class~="text-black/30"] { color: #625b4c !important; }
 
+@keyframes boot-progress { 0% { width: 0%; } 100% { width: 100%; } }
 .boot-indeterminate {
   background-image: repeating-linear-gradient(90deg, #a96520 0 8px, #f8f1e4 8px 16px);
   background-size: 32px 100%;
   animation: boot-march 0.5s steps(4) infinite;
 }
-
 @keyframes boot-march { to { background-position: 32px 0; } }
 
+@media (max-width: 640px) {
+  body { font-size: 15px; }
+  .mac-scroll { font-size: 15px; }
+}
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
