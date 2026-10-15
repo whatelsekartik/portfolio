@@ -1,341 +1,162 @@
 // ---------------------------------------------------------------------------
-// PORTFOLIO CONTENT — edit everything in this file to make the site your own.
-// Every window on the desktop (About, Terminal, Skills.exe, Education, ...)
-// reads from here. Everything below is placeholder text.
+// PORTFOLIO CONTENT — one source of truth for the desktop's windows.
+// Keep descriptions factual and add verified project URLs when available.
 // ---------------------------------------------------------------------------
-
 export const profile = {
-  name: "Your Name",
-  /** Used in the Terminal prompt: handle@macintosh */
-  handle: "yourname",
-  title: "Web Developer & Electronics Tinkerer",
-  tagline: "Building websites, games and gadgets — one tiny window at a time.",
-  location: "Your City, Country",
-  /** Optional. Put a photo in /public and set e.g. "/me.jpg" — shown in the About window. */
+  name: "Kartik Gaikwad",
+  handle: "kartik",
+  title: "Student Developer & Builder",
+  tagline: "Small experiments, useful software, and ideas that make it out of the notes app.",
+  location: "Pune, India",
   photo: "",
-  quickIntro:
-    "Hi! I'm Your Name. I build websites, tinker with electronics, and make small games for fun.",
+  quickIntro: "Hey, I'm Kartik — a student developer interested in thoughtful web experiences, practical software, and the hardware side of computing.",
   bio: [
-    "Write two or three short paragraphs about yourself here: what you build, what got you started, and what you're looking for next.",
-    "This portfolio is styled after the classic Macintosh System 7 desktop. Double-click the icons to open windows, drag them around, and poke at everything — there's a working terminal, too.",
+    "I like turning ideas into things people can actually use: clean web interfaces, small tools, campus-focused products, and experiments with electronics.",
+    "This portfolio is a little digital workspace rather than a conventional landing page. Open a file, browse a project, or use the terminal — the details are meant to be explored.",
   ],
-  interests: ["Web design", "Retro computing", "Arduino & ESP32", "Game dev", "Open source"],
-  personality: ["Curious", "Detail-obsessed", "Night-owl coder", "Coffee-powered"],
+  interests: ["Frontend craft", "Product building", "Open source", "ESP32 & electronics", "Retro computing"],
+  personality: ["Curious by default", "Learn by building", "Detail-oriented", "Always iterating"],
 };
 
 export const socials = {
-  email: "you@example.com",
-  phone: "+00 00000 00000",
-  github: "https://github.com/yourusername",
-  linkedin: "https://linkedin.com/in/yourusername",
-  instagram: "https://instagram.com/yourusername",
+  email: "",
+  phone: "",
+  github: "https://github.com/whatelsekartik",
+  linkedin: "",
+  instagram: "",
 };
-
-// ---------------------------------------------------------------------------
-// Projects
-// kind decides the icon: "web" | "game" | "chip" | "code"
-// ---------------------------------------------------------------------------
 
 export type ProjectKind = "web" | "game" | "chip" | "code";
-
 export interface Project {
-  id: string;
-  name: string;
-  year: string;
-  tagline: string;
-  description: string;
-  tags: string[];
-  link?: string;
-  repo?: string;
-  kind: ProjectKind;
+  id: string; name: string; year: string; tagline: string; description: string;
+  tags: string[]; link?: string; repo?: string; kind: ProjectKind;
 }
-
 export const projects: Project[] = [
   {
-    id: "sitemango",
-    name: "SiteMango",
-    year: "2024",
-    tagline: "Websites built for small businesses and clients.",
-    description:
-      "Describe SiteMango here: who it's for, what you build, and what makes it different. Mention the stack you use and a result or two you're proud of.",
-    tags: ["React", "Tailwind", "Client work"],
-    link: "https://example.com",
-    kind: "web",
+    id: "campus-plus", name: "Campus+", year: "2026",
+    tagline: "A text-first home for campus life.",
+    description: "A campus platform concept bringing together student communities, posts, messaging, events, notices, lost and found, rides, housing, and a moderated marketplace. The product direction is deliberately minimal: clear information, useful workflows, and no AI bolted on for its own sake.",
+    tags: ["Next.js", "Supabase", "Product design"], repo: "https://github.com/whatelsekartik", kind: "code",
   },
   {
-    id: "pixel-game",
-    name: "Pixel Game",
-    year: "2023",
-    tagline: "A small browser game.",
-    description:
-      "Describe your game: the idea, how it plays, and what you learned while building it. Link to a playable version if you have one.",
-    tags: ["JavaScript", "Canvas", "Game dev"],
-    link: "https://example.com",
-    repo: "https://github.com/yourusername/pixel-game",
-    kind: "game",
+    id: "sitemango", name: "SiteMango", year: "2025",
+    tagline: "A small web studio for local businesses.",
+    description: "A web-development initiative focused on helping local businesses get a polished, practical web presence. The emphasis is on responsive pages, straightforward contact flows, and keeping the solution maintainable.",
+    tags: ["Web design", "Frontend", "Small business"], repo: "https://github.com/whatelsekartik", kind: "web",
   },
   {
-    id: "circuit-project",
-    name: "Circuit Project",
-    year: "2023",
-    tagline: "An electronics build.",
-    description:
-      "Describe the hardware project: what it does, the parts you used (Arduino, ESP32, sensors...) and the trickiest bug you fixed. Photos and schematics make these shine.",
-    tags: ["Arduino", "C++", "Electronics"],
-    kind: "chip",
+    id: "hardware-lab", name: "Hardware Lab", year: "2025",
+    tagline: "Small interfaces with physical-world inputs.",
+    description: "Ongoing experiments around microcontrollers, displays, input controls, and small connected devices. A place to test the line between a useful interface and a fun hardware prototype.",
+    tags: ["ESP32", "Embedded C++", "Prototyping"], kind: "chip",
   },
   {
-    id: "open-source",
-    name: "Open Source Tool",
-    year: "2022",
-    tagline: "A project from GitHub.",
-    description:
-      "Describe a repository you're proud of. What problem does it solve, and who uses it?",
-    tags: ["TypeScript", "Node.js", "GitHub"],
-    repo: "https://github.com/yourusername/open-source-tool",
-    kind: "code",
+    id: "web-experiments", name: "Web Experiments", year: "2025",
+    tagline: "Motion, interaction, and little details.",
+    description: "A collection of browser experiments exploring responsive layouts, animation, simple games, and interface ideas. The goal is to make the web feel considered without making it harder to use.",
+    tags: ["HTML", "CSS", "JavaScript"], repo: "https://github.com/whatelsekartik", kind: "game",
   },
 ];
 
-// ---------------------------------------------------------------------------
-// Skills.exe — level is 1-10
-// ---------------------------------------------------------------------------
-
-export interface SkillGroup {
-  name: string;
-  items: { name: string; level: number }[];
-}
-
+export interface SkillGroup { name: string; items: { name: string; level: number }[]; }
 export const skillGroups: SkillGroup[] = [
-  {
-    name: "Languages",
-    items: [
-      { name: "HTML & CSS", level: 9 },
-      { name: "JavaScript", level: 9 },
-      { name: "TypeScript", level: 8 },
-      { name: "Python", level: 7 },
-      { name: "C / C++", level: 6 },
-    ],
-  },
-  {
-    name: "Web",
-    items: [
-      { name: "React", level: 8 },
-      { name: "Next.js", level: 7 },
-      { name: "Tailwind CSS", level: 9 },
-      { name: "Node.js", level: 7 },
-    ],
-  },
-  {
-    name: "Tools",
-    items: [
-      { name: "Git & GitHub", level: 8 },
-      { name: "VS Code", level: 9 },
-      { name: "Figma", level: 6 },
-      { name: "Docker", level: 5 },
-    ],
-  },
-  {
-    name: "Hardware",
-    items: [
-      { name: "Arduino", level: 7 },
-      { name: "ESP32", level: 6 },
-      { name: "Raspberry Pi", level: 6 },
-      { name: "Soldering", level: 7 },
-    ],
-  },
+  { name: "Languages", items: [
+    { name: "HTML & CSS", level: 9 }, { name: "JavaScript", level: 8 },
+    { name: "Python", level: 7 }, { name: "C / C++", level: 6 }, { name: "TypeScript", level: 5 },
+  ]},
+  { name: "Web", items: [
+    { name: "React", level: 7 }, { name: "Next.js", level: 6 },
+    { name: "Tailwind CSS", level: 8 }, { name: "Node.js", level: 6 }, { name: "Supabase", level: 6 },
+  ]},
+  { name: "Tools", items: [
+    { name: "Git & GitHub", level: 8 }, { name: "VS Code", level: 8 },
+    { name: "Figma", level: 5 }, { name: "Command line", level: 6 },
+  ]},
+  { name: "Hardware", items: [
+    { name: "ESP32", level: 6 }, { name: "Raspberry Pi", level: 6 },
+    { name: "Arduino", level: 6 }, { name: "Prototyping", level: 6 },
+  ]},
 ];
 
-// ---------------------------------------------------------------------------
-// Experience — kind: "Client Work" | "Internship" | "Freelance" | "Competition" | ...
-// ---------------------------------------------------------------------------
-
-export interface ExperienceEntry {
-  role: string;
-  org: string;
-  kind: string;
-  period: string;
-  points: string[];
-}
-
+export interface ExperienceEntry { role: string; org: string; kind: string; period: string; points: string[]; }
 export const experience: ExperienceEntry[] = [
   {
-    role: "Founder & Developer",
-    org: "SiteMango",
-    kind: "Client Work",
-    period: "2023 – Present",
+    role: "Builder & Developer", org: "Independent projects", kind: "Projects", period: "Ongoing",
     points: [
-      "Placeholder: designed and built websites for clients from first sketch to launch.",
-      "Placeholder: handled hosting, domains, and ongoing updates.",
+      "Designing and implementing small web products from an idea through to a working prototype.",
+      "Exploring product structure, maintainable frontend code, and practical backend workflows.",
     ],
   },
   {
-    role: "Web Development Intern",
-    org: "Company Name",
-    kind: "Internship",
-    period: "Summer 2023",
-    points: ["Placeholder: what you shipped.", "Placeholder: what you learned."],
+    role: "Founder-in-progress", org: "SiteMango", kind: "Web development", period: "Ongoing",
+    points: [
+      "Developing a straightforward web offering for local businesses, with a focus on clarity and useful contact paths.",
+      "Working through the details that make small sites dependable: responsive layouts, forms, deployment, and handoff.",
+    ],
   },
   {
-    role: "Freelance Developer",
-    org: "Various clients",
-    kind: "Freelance",
-    period: "2022 – 2023",
-    points: ["Placeholder: small sites and fixes for people who needed them."],
-  },
-  {
-    role: "Finalist",
-    org: "Hackathon / Competition Name",
-    kind: "Competition",
-    period: "2022",
-    points: ["Placeholder: what you built in 24 hours and how it went."],
+    role: "Student", org: "Science & computing", kind: "Education", period: "Current",
+    points: [
+      "Balancing formal study with independent projects in software and electronics.",
+      "Using projects to connect fundamentals with real interfaces and working systems.",
+    ],
   },
 ];
 
-// ---------------------------------------------------------------------------
-// Education
-// ---------------------------------------------------------------------------
-
 export const education = {
-  schools: [
-    {
-      school: "College / University Name",
-      degree: "B.Tech / B.Sc. in Your Course",
-      period: "2021 – 2025",
-      details: ["Placeholder: major subjects, GPA, or notable coursework."],
-    },
-    {
-      school: "School Name",
-      degree: "Higher Secondary (Science)",
-      period: "2019 – 2021",
-      details: ["Placeholder: board, stream, or result."],
-    },
-  ],
-  certifications: [
-    { name: "Certification Name", issuer: "Issuer", year: "2024" },
-    { name: "Another Certificate", issuer: "Issuer", year: "2023" },
-  ],
+  schools: [{
+    school: "Higher Secondary Education", degree: "Science", period: "Completed",
+    details: ["Maharashtra State Board · Class XII"],
+  }],
+  certifications: [],
   achievements: [
-    "Placeholder: an award, scholarship, rank, or competition result.",
-    "Placeholder: something you organized or led.",
+    "International Mathematics Olympiad (SOF): 92 percentile.",
+    "Enjoys learning by building and iterating on independent projects.",
   ],
 };
-
-// ---------------------------------------------------------------------------
-// Résumé — put your real CV at /public/resume.pdf (replace the placeholder).
-// ---------------------------------------------------------------------------
 
 export const resume = {
   pdfUrl: `${import.meta.env.BASE_URL}resume.pdf`,
-  downloadName: "Your-Name-Resume.pdf",
-  summary:
-    "Placeholder summary of your background: two or three sentences about your experience, your focus, and what you want to do next.",
+  downloadName: "Kartik-Gaikwad-Resume.pdf",
+  summary: "Student developer exploring frontend engineering, product building, and electronics. Interested in creating useful software with clear interfaces and thoughtful details.",
 };
 
-// ---------------------------------------------------------------------------
-// Trash — the easter egg. Abandoned ideas, old designs, funny moments.
-// ---------------------------------------------------------------------------
-
-export interface TrashItem {
-  name: string;
-  kind: string;
-  story: string;
-}
-
+export interface TrashItem { name: string; kind: string; story: string; }
 export const trashItems: TrashItem[] = [
-  {
-    name: "portfolio_v1_FINAL.html",
-    kind: "Old design",
-    story: "The first portfolio. Comic Sans. A marquee tag. It was 2019 and I regret nothing (some things).",
-  },
-  {
-    name: "todo_app_7.zip",
-    kind: "Abandoned code",
-    story: "The seventh to-do app. The to-do list for finishing it was longer than the app.",
-  },
-  {
-    name: "flappy_clone.exe",
-    kind: "Failed idea",
-    story: "A game where the pipes were always exactly 2px too close together. Unwinnable by design (accidentally).",
-  },
-  {
-    name: "smoke_test.ino",
-    kind: "Electronics",
-    story: "The first circuit that worked was preceded by a circuit that smelled. Lesson learned: check polarity.",
-  },
-  {
-    name: "bad_css_ideas.zip",
-    kind: "Old design",
-    story: "Includes: a neon gradient on everything, and a button that ran away from the cursor.",
-  },
-  {
-    name: "internet_explorer.app",
-    kind: "Legacy",
-    story: "Kept for testing. Never opened.",
-  },
+  { name: "portfolio_v1_FINAL_FINAL", kind: "Old design", story: "The version that was definitely final. Until the next version existed." },
+  { name: "todo_app_09", kind: "Abandoned code", story: "A reminder that building a tool is sometimes easier than deciding which tool to build." },
+  { name: "unread_notes.txt", kind: "Research", story: "Forty tabs, three notebooks, and one useful idea hiding at the bottom." },
+  { name: "mystery_wire.ino", kind: "Electronics", story: "A tiny reminder to label wires, check polarity, and keep the wiring diagram." },
+  { name: "perfect-gradient.css", kind: "Old design", story: "Sometimes the most useful design decision is removing one more effect." },
 ];
-
-// ---------------------------------------------------------------------------
-// README.txt contents
-// ---------------------------------------------------------------------------
 
 export function readmeText(): string {
   return [
-    `README.txt`,
-    `==========`,
-    ``,
-    `Hello, and welcome! I'm ${profile.name} — ${profile.title.toLowerCase()}.`,
-    ``,
-    `This website is a tiny Macintosh desktop. Everything you'd`,
-    `find on a portfolio is here, just filed the old-fashioned way:`,
-    ``,
-    `  About Me ...... who I am`,
-    `  My Projects ... things I've built`,
-    `  Skills.exe .... what I know (it runs, honestly)`,
-    `  Experience .... where I've worked`,
-    `  Education ..... where I've studied`,
-    `  Resume.pdf .... the downloadable CV`,
-    `  Contact Me .... how to reach me`,
-    `  Terminal.exe .. the same portfolio, for keyboard people`,
-    ``,
-    `Tips:`,
-    `  - Double-click icons to open them (tap once on a phone).`,
-    `  - Drag title bars to move windows; click the box on the`,
-    `    right of a title bar to roll a window up like a shade.`,
-    `  - Special > Desktop Pattern changes the wallpaper.`,
-    `  - Open the Terminal and type "help".`,
-    `  - Don't open the Trash. (Open the Trash.)`,
-    ``,
+    "README.txt", "==========",
+    `Hey, I'm ${profile.name} — ${profile.title.toLowerCase()}.`, "",
+    profile.tagline, "",
+    "This portfolio works like a tiny desktop. Files and apps open in their own windows:", "",
+    "  About Me ...... what I'm curious about",
+    "  My Projects ... things I've been building",
+    "  Skills.exe .... a snapshot of my toolkit",
+    "  Experience .... the work behind the projects",
+    "  Education ..... the formal side of learning",
+    "  Resume.pdf .... the downloadable résumé",
+    "  Contact Me .... ways to get in touch",
+    "  Terminal.exe .. a keyboard-friendly route through the portfolio", "",
+    "Tips:",
+    "  - Double-click icons to open them (tap on a phone).",
+    "  - Drag title bars to move windows.",
+    "  - Use Special > Desktop Pattern to change the background.",
+    "  - Open Terminal.exe and type help.", "",
     `— ${profile.name}`,
   ].join("\n");
 }
 
-// ---------------------------------------------------------------------------
-// Desktop
-// ---------------------------------------------------------------------------
-
 export const desktop = {
-  /**
-   * Default pattern when you have no custom wallpaper: "blue" | "gray" | "teal" | "bricks".
-   * To use your own image instead, save it as src/assets/wallpaper.png (see that folder).
-   */
-  defaultPattern: "blue",
+  /** Built-in warm patterns: "amber" | "paper" | "olive" | "terracotta". */
+  defaultPattern: "paper",
 };
 
-// ---------------------------------------------------------------------------
-// Backend — one Google Apps Script web app powers the guestbook (Google Sheet)
-// and the AI assistant in Terminal.exe (Groq). Setup: README.md.
-// Paste the web app URL (it ends in /exec). Leave it empty and the guestbook
-// keeps messages on the visitor's device only, and the AI assistant stays off.
-// The Groq API key is NOT stored here or in GitHub: it lives in the script's
-// private settings (see README, "AI assistant").
-// ---------------------------------------------------------------------------
-
-export const backend = {
-  endpoint: "",
-};
-
-export const ai = {
-  /** Name shown when the assistant replies in Terminal.exe. */
-  name: "Assistant",
-};
+export const backend = { endpoint: "" };
+export const ai = { name: "Kartik's Terminal" };
