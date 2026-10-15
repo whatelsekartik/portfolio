@@ -46,8 +46,8 @@ export const projects: Project[] = [
     tagline: "A small web studio for growing local businesses.",
     description: "A web-development initiative focused on fast, clean, conversion-minded websites for local businesses. The work emphasizes responsive pages, clear service presentation, useful contact and lead-capture flows, and a practical handoff that small teams can maintain.",
     tags: ["Web design", "HTML · CSS · JavaScript", "Small business"],
-    link: "https://whatelsekartik.github.io/SiteMango/",
-    repo: "https://github.com/whatelsekartik/SiteMango",
+    link: "https://sitemango.github.io/home/",
+    repo: "https://github.com/sitemango/home",
     kind: "web",
   },
   {
