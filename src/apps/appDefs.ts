@@ -30,6 +30,7 @@ export const APPS: Record<AppId, AppDef> = {
   },
   skills: { label: "Skills.exe", icon: "skills", width: 500, height: 400 },
   education: { label: "Education", icon: "globe", width: 540, height: 450, minWidth: 320 },
+  achievements: { label: "Achievements", icon: "award", width: 560, height: 620, minWidth: 320, minHeight: 360 },
   experience: { label: "Experience", icon: "floppy", width: 600, height: 400, minWidth: 320 },
   trash: { label: "Trash", icon: "trash", width: 420, height: 390 },
   contact: { label: "Contact Me", icon: "phone", width: 430, height: 610 },
