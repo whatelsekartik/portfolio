@@ -13,58 +13,47 @@ export default function ProjectDetailApp({ payload }: { payload?: Record<string,
   return (
     <div className="flex min-h-full flex-col gap-5 p-4 text-[15px] leading-relaxed">
       <ScrollReveal>
-        <header className="flex items-start gap-3 border-b border-dashed border-[#d8c9ad] pb-4">
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center border border-[#d8c9ad] bg-[#f5ead6] p-1">
-            <FileIcon kind={project.kind} className="h-12 w-12" />
+        <header className="relative overflow-hidden border border-[#29271f] bg-[#29271f] p-4 text-[#fffaf0]">
+          <div className="relative z-10 flex items-start gap-3">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center border border-[#756951] bg-[#f1e8d6] p-1">
+              <FileIcon kind={project.kind} className="h-10 w-10" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="editorial-meta text-[#e7ad5a]">
+                Project {String(projectIndex + 1).padStart(2, "0")} / {project.year}
+              </p>
+              <h1 className="font-display mt-2 text-[clamp(1.8rem,4vw,2.4rem)] leading-[1.02] tracking-[-0.055em]">
+                {project.name}<span className="text-[#e7ad5a]">.</span>
+              </h1>
+              <p className="mt-2 text-[14px] leading-relaxed text-[#e7dfcf]">{project.tagline}</p>
+            </div>
           </div>
-          <div className="min-w-0 flex-1">
-            <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#89551e]">
-              Project {String(projectIndex + 1).padStart(2, "0")} · {project.year}
-            </p>
-            <h1 className="mt-1 text-[26px] font-bold leading-tight tracking-[-0.04em] text-[#29271f]">
-              {project.name}<span className="text-[#a96520]">.</span>
-            </h1>
-            <p className="mt-1 text-[14px] leading-relaxed text-[#514c40]">{project.tagline}</p>
-          </div>
+          <span className="pointer-events-none absolute -right-3 -bottom-10 font-display text-[120px] leading-none text-white/[0.06]" aria-hidden="true">0{projectIndex + 1}</span>
         </header>
       </ScrollReveal>
 
       <ScrollReveal>
         <section>
-          <h2 className="mb-2 text-[12px] font-bold uppercase tracking-[0.14em] text-[#756951]">Overview</h2>
+          <h2 className="editorial-meta mb-2 text-[#89551e]">The idea</h2>
           <p className="text-[15px] leading-[1.7] text-[#29271f]">{project.description}</p>
         </section>
       </ScrollReveal>
 
       <ScrollReveal>
         <section>
-          <h2 className="mb-2 text-[12px] font-bold uppercase tracking-[0.14em] text-[#756951]">Tools & themes</h2>
+          <h2 className="editorial-meta mb-2 text-[#89551e]">Tools & themes</h2>
           <div className="flex flex-wrap gap-1.5">
             {project.tags.map((tag) => (
-              <span key={tag} className="border border-[#d8c9ad] bg-[#fff7e8] px-2 py-1 text-[13px] text-[#514c40]">
-                {tag}
-              </span>
+              <span key={tag} className="border border-[#d8c9ad] bg-[#fff7e8] px-2 py-1 text-[13px] text-[#514c40]">{tag}</span>
             ))}
           </div>
         </section>
       </ScrollReveal>
 
       <div className="mt-auto flex flex-wrap gap-2 border-t border-dashed border-[#d8c9ad] pt-4">
-        {project.link && (
-          <a href={project.link} target="_blank" rel="noreferrer" className={linkClass}>
-            Visit site <span aria-hidden="true">↗</span>
-          </a>
-        )}
-        {project.repo && (
-          <a href={project.repo} target="_blank" rel="noreferrer" className={linkClass}>
-            View code <span aria-hidden="true">↗</span>
-          </a>
-        )}
-        {!project.link && !project.repo && socials.github && (
-          <a href={socials.github} target="_blank" rel="noreferrer" className={linkClass}>
-            More on GitHub <span aria-hidden="true">↗</span>
-          </a>
-        )}
+        {project.link && <a href={project.link} target="_blank" rel="noreferrer" className={linkClass}>Visit site <span aria-hidden="true">↗</span></a>}
+        {project.repo && <a href={project.repo} target="_blank" rel="noreferrer" className={linkClass}>View code <span aria-hidden="true">↗</span></a>}
+        {!project.link && !project.repo && socials.github && <a href={socials.github} target="_blank" rel="noreferrer" className={linkClass}>More on GitHub <span aria-hidden="true">↗</span></a>}
       </div>
     </div>
   );
