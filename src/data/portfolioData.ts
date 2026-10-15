@@ -70,6 +70,72 @@ export const projects: Project[] = [
   },
 ];
 
+export interface AchievementRecord {
+  id: string;
+  title: string;
+  category: "Academics" | "Olympiad";
+  result: string;
+  resultLabel: string;
+  note: string;
+  period: string;
+}
+export const achievementRecords: AchievementRecord[] = [
+  {
+    id: "mht-cet",
+    title: "MHT CET",
+    category: "Academics",
+    result: "98.98",
+    resultLabel: "percentile",
+    note: "Entrance examination result.",
+    period: "2026",
+  },
+  {
+    id: "jee-maths",
+    title: "JEE Main · Mathematics",
+    category: "Academics",
+    result: "96.5",
+    resultLabel: "percentile",
+    note: "Mathematics subject percentile — distinct from the overall JEE Main percentile.",
+    period: "2026",
+  },
+  {
+    id: "hsc-maths",
+    title: "HSC Mathematics",
+    category: "Academics",
+    result: "91/100",
+    resultLabel: "marks",
+    note: "Class XII Mathematics subject score.",
+    period: "2026",
+  },
+  {
+    id: "hsc-overall",
+    title: "HSC · Science",
+    category: "Academics",
+    result: "82%",
+    resultLabel: "overall",
+    note: "Maharashtra State Board Higher Secondary Certificate.",
+    period: "2026",
+  },
+  {
+    id: "sof-imo",
+    title: "SOF International Mathematics Olympiad",
+    category: "Olympiad",
+    result: "#791",
+    resultLabel: "international rank",
+    note: "92nd percentile, with full marks in the Achievers' Section.",
+    period: "SOF IMO",
+  },
+  {
+    id: "class-x",
+    title: "Class X board examination",
+    category: "Academics",
+    result: "93%",
+    resultLabel: "overall",
+    note: "Secondary school board examination result.",
+    period: "Board result",
+  },
+];
+
 export interface SkillGroup { name: string; items: { name: string; level: number }[]; }
 export const skillGroups: SkillGroup[] = [
   { name: "Languages", items: [
@@ -138,8 +204,10 @@ export const education = {
   }],
   certifications: [],
   achievements: [
+    "JEE Main Mathematics: 96.5 percentile (2026).",
+    "MHT CET: 98.98 percentile (2026).",
     "Class X board examination: 93%.",
-    "SOF International Mathematics Olympiad: 92nd percentile; International Rank 791.",
+    "SOF International Mathematics Olympiad: 92nd percentile; International Rank 791; full marks in the Achievers' Section.",
   ],
 };
 
