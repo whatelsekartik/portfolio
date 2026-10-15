@@ -9,18 +9,20 @@ export default function AboutApp() {
   return (
     <div className="flex flex-col gap-4 p-4 text-[15px] leading-relaxed">
       <ScrollReveal>
-        <section className="relative grid min-h-[194px] grid-cols-[minmax(0,1fr)_112px] overflow-hidden border border-[#29271f] bg-[#29271f] text-[#fffaf0]">
+        <section className="relative grid min-h-[210px] grid-cols-[minmax(0,1fr)_140px] overflow-hidden border border-[#29271f] bg-[#29271f] text-[#fffaf0]">
           <div className="relative z-10 flex min-w-0 flex-col items-start justify-center p-4 pr-1">
             <p className="editorial-meta mb-3 text-[#e7ad5a]">Student developer · Pune</p>
-            <h1 className="editorial-title text-[clamp(2.25rem,5vw,3rem)]">
+            <h1 className="editorial-title text-[clamp(1.9rem,4.5vw,2.7rem)]">
               KARTIK<br />GAIKWAD<span className="text-[#e7ad5a]">.</span>
             </h1>
             <p className="mt-3 max-w-[14rem] text-[13px] leading-snug text-[#e7dfcf]">{profile.title}</p>
           </div>
+
           <div className="relative flex min-h-full items-end justify-center overflow-hidden bg-[#dca45e]">
             <span className="absolute top-3 right-3 h-3 w-3 rounded-full border-2 border-[#29271f]" aria-hidden="true" />
-            <CharacterPortrait className="relative z-10 h-[178px] w-[108px] max-w-none" />
-            <span className="absolute right-0 bottom-0 left-0 h-8 bg-[#a96520]" aria-hidden="true" />
+            <span className="absolute top-7 left-3 h-2 w-2 bg-[#fffaf0]" aria-hidden="true" />
+            <CharacterPortrait className="relative z-10 mb-1 h-[202px] w-[150px] max-w-none" />
+            <span className="absolute right-0 bottom-0 left-0 h-1.5 bg-[#a96520]" aria-hidden="true" />
           </div>
           <span className="pointer-events-none absolute top-2 left-2 h-2 w-2 bg-[#dca45e]" aria-hidden="true" />
         </section>
