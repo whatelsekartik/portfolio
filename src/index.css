@@ -123,45 +123,55 @@ input, textarea, select, button { font-family: inherit; }
 .mac-scroll [class~="text-black/35"],
 .mac-scroll [class~="text-black/30"] { color: #625b4c !important; }
 
-/* SVG character: a tiny amount of life, never a distracting animation loop. */
-.character-shadow { fill: rgba(41, 39, 31, 0.16); }
+/* A restrained editorial character, with movement limited to tiny gestures. */
+.character-sun { fill: #f0c27d; }
+.character-orbit { fill: none; stroke: #29271f; stroke-width: 1; stroke-dasharray: 2 6; opacity: 0.24; }
+.character-spark { fill: none; stroke: #29271f; stroke-width: 1.5; stroke-linecap: square; }
+.character-shadow { fill: rgba(41, 39, 31, 0.13); }
+.character-chair { fill: none; stroke: #29271f; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; opacity: 0.72; }
 .character-body {
   transform-box: fill-box;
   transform-origin: 50% 85%;
-  animation: character-float 4.8s ease-in-out infinite;
+  animation: character-float 5s ease-in-out infinite;
 }
 .character-head {
   transform-box: fill-box;
-  transform-origin: 50% 52%;
-  animation: character-nod 5.8s ease-in-out infinite;
+  transform-origin: 50% 90%;
+  animation: character-nod 6.5s ease-in-out infinite;
 }
-.character-torso { fill: #66704a; stroke: #29271f; stroke-width: 2; }
-.character-neck, .character-head-outline, .character-skin { fill: #d9a27c; stroke: #29271f; stroke-width: 2; }
-.character-cap-top { fill: #fffaf0; stroke: #29271f; stroke-width: 2; }
-.character-cap-brim { fill: none; stroke: #29271f; stroke-width: 8; stroke-linecap: round; }
-.character-eye-white, .character-mouth-frame { fill: #fffaf0; }
-.character-eye, .character-brow { fill: #29271f; }
-.character-nose { fill: #b87556; }
-.character-mouth-line { fill: none; stroke: #94543e; stroke-width: 4; stroke-linecap: round; }
-.character-arm { fill: none; stroke: #29271f; stroke-width: 12; stroke-linecap: round; }
-.character-arm-right {
-  transform-box: fill-box;
-  transform-origin: 0% 100%;
-  animation: character-wave 5.4s ease-in-out infinite;
-}
+.character-torso { fill: #66704a; stroke: #29271f; stroke-width: 2.5; stroke-linejoin: round; }
+.character-collar { fill: #e6d9bd; stroke: #29271f; stroke-width: 2; stroke-linejoin: round; }
+.character-pocket { fill: none; stroke: #e6d9bd; stroke-width: 1.5; stroke-linejoin: round; opacity: 0.8; }
+.character-arm { fill: none; stroke: #66704a; stroke-width: 15; stroke-linecap: round; stroke-linejoin: round; }
+.character-arm-left, .character-arm-right { stroke: #66704a; }
+.character-hand { fill: #d9a27c; stroke: #29271f; stroke-width: 1.5; }
+.character-neck, .character-face, .character-ear { fill: #d9a27c; stroke: #29271f; stroke-width: 2; stroke-linejoin: round; }
+.character-hair { fill: #29271f; }
+.character-cap-top { fill: #fffaf0; stroke: #29271f; stroke-width: 2; stroke-linejoin: round; }
+.character-cap-brim { fill: none; stroke: #29271f; stroke-width: 4; stroke-linecap: round; }
+.character-cap-mark { fill: none; stroke: #a96520; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.character-brow { fill: none; stroke: #29271f; stroke-width: 1.8; stroke-linecap: round; }
+.character-eye { fill: #29271f; }
+.character-nose { fill: none; stroke: #94543e; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.character-mouth-line { fill: none; stroke: #29271f; stroke-width: 1.8; stroke-linecap: round; }
+.character-cheek { fill: none; stroke: #b87556; stroke-width: 1.5; stroke-linecap: round; opacity: 0.7; }
+.character-laptop-screen { fill: #fffaf0; stroke: #29271f; stroke-width: 2.5; }
+.character-laptop-display { fill: #29271f; }
+.character-screen-mark { fill: none; stroke: #e7ad5a; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.character-laptop-base { fill: #e6d9bd; stroke: #29271f; stroke-width: 2.5; stroke-linejoin: round; }
+.character-laptop-trackpad { fill: none; stroke: #756951; stroke-width: 1.2; stroke-linejoin: round; }
+.character-desk { fill: none; stroke: #29271f; stroke-width: 3; stroke-linecap: round; }
+.character-desk-leg { fill: none; stroke: #29271f; stroke-width: 2; stroke-linecap: round; }
+.character-dot { fill: #a96520; }
+.character-plant { fill: none; stroke: #66704a; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
 @keyframes character-float {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-3px); }
+  50% { transform: translateY(-2px); }
 }
 @keyframes character-nod {
-  0%, 82%, 100% { transform: rotate(0); }
-  86% { transform: rotate(-1.2deg); }
-  90% { transform: rotate(0.7deg); }
-}
-@keyframes character-wave {
-  0%, 84%, 100% { transform: rotate(0); }
-  88% { transform: rotate(1.8deg); }
-  92% { transform: rotate(-1.2deg); }
+  0%, 83%, 100% { transform: rotate(0); }
+  87% { transform: rotate(-0.8deg); }
+  91% { transform: rotate(0.4deg); }
 }
 
 /* Content is visible by default; reveal animation is progressive enhancement. */
