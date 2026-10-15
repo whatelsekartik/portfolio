@@ -7,6 +7,7 @@ export type AppId =
   | "project-detail"
   | "skills"
   | "education"
+  | "achievements"
   | "experience"
   | "trash"
   | "contact"
