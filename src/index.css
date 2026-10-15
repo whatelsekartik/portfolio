@@ -1,120 +1,86 @@
 @import "tailwindcss";
 
 :root {
-  --mac-bg: #d6d6d6;
-  --mac-window: #dfdfdf;
-  --mac-border: #0a0a0a;
+  color-scheme: light;
+  --mac-bg: #f1e8d6;
+  --mac-window: #fbf7ee;
+  --mac-border: #302d25;
+  --paper: #f1e8d6;
+  --paper-light: #fbf7ee;
+  --ink: #29271f;
+  --ink-muted: #625d50;
+  --amber: #a96520;
+  --amber-light: #dca45e;
+  --olive: #66704a;
+  --terracotta: #94543e;
 }
 
-* {
-  box-sizing: border-box;
-}
-
-html,
-body,
-#root {
-  height: 100%;
-}
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; }
 
 body {
   margin: 0;
   overflow: hidden;
-  font-family: "Pixelify Sans", "Geneva", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: none;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "VT323", "Geneva", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 18px;
+  -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
 }
 
 @layer base {
-  button {
-    cursor: default;
-  }
-
-  :focus-visible {
-    outline: 2px dotted #000;
-    outline-offset: 1px;
-  }
+  button { cursor: default; }
+  :focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
 }
 
-/* Menus, titles and icon labels use the pixel "Chicago-style" face. */
-.font-chicago {
-  font-family: "Pixelify Sans", "Silkscreen", monospace;
-}
+/* Retain pixel character in the chrome while keeping body copy legible. */
+.font-chicago { font-family: "Pixelify Sans", "VT323", monospace; }
+input, textarea, .select-text { user-select: text; }
 
-/* Inputs and text you might want to copy stay selectable. */
-input,
-textarea,
-.select-text {
-  user-select: text;
-}
-
-/* Striped title bar of the active window. */
 .scanline-title {
   background-image: repeating-linear-gradient(
     to bottom,
-    #000 0px,
-    #000 1px,
+    rgba(41, 39, 31, 0.72) 0px,
+    rgba(41, 39, 31, 0.72) 1px,
     transparent 1px,
     transparent 3px
   );
 }
 
-::selection {
-  background: #000;
-  color: #fff;
-}
+::selection { background: #a96520; color: #fffaf0; }
 
-/* Chunky classic scrollbars. */
 .mac-scroll::-webkit-scrollbar,
-.mac-scroll-dark::-webkit-scrollbar {
-  width: 16px;
-  height: 16px;
-}
+.mac-scroll-dark::-webkit-scrollbar { width: 14px; height: 14px; }
+
 .mac-scroll::-webkit-scrollbar-track {
-  background: #fff;
-  background-image: repeating-conic-gradient(#000 0% 25%, #fff 0% 50%);
-  background-size: 2px 2px;
-  border-left: 1px solid #000;
+  background: #f8f1e4;
+  background-image: repeating-conic-gradient(#d5c6ab 0% 25%, #fbf7ee 0% 50%);
+  background-size: 3px 3px;
+  border-left: 1px solid #8c8068;
 }
+
 .mac-scroll::-webkit-scrollbar-thumb {
-  background: #d6d6d6;
-  border: 1px solid #000;
-  box-shadow: inset 1px 1px 0 #fff;
-}
-.mac-scroll-dark::-webkit-scrollbar-track {
-  background: #0b0d0b;
-  border-left: 1px solid #333;
-}
-.mac-scroll-dark::-webkit-scrollbar-thumb {
-  background: #333;
-  border: 1px solid #555;
+  background: #dfd1b8;
+  border: 1px solid #756951;
+  box-shadow: inset 1px 1px 0 #fffaf0;
 }
 
-@keyframes boot-progress {
-  0% {
-    width: 0%;
-  }
-  100% {
-    width: 100%;
-  }
-}
+.mac-scroll-dark::-webkit-scrollbar-track { background: #39382d; border-left: 1px solid #625d50; }
+.mac-scroll-dark::-webkit-scrollbar-thumb { background: #847452; border: 1px solid #c7b58e; }
 
-/* Boot bar when the wallpaper size isn't known: marching stripes. */
+@keyframes boot-progress { 0% { width: 0%; } 100% { width: 100%; } }
+
 .boot-indeterminate {
-  background-image: repeating-linear-gradient(90deg, #000 0 8px, #fff 8px 16px);
+  background-image: repeating-linear-gradient(90deg, #a96520 0 8px, #f8f1e4 8px 16px);
   background-size: 32px 100%;
   animation: boot-march 0.5s steps(4) infinite;
 }
-@keyframes boot-march {
-  to {
-    background-position: 32px 0;
-  }
-}
+
+@keyframes boot-march { to { background-position: 32px 0; } }
 
 @media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-  }
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
