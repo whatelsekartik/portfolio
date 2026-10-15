@@ -10,27 +10,9 @@ import { desktop } from "./portfolioData";
 type Bitmap = string[];
 
 const BITMAPS: Record<string, Bitmap> = {
-  lattice: [
-    "10000001",
-    "01000010",
-    "00100100",
-    "00011000",
-    "00011000",
-    "00100100",
-    "01000010",
-    "10000001",
-  ],
+  linen: ["10101010", "00000000", "10101010", "00000000"],
   checker: ["10", "01"],
-  bricks: [
-    "11111111",
-    "10000000",
-    "10000000",
-    "10000000",
-    "11111111",
-    "00001000",
-    "00001000",
-    "00001000",
-  ],
+  arcs: ["00111100", "01000010", "10000001", "10000001", "10000001", "10000001", "01000010", "00111100"],
   dots: ["1000", "0000", "0010", "0000"],
 };
 
@@ -74,10 +56,10 @@ export const customWallpaperFile: string | undefined = Object.values(customFiles
 
 export const wallpapers: Wallpaper[] = [
   ...(customWallpaperFile ? [{ id: "custom", name: "My Wallpaper", style: {} as CSSProperties }] : []),
-  { id: "blue", name: "Blue Lattice", style: tile(BITMAPS.lattice, "#5361c2", "#7b88d8") },
-  { id: "gray", name: "Gray Checker", style: tile(BITMAPS.checker, "#5a5a5a", "#b8b8b8") },
-  { id: "teal", name: "Teal Dots", style: tile(BITMAPS.dots, "#1f6f6f", "#3b9a9a", 3) },
-  { id: "bricks", name: "Bricks", style: tile(BITMAPS.bricks, "#5a2e22", "#b5694f") },
+  { id: "amber", name: "Amber Linen", style: tile(BITMAPS.linen, "#9a5b16", "#e8d5b5", 4) },
+  { id: "paper", name: "Warm Paper", style: tile(BITMAPS.checker, "#d2c4a8", "#f1e8d6", 7) },
+  { id: "olive", name: "Soft Olive", style: tile(BITMAPS.dots, "#69734b", "#c9cdb2", 5) },
+  { id: "terracotta", name: "Terracotta", style: tile(BITMAPS.arcs, "#8d4935", "#d7aa8c", 3) },
 ];
 
 /** Your own wallpaper if you added one, otherwise the pattern set in portfolioData.ts. */
