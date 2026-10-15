@@ -105,8 +105,8 @@ export const experience: ExperienceEntry[] = [
 
 export const education = {
   schools: [{
-    school: "Higher Secondary Education", degree: "Science", period: "Completed",
-    details: ["Maharashtra State Board · Class XII"],
+    school: "Maharashtra State Board", degree: "Higher Secondary Certificate · Science", period: "2026",
+    details: ["Class XII · 82% overall · Mathematics: 91/100"],
   }],
   certifications: [],
   achievements: [
