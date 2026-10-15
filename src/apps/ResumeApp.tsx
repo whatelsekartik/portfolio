@@ -48,36 +48,44 @@ export default function ResumeApp() {
               {experience.map((e) => (
                 <div key={`${e.org}-${e.role}`}>
                   <p className="flex flex-wrap justify-between gap-x-2">
-                    <span className="font-bold">
-                      {e.role}, {e.org}
-                    </span>
+                    <span className="font-bold">{e.role}, {e.org}</span>
                     <span className="text-black/55">{e.period}</span>
                   </p>
                   <ul className="ml-4 list-disc">
-                    {e.points.map((p) => (
-                      <li key={p}>{p}</li>
-                    ))}
+                    {e.points.map((point) => <li key={point}>{point}</li>)}
                   </ul>
                 </div>
               ))}
             </div>
 
             <h2 className="font-chicago mb-1 border-b-2 border-black/30 text-[14px]">Education</h2>
-            <div className="mb-3">
-              {education.schools.map((s) => (
-                <p key={s.school} className="flex flex-wrap justify-between gap-x-2">
+            <div className="mb-3 flex flex-col gap-1">
+              {education.current.map((item) => (
+                <p key={item.degree + item.program} className="flex flex-wrap justify-between gap-x-2">
                   <span>
-                    {s.degree}, {s.school}
+                    <span className="font-bold">{item.degree} in {item.program}</span>
+                    {item.institution ? `, ${item.institution}` : ""}
                   </span>
-                  <span className="text-black/55">{s.period}</span>
+                  <span className="text-black/55">In progress</span>
+                </p>
+              ))}
+              {education.schools.map((school) => (
+                <p key={school.school} className="flex flex-wrap justify-between gap-x-2">
+                  <span>{school.degree}, {school.school}</span>
+                  <span className="text-black/55">{school.period}</span>
                 </p>
               ))}
             </div>
 
+            <h2 className="font-chicago mb-1 border-b-2 border-black/30 text-[14px]">Academic highlights</h2>
+            <ul className="mb-3 ml-4 list-disc">
+              {education.achievements.map((achievement) => <li key={achievement}>{achievement}</li>)}
+            </ul>
+
             <h2 className="font-chicago mb-1 border-b-2 border-black/30 text-[14px]">Skills</h2>
-            {skillGroups.map((g) => (
-              <p key={g.name}>
-                <span className="font-bold">{g.name}:</span> {g.items.map((i) => i.name).join(", ")}
+            {skillGroups.map((group) => (
+              <p key={group.name}>
+                <span className="font-bold">{group.name}:</span> {group.items.map((item) => item.name).join(", ")}
               </p>
             ))}
           </article>
