@@ -53,7 +53,7 @@ export default function EducationApp() {
                 <span className="editorial-meta">{item.title}</span>
                 <strong>{item.result}</strong>
                 <span className="education-score-label">{item.resultLabel}</span>
-                <span className="education-score-period">{item.period} · VERIFIED RECORD</span>
+                <span className="education-score-period">{item.period} · EXAM RESULT</span>
               </article>
             ))}
           </div>
