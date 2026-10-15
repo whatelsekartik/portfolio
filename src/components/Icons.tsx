@@ -355,6 +355,19 @@ export function IconGuestbook({ className }: IconProps) {
   );
 }
 
+export function IconAward({ className }: IconProps) {
+  return (
+    <Svg className={className}>
+      <path d="M10 4H22V13L16 18L10 13Z" fill="#f1c66b" stroke={K} strokeWidth={1} />
+      <path d="M11 4H21V12L16 16L11 12Z" fill="#e7ad5a" />
+      <path d="M10 11L6 13L9 21L14 17Z" fill="#c14f4f" stroke={K} strokeWidth={1} />
+      <path d="M22 11L26 13L23 21L18 17Z" fill="#3b6fd8" stroke={K} strokeWidth={1} />
+      <path d="M16 10L17.5 13L21 13.5L18.5 16L19.2 19.5L16 17.8L12.8 19.5L13.5 16L11 13.5L14.5 13Z" fill="#fffaf0" stroke={K} strokeWidth={0.8} />
+      <path d="M12 19L11 28L16 25L21 28L20 19" fill="#e7ad5a" stroke={K} strokeWidth={1} />
+    </Svg>
+  );
+}
+
 export function IconApple({ className }: IconProps) {
   return (
     <svg viewBox="0 0 32 32" className={className} aria-hidden="true" focusable="false">
@@ -393,6 +406,7 @@ export const ICONS = {
   text: IconDocument,
   mail: IconMail,
   guestbook: IconGuestbook,
+  award: IconAward,
 } as const;
 
 export type IconKind = keyof typeof ICONS;
