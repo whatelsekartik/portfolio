@@ -87,7 +87,7 @@ export default function Window({ win, children }: WindowProps) {
     <div
       role="dialog"
       aria-label={win.title}
-      className="absolute flex flex-col border-2 border-black bg-[#dfdfdf] shadow-[4px_4px_0_rgba(0,0,0,0.4)]"
+      className="absolute flex flex-col border-2 border-[#302d25] bg-[#f0e6d3] shadow-[4px_4px_0_rgba(41,39,31,0.24)]"
       style={{
         left: win.rect.x,
         top: win.rect.y,
@@ -102,7 +102,7 @@ export default function Window({ win, children }: WindowProps) {
         className={cn(
           "flex h-6 shrink-0 touch-none items-center gap-1.5 px-1.5 select-none",
           !shaded && "border-b-2 border-black",
-          isActive ? "scanline-title" : "bg-[#dfdfdf]"
+          isActive ? "scanline-title" : "bg-[#f0e6d3]"
         )}
         onPointerDown={onTitlePointerDown}
         onPointerMove={onTitlePointerMove}
@@ -116,14 +116,14 @@ export default function Window({ win, children }: WindowProps) {
           aria-label="Close"
           onClick={() => closeWindow(win.id)}
           className={cn(
-            "h-3.5 w-3.5 shrink-0 border border-black bg-[#dfdfdf] active:bg-black",
+            "h-3.5 w-3.5 shrink-0 border border-[#302d25] bg-[#fffaf0] active:bg-[#a96520]",
             !isActive && "invisible"
           )}
         />
         <div
           className={cn(
             "font-chicago mx-auto max-w-full min-w-0 flex-1 truncate px-2 text-center text-[14px] leading-none",
-            isActive ? "bg-[#dfdfdf]" : "text-[#7a7a7a]"
+            isActive ? "bg-[#f0e6d3] text-[#29271f]" : "text-[#514c40]"
           )}
         >
           {win.title}
@@ -132,7 +132,7 @@ export default function Window({ win, children }: WindowProps) {
           type="button"
           aria-label={win.isMaximized ? "Restore size" : "Zoom"}
           onClick={() => toggleMaximizeWindow(win.id)}
-          className={cn("flex h-3.5 w-3.5 shrink-0 items-center justify-center border border-black bg-[#dfdfdf]", !isActive && "invisible")}
+          className={cn("flex h-3.5 w-3.5 shrink-0 items-center justify-center border border-[#302d25] bg-[#fffaf0]", !isActive && "invisible")}
         >
           <span className="block h-1.5 w-1.5 border border-black" />
         </button>
@@ -147,13 +147,13 @@ export default function Window({ win, children }: WindowProps) {
       </div>
 
       {/* Content */}
-      {!shaded && <div className="mac-scroll relative flex-1 overflow-auto bg-white">{children}</div>}
+      {!shaded && <div className="mac-scroll relative flex-1 overflow-auto bg-[#fffaf0]">{children}</div>}
 
       {/* Resize handle */}
       {!shaded && !win.isMaximized && (
         <div
           className="absolute right-0 bottom-0 h-4 w-4 cursor-nwse-resize touch-none"
-          style={{ backgroundImage: "repeating-linear-gradient(135deg, #000 0 1px, transparent 1px 3px)" }}
+          style={{ backgroundImage: "repeating-linear-gradient(135deg, #756951 0 1px, transparent 1px 3px)" }}
           onPointerDown={onResizePointerDown}
           onPointerMove={onResizePointerMove}
           onPointerUp={onResizePointerUp}
