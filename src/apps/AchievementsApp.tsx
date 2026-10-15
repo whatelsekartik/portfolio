@@ -58,7 +58,7 @@ const builds: ProjectCard[] = projects.map((project) => ({
 const filters: { id: Filter; label: string }[] = [
   { id: "all", label: "Everything" },
   { id: "academics", label: "Academic record" },
-  { id: "projects", label: "Built in public" },
+  { id: "projects", label: "Projects & prototypes" },
 ];
 
 export default function AchievementsApp() {
