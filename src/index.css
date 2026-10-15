@@ -13,6 +13,9 @@
   --amber-light: #dca45e;
   --olive: #66704a;
   --terracotta: #94543e;
+  --display-font: "Syne", "Arial Black", sans-serif;
+  --body-font: "DM Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --mono-font: "Space Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
 * { box-sizing: border-box; }
@@ -23,7 +26,7 @@ body {
   overflow: hidden;
   background: var(--paper);
   color: var(--ink);
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: var(--body-font);
   font-size: 16px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
@@ -34,24 +37,39 @@ body {
 
 @layer base {
   button { cursor: default; }
-  :focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+  :focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
 }
 
-/* Keep the old-Mac structure, not the old-Mac pixel font, for reading. */
-.font-chicago {
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  font-weight: 650;
-  letter-spacing: -0.015em;
+/* A clear typographic system: characterful display, quiet body, measured metadata. */
+.font-chicago, .font-display {
+  font-family: var(--display-font);
+  font-weight: 800;
+  letter-spacing: -0.055em;
 }
-
+.font-body { font-family: var(--body-font); }
+.editorial-meta {
+  font-family: var(--mono-font);
+  font-size: 11px;
+  line-height: 1.5;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+}
+.editorial-title {
+  font-family: var(--display-font);
+  font-weight: 800;
+  letter-spacing: -0.065em;
+  line-height: 0.98;
+}
+.editorial-rule { border-color: #d8c9ad; }
 input, textarea, select, .select-text { user-select: text; }
 input, textarea, select, button { font-family: inherit; }
 
 .scanline-title {
+  background-color: #29271f;
   background-image: repeating-linear-gradient(
     to bottom,
-    rgba(41, 39, 31, 0.72) 0px,
-    rgba(41, 39, 31, 0.72) 1px,
+    rgba(255, 250, 240, 0.13) 0px,
+    rgba(255, 250, 240, 0.13) 1px,
     transparent 1px,
     transparent 3px
   );
@@ -62,16 +80,16 @@ input, textarea, select, button { font-family: inherit; }
 .mac-scroll {
   background-color: #fffaf0;
   color: #29271f;
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: var(--body-font);
   font-size: 15px;
-  line-height: 1.55;
+  line-height: 1.58;
   scrollbar-color: #cabb9e #f8f1e4;
   scrollbar-width: auto;
 }
 .mac-scroll-dark {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
-  font-size: 14px;
-  line-height: 1.5;
+  font-family: var(--mono-font);
+  font-size: 13px;
+  line-height: 1.6;
 }
 
 .mac-scroll::-webkit-scrollbar,
@@ -91,12 +109,12 @@ input, textarea, select, button { font-family: inherit; }
 .mac-scroll-dark::-webkit-scrollbar-track { background: #39382d; border-left: 1px solid #625d50; }
 .mac-scroll-dark::-webkit-scrollbar-thumb { background: #847452; border: 1px solid #c7b58e; }
 
-/* Arbitrary utility font sizes are used by the original app components. Bump
-   their smallest labels so metadata stays readable without overwhelming body copy. */
-.mac-scroll [class~="text-[12px]"] { font-size: 13px !important; line-height: 1.4 !important; }
-.mac-scroll [class~="text-[13px]"] { font-size: 14px !important; line-height: 1.45 !important; }
-.mac-scroll [class~="text-[14px]"] { font-size: 15px !important; line-height: 1.55 !important; }
-.mac-scroll [class~="text-[15px]"] { font-size: 15px !important; line-height: 1.55 !important; }
+/* Prevent tiny Tailwind utility labels from disappearing in small windows. */
+.mac-scroll [class~="text-[11px]"] { font-size: 11px !important; line-height: 1.4 !important; }
+.mac-scroll [class~="text-[12px]"] { font-size: 12px !important; line-height: 1.45 !important; }
+.mac-scroll [class~="text-[13px]"] { font-size: 13px !important; line-height: 1.5 !important; }
+.mac-scroll [class~="text-[14px]"] { font-size: 14px !important; line-height: 1.55 !important; }
+.mac-scroll [class~="text-[15px]"] { font-size: 15px !important; line-height: 1.58 !important; }
 .mac-scroll [class~="text-black/60"],
 .mac-scroll [class~="text-black/55"],
 .mac-scroll [class~="text-black/50"],
@@ -105,8 +123,8 @@ input, textarea, select, button { font-family: inherit; }
 .mac-scroll [class~="text-black/35"],
 .mac-scroll [class~="text-black/30"] { color: #625b4c !important; }
 
-/* The character from the motion concept, tuned to the warm paper palette. */
-.character-shadow { fill: rgba(41, 39, 31, 0.13); }
+/* SVG character: a tiny amount of life, never a distracting animation loop. */
+.character-shadow { fill: rgba(41, 39, 31, 0.16); }
 .character-body {
   transform-box: fill-box;
   transform-origin: 50% 85%;
@@ -125,12 +143,7 @@ input, textarea, select, button { font-family: inherit; }
 .character-eye, .character-brow { fill: #29271f; }
 .character-nose { fill: #b87556; }
 .character-mouth-line { fill: none; stroke: #94543e; stroke-width: 4; stroke-linecap: round; }
-.character-arm {
-  fill: none;
-  stroke: #29271f;
-  stroke-width: 12;
-  stroke-linecap: round;
-}
+.character-arm { fill: none; stroke: #29271f; stroke-width: 12; stroke-linecap: round; }
 .character-arm-right {
   transform-box: fill-box;
   transform-origin: 0% 100%;
@@ -138,7 +151,7 @@ input, textarea, select, button { font-family: inherit; }
 }
 @keyframes character-float {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-2px); }
+  50% { transform: translateY(-3px); }
 }
 @keyframes character-nod {
   0%, 82%, 100% { transform: rotate(0); }
@@ -151,14 +164,13 @@ input, textarea, select, button { font-family: inherit; }
   92% { transform: rotate(-1.2deg); }
 }
 
-/* Elements start fully visible. JavaScript opts them into the reveal only
-   when IntersectionObserver is supported and reduced motion is not requested. */
+/* Content is visible by default; reveal animation is progressive enhancement. */
 .scroll-reveal { opacity: 1; transform: none; }
-.scroll-reveal.reveal-pending { opacity: 0; transform: translateY(9px); }
+.scroll-reveal.reveal-pending { opacity: 0; transform: translateY(10px); }
 .scroll-reveal.reveal-visible {
   opacity: 1;
   transform: translateY(0);
-  transition: opacity 380ms ease, transform 380ms ease;
+  transition: opacity 420ms ease, transform 420ms cubic-bezier(0.2, 0.75, 0.25, 1);
 }
 
 @keyframes boot-progress { 0% { width: 0%; } 100% { width: 100%; } }
