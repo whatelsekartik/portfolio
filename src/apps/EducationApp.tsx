@@ -1,10 +1,14 @@
-import { education } from "../data/portfolioData";
+import { achievementRecords, education } from "../data/portfolioData";
+import { useOpenApp } from "./appDefs";
 import ScrollReveal from "../components/ScrollReveal";
 
 const browserButton =
   "flex h-6 items-center justify-center border border-[#a99a7f] bg-[#fffaf0] px-2 text-[13px] text-[#514c40]";
 
 export default function EducationApp() {
+  const openApp = useOpenApp();
+  const entranceResults = achievementRecords.filter((item) => item.id === "mht-cet" || item.id === "jee-maths");
+
   return (
     <div className="flex h-full flex-col text-[15px]">
       <div className="flex shrink-0 items-center gap-2 border-b border-[#cabb9e] bg-[#f4ead7] px-2 py-1.5">
@@ -27,6 +31,32 @@ export default function EducationApp() {
             Studying information technology while exploring applied AI and data science in parallel.
           </p>
         </ScrollReveal>
+
+        <section className="education-score-section mt-6">
+          <div className="mb-3 flex flex-wrap items-end justify-between gap-3 border-b border-[#d8c9ad] pb-2">
+            <div>
+              <p className="editorial-meta text-[#89551e]">Entrance results / 2026</p>
+              <h2 className="font-display mt-1 text-[21px] leading-tight text-[#29271f]">The numbers that opened doors.</h2>
+            </div>
+            <button
+              type="button"
+              onClick={() => openApp("achievements")}
+              className="text-[12px] font-semibold text-[#89551e] underline-offset-4 hover:underline"
+            >
+              Full achievement archive ↗
+            </button>
+          </div>
+          <div className="education-score-grid">
+            {entranceResults.map((item, index) => (
+              <article key={item.id} className={`education-score-card ${index === 0 ? "score-amber" : "score-ink"}`}>
+                <span className="editorial-meta">{item.title}</span>
+                <strong>{item.result}</strong>
+                <span className="education-score-label">{item.resultLabel}</span>
+                <span className="education-score-period">{item.period} · VERIFIED RECORD</span>
+              </article>
+            ))}
+          </div>
+        </section>
 
         <section className="mt-7">
           <div className="mb-3 flex items-end justify-between gap-3 border-b border-[#d8c9ad] pb-2">
@@ -91,7 +121,7 @@ export default function EducationApp() {
         </section>
 
         <section className="mt-8 pb-2">
-          <h2 className="editorial-meta border-b border-[#d8c9ad] pb-2 text-[#514c40]">Earlier achievements</h2>
+          <h2 className="editorial-meta border-b border-[#d8c9ad] pb-2 text-[#514c40]">Additional academic highlights</h2>
           <div className="mt-3 flex flex-col">
             {education.achievements.map((achievement, index) => (
               <ScrollReveal key={achievement}>
