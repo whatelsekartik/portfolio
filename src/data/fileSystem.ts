@@ -60,9 +60,6 @@ export const root: FsDir = dir("Macintosh HD", [
     file("Skills.exe", "skills", "skills"),
     ...skillGroups.map((g) => textFile(`${g.name}.txt`, skillsText(g))),
   ]),
-  dir("Achievements", [
-    file("Achievement archive.htm", "award", "achievements"),
-  ]),
   dir("Education", [
     file("Education.htm", "globe", "education"),
     ...education.schools.map((s) =>
