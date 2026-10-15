@@ -522,7 +522,7 @@ export default function TerminalApp({ windowId }: { windowId: string }) {
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "repeating-linear-gradient(to bottom, rgba(0,0,0,.08) 0, rgba(0,0,0,.22) 1px, transparent 1px, transparent 3px), radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,.12) 100%)",
+            "repeating-linear-gradient(to bottom, rgba(0,0,0,.08) 0, rgba(0,0,0,.08) 1px, transparent 1px, transparent 3px), radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,.12) 100%)",
         }}
       />
     </div>
