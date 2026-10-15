@@ -8,6 +8,7 @@ const browserButton =
 export default function EducationApp() {
   const openApp = useOpenApp();
   const entranceResults = achievementRecords.filter((item) => item.id === "mht-cet" || item.id === "jee-maths");
+  const additionalAchievements = education.achievements.filter((item) => !item.startsWith("JEE Main Mathematics:") && !item.startsWith("MHT CET:"));
 
   return (
     <div className="flex h-full flex-col text-[15px]">
@@ -123,7 +124,7 @@ export default function EducationApp() {
         <section className="mt-8 pb-2">
           <h2 className="editorial-meta border-b border-[#d8c9ad] pb-2 text-[#514c40]">Additional academic highlights</h2>
           <div className="mt-3 flex flex-col">
-            {education.achievements.map((achievement, index) => (
+            {additionalAchievements.map((achievement, index) => (
               <ScrollReveal key={achievement}>
                 <div className="flex items-start gap-3 border-b border-dashed border-[#dfd2bb] py-3">
                   <span className="editorial-meta mt-0.5 text-[#a96520]">0{index + 1}</span>
