@@ -61,6 +61,7 @@ export default function MenuBar() {
         { label: "Terminal.exe", action: () => openApp("terminal") },
         { label: "README.txt", action: () => openApp("readme") },
         { label: "Resume.pdf", action: () => openApp("resume") },
+        { label: "Achievements", action: () => openApp("achievements") },
         { label: "Contact Me", action: () => openApp("contact") },
         { label: "Guestbook", action: () => openApp("guestbook") },
       ],
