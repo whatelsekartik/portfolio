@@ -12,6 +12,7 @@ const ProjectsApp = lazy(() => import("./ProjectsApp"));
 const ProjectDetailApp = lazy(() => import("./ProjectDetailApp"));
 const SkillsApp = lazy(() => import("./SkillsApp"));
 const EducationApp = lazy(() => import("./EducationApp"));
+const AchievementsApp = lazy(() => import("./AchievementsApp"));
 const ExperienceApp = lazy(() => import("./ExperienceApp"));
 const TrashApp = lazy(() => import("./TrashApp"));
 const ContactApp = lazy(() => import("./ContactApp"));
@@ -38,6 +39,8 @@ function content(win: WindowInstance) {
       return <SkillsApp />;
     case "education":
       return <EducationApp />;
+    case "achievements":
+      return <AchievementsApp />;
     case "experience":
       return <ExperienceApp />;
     case "trash":
