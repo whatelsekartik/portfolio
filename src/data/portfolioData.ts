@@ -237,6 +237,7 @@ export function readmeText(): string {
     "  Skills.exe .... a snapshot of my toolkit",
     "  Experience .... the work behind the projects",
     "  Education ..... the formal side of learning",
+    "  Achievements .. academic results and selected build milestones",
     "  Resume.pdf .... the downloadable résumé",
     "  Contact Me .... ways to get in touch",
     "  Terminal.exe .. a keyboard-friendly route through the portfolio", "",
