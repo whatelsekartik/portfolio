@@ -20,10 +20,13 @@ const DESKTOP_APPS: AppId[] = [
   "skills",
   "experience",
   "education",
+  "achievements",
   "terminal",
   "contact",
   "resume",
 ];
+
+const DOCK_APPS: AppId[] = ["projects", "achievements", "education", "skills", "terminal"];
 
 // Window contents only re-render when their own window changes, so dragging or
 // resizing one window doesn't re-render every open app (e.g. the Terminal).
@@ -52,6 +55,7 @@ export default function Desktop() {
 
   return (
     <div className="fixed inset-0 overflow-hidden" style={style}>
+      <div className="desktop-atmosphere" aria-hidden="true" />
       <MenuBar />
 
       {/* Desktop icons */}
@@ -66,13 +70,33 @@ export default function Desktop() {
         ))}
       </div>
 
-      <div className="absolute right-2 bottom-6">
+      <div className="absolute right-2 bottom-6 max-sm:bottom-24">
         <DesktopIcon
           label="Trash"
           icon={<IconTrash className="h-full w-full" full={!trashEmpty} />}
           onOpen={() => openApp("trash")}
         />
       </div>
+
+      <nav className="desktop-dock" aria-label="Quick launch">
+        {DOCK_APPS.map((id) => {
+          const running = windows.some((win) => win.appId === id && !win.isMinimized);
+          return (
+            <button
+              key={id}
+              type="button"
+              className="desktop-dock-item"
+              onClick={() => openApp(id)}
+              aria-label={`Open ${APPS[id].label}`}
+              title={APPS[id].label}
+            >
+              <FileIcon kind={APPS[id].icon} className="h-10 w-10" />
+              <span className="dock-tooltip">{APPS[id].label}</span>
+              <span className={`dock-running ${running ? "is-running" : ""}`} aria-hidden="true" />
+            </button>
+          );
+        })}
+      </nav>
 
       {/* Windows */}
       {windows.map((win) => (
@@ -82,7 +106,7 @@ export default function Desktop() {
       ))}
 
       <div
-        className="pointer-events-none absolute bottom-2 left-3 rounded border border-[#8c8068] bg-[#fffaf0]/95 px-2 py-1 text-[13px] font-medium text-[#29271f]"
+        className="pointer-events-none absolute bottom-2 left-3 rounded border border-[#8c8068] bg-[#fffaf0]/95 px-2 py-1 text-[13px] font-medium text-[#29271f] max-sm:hidden"
         
       >
         {coarse ? "Tap an icon to open it" : "Double-click an icon to open it · drag title bars to move windows"}
