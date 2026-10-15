@@ -44,6 +44,7 @@ export const root: FsDir = dir("Macintosh HD", [
   }),
   file("README.txt", "readme", "readme", { content: readmeText() }),
   file("Resume.pdf", "pdf", "resume"),
+  file("Achievements", "award", "achievements"),
   file("Contact Me", "phone", "contact"),
   file("Guestbook", "guestbook", "guestbook"),
   dir(
@@ -58,6 +59,9 @@ export const root: FsDir = dir("Macintosh HD", [
   dir("Skills", [
     file("Skills.exe", "skills", "skills"),
     ...skillGroups.map((g) => textFile(`${g.name}.txt`, skillsText(g))),
+  ]),
+  dir("Achievements", [
+    file("Achievement archive.htm", "award", "achievements"),
   ]),
   dir("Education", [
     file("Education.htm", "globe", "education"),
