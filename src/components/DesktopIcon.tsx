@@ -9,8 +9,6 @@ interface DesktopIconProps {
   onOpen: () => void;
 }
 
-const OUTLINE = "0 1px 1px rgba(255,250,240,.9)";
-
 export default function DesktopIcon({ label, icon, onOpen }: DesktopIconProps) {
   const [selected, setSelected] = useState(false);
   const coarse = useCoarsePointer();
@@ -22,13 +20,18 @@ export default function DesktopIcon({ label, icon, onOpen }: DesktopIconProps) {
       onDoubleClick={onOpen}
       onBlur={() => setSelected(false)}
       onKeyDown={(e) => e.key === "Enter" && onOpen()}
-      className="flex w-[104px] flex-col items-center gap-1 p-0.5 outline-none focus-visible:outline-1 focus-visible:outline-dotted focus-visible:outline-[#a96520]"
+      className="group flex w-[104px] flex-col items-center gap-1 p-0.5 outline-none focus-visible:outline-1 focus-visible:outline-dotted focus-visible:outline-[#a96520]"
     >
-      <div className={cn("h-12 w-12", selected && "brightness-[.55]")}>{icon}</div>
+      <div className={cn("h-12 w-12 transition-transform duration-150 group-hover:-translate-y-0.5", selected && "brightness-[.55]")}>
+        {icon}
+      </div>
       <span
-        className={cn("font-chicago max-w-[100px] rounded-sm border border-[#d5c6ab] bg-[#fffaf0] px-1.5 py-0.5 text-center text-[14px] font-semibold leading-tight text-[#29271f] shadow-sm",
-        selected && "border-[#a96520] bg-[#a96520] text-white")}
-        style={{ textShadow: selected ? "none" : OUTLINE }}
+        className={cn(
+          "font-body inline-block max-w-[98px] rounded-[3px] border border-[#d5c6ab]/80 bg-[#fffaf0]/95 px-1.5 py-0.5 text-center text-[12px] font-semibold leading-[1.25] tracking-[-0.01em] text-[#29271f] shadow-[0_1px_2px_rgba(41,39,31,0.12)] [overflow-wrap:anywhere] transition-colors duration-150",
+          selected
+            ? "border-[#a96520] bg-[#a96520] text-white shadow-none"
+            : "group-hover:border-[#a96520]/70 group-hover:bg-[#fff7e8]"
+        )}
       >
         {label}
       </span>
