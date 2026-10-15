@@ -22,11 +22,11 @@ export default function DesktopIcon({ label, icon, onOpen }: DesktopIconProps) {
       onDoubleClick={onOpen}
       onBlur={() => setSelected(false)}
       onKeyDown={(e) => e.key === "Enter" && onOpen()}
-      className="flex w-[104px] flex-col items-center gap-1 p-0.5 outline-none focus-visible:outline-1 focus-visible:outline-dotted focus-visible:outline-white"
+      className="flex w-[104px] flex-col items-center gap-1 p-0.5 outline-none focus-visible:outline-1 focus-visible:outline-dotted focus-visible:outline-[#a96520]"
     >
       <div className={cn("h-12 w-12", selected && "brightness-[.55]")}>{icon}</div>
       <span
-        className={cn("font-chicago max-w-[100px] rounded-sm border border-[#fffaf0]/80 bg-[#fffaf0]/92 px-1.5 py-0.5 text-center text-[14px] font-semibold leading-tight text-[#29271f] shadow-sm",
+        className={cn("font-chicago max-w-[100px] rounded-sm border border-[#d5c6ab] bg-[#fffaf0] px-1.5 py-0.5 text-center text-[14px] font-semibold leading-tight text-[#29271f] shadow-sm",
         selected && "border-[#a96520] bg-[#a96520] text-white")}
         style={{ textShadow: selected ? "none" : OUTLINE }}
       >
