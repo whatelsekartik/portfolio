@@ -36,13 +36,13 @@ export const projects: Project[] = [
     id: "campus-plus", name: "Campus+", year: "2026",
     tagline: "A text-first home for campus life.",
     description: "A campus platform concept bringing together student communities, posts, messaging, events, notices, lost and found, rides, housing, and a moderated marketplace. The product direction is deliberately minimal: clear information, useful workflows, and no AI bolted on for its own sake.",
-    tags: ["Next.js", "Supabase", "Product design"], repo: "https://github.com/whatelsekartik", kind: "code",
+    tags: ["Next.js", "Supabase", "Product design"], kind: "code",
   },
   {
     id: "sitemango", name: "SiteMango", year: "2025",
     tagline: "A small web studio for local businesses.",
     description: "A web-development initiative focused on helping local businesses get a polished, practical web presence. The emphasis is on responsive pages, straightforward contact flows, and keeping the solution maintainable.",
-    tags: ["Web design", "Frontend", "Small business"], repo: "https://github.com/whatelsekartik", kind: "web",
+    tags: ["Web design", "Frontend", "Small business"], kind: "web",
   },
   {
     id: "hardware-lab", name: "Hardware Lab", year: "2025",
@@ -54,7 +54,7 @@ export const projects: Project[] = [
     id: "web-experiments", name: "Web Experiments", year: "2025",
     tagline: "Motion, interaction, and little details.",
     description: "A collection of browser experiments exploring responsive layouts, animation, simple games, and interface ideas. The goal is to make the web feel considered without making it harder to use.",
-    tags: ["HTML", "CSS", "JavaScript"], repo: "https://github.com/whatelsekartik", kind: "game",
+    tags: ["HTML", "CSS", "JavaScript"], kind: "game",
   },
 ];
 
@@ -104,14 +104,30 @@ export const experience: ExperienceEntry[] = [
 ];
 
 export const education = {
+  current: [
+    {
+      degree: "B.Tech",
+      program: "Information Technology",
+      institution: "Pimpri Chinchwad College of Engineering (PCCOE)",
+      status: "Currently pursuing",
+    },
+    {
+      degree: "BS",
+      program: "Applied AI & Data Science",
+      institution: "",
+      status: "Currently pursuing",
+    },
+  ],
   schools: [{
-    school: "Maharashtra State Board", degree: "Higher Secondary Certificate · Science", period: "2026",
-    details: ["Class XII · 82% overall · Mathematics: 91/100"],
+    school: "Maharashtra State Board",
+    degree: "Higher Secondary Certificate · Science",
+    period: "2026",
+    details: ["Class XII · 82% overall", "Mathematics · 91/100"],
   }],
   certifications: [],
   achievements: [
-    "International Mathematics Olympiad (SOF): 92 percentile.",
-    "Enjoys learning by building and iterating on independent projects.",
+    "Class X board examination: 93%.",
+    "SOF International Mathematics Olympiad: 92nd percentile; International Rank 791.",
   ],
 };
 
