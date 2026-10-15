@@ -1,6 +1,6 @@
-# Retro Macintosh Portfolio
+# Kartik Gaikwad — Macintosh Portfolio
 
-A portfolio that looks like a classic Macintosh (System 7) desktop.
+A personal portfolio presented as a warm, tactile Macintosh-inspired desktop.
 React 19 + Vite + Tailwind 4. It is a static site (works on GitHub Pages); the guestbook
 and the AI assistant use one small Google Apps Script backend.
 
@@ -14,7 +14,7 @@ npm run optimize-wallpaper  # shrink src/assets/wallpaper.* (see Wallpaper)
 ## Make it yours
 
 Everything on the desktop reads from **one file: `src/data/portfolioData.ts`**.
-It is all placeholder text right now:
+Portfolio facts and project summaries live in one data file; avoid publishing private contact details or unverified claims.
 
 | Icon | What opens | Edit in `portfolioData.ts` |
 | --- | --- | --- |
@@ -31,7 +31,7 @@ It is all placeholder text right now:
 | Resume.pdf | Embedded PDF viewer with download | put your CV at `public/resume.pdf` |
 | Guestbook (My Computer, Apple menu) | Visitor messages saved to a Google Sheet | `backend.endpoint` |
 
-### Your real resume
+### Résumé
 Replace `public/resume.pdf` with your own file (keep the name) and set
 `resume.downloadName`. Phones can't show PDFs inline, so they get a text version generated
 from your data plus a Download button. Keep the PDF small (a few hundred KB).
@@ -94,10 +94,7 @@ at run time. Never put the key in `portfolioData.ts`, a `.env` file that gets bu
 
 Abuse protection is built into the script: at most 15 AI requests a minute and 300 a day across
 all visitors (`MAX_CHATS_PER_MINUTE`, `MAX_CHATS_PER_DAY`), short replies, trimmed history, and a
-fixed system prompt that keeps it on topic. The model is `openai/gpt-oss-20b` (`GROQ_MODEL` at the
-top of the script). Groq retires models from time to time (it shut down the Llama 3.1 8B and 3.3
-70B ones in August 2026), so if the assistant starts failing, check https://console.groq.com/docs/models
-and update that one line.
+fixed system prompt that keeps it on topic. The model is configured in the Apps Script. Check Groq's current model documentation before changing it.
 
 ## Deploy to GitHub Pages
 
