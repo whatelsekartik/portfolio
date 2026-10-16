@@ -61,6 +61,8 @@ export default function Window({ win, children }: WindowProps) {
         /* noop */
       }
       if (!drag || win.isMaximized || window.innerWidth < MOBILE_BREAKPOINT) return;
+      const moved = Math.abs(e.clientX - drag.startX) > 3 || Math.abs(e.clientY - drag.startY) > 3;
+      if (!moved) return;
 
       // Apply the last pointer position before snapping so fast releases are not lost.
       const maxX = Math.max(8, window.innerWidth - win.rect.width - 8);
@@ -236,14 +238,36 @@ export default function Window({ win, children }: WindowProps) {
 
       {!shaded && !win.isMaximized && window.innerWidth >= MOBILE_BREAKPOINT && (
         <div
-          role="separator"
+          role="group"
+          tabIndex={0}
           aria-label={`Resize ${win.title} window`}
-          className="absolute right-0 bottom-0 h-5 w-5 cursor-nwse-resize touch-none focus-visible:outline-2 focus-visible:outline-[#a96520]"
+          aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown"
+          title="Resize with arrow keys"
+          className="absolute right-0 bottom-0 h-5 w-5 cursor-nwse-resize touch-none focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[#a96520]"
           style={{ backgroundImage: "repeating-linear-gradient(135deg, #756951 0 1px, transparent 1px 3px)" }}
           onPointerDown={onResizePointerDown}
           onPointerMove={onResizePointerMove}
           onPointerUp={onResizePointerUp}
           onPointerCancel={onResizePointerCancel}
+          onKeyDown={(e) => {
+            const step = e.shiftKey ? 40 : 10;
+            let width = win.rect.width;
+            let height = win.rect.height;
+            if (e.key === "ArrowLeft") width -= step;
+            else if (e.key === "ArrowRight") width += step;
+            else if (e.key === "ArrowUp") height -= step;
+            else if (e.key === "ArrowDown") height += step;
+            else return;
+
+            e.preventDefault();
+            focusWindow(win.id);
+            const maxWidth = Math.max(1, window.innerWidth - win.rect.x - 8);
+            const maxHeight = Math.max(1, window.innerHeight - win.rect.y - 8);
+            updateRect(win.id, {
+              width: clamp(width, Math.min(win.minWidth, maxWidth), maxWidth),
+              height: clamp(height, Math.min(win.minHeight, maxHeight), maxHeight),
+            });
+          }}
         />
       )}
     </div>
