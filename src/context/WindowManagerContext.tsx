@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useRef, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import type { OpenWindowOptions, WindowInstance } from "../types";
 
 interface WindowManagerValue {
@@ -25,20 +25,37 @@ function keyOf(appId: string, payload?: Record<string, unknown>) {
   return `${appId}:${JSON.stringify(payload ?? {})}`;
 }
 
-/** Fit a requested window into the viewport. On phones every window goes full-screen. */
+function maximizedRect() {
+  return {
+    x: 8,
+    y: MENU_BAR + 8,
+    width: Math.max(1, window.innerWidth - 16),
+    height: Math.max(1, window.innerHeight - MENU_BAR - 16),
+  };
+}
+
+/** Keep every window inside the viewport. On phones, windows use the available screen. */
 function fitRect(requested: Partial<WindowInstance["rect"]>, cascadeIndex: number) {
   const vw = window.innerWidth;
   const vh = window.innerHeight;
 
   if (vw < SMALL_SCREEN) {
-    return { x: 4, y: MENU_BAR + 6, width: vw - 8, height: vh - MENU_BAR - 14 };
+    return {
+      x: 4,
+      y: MENU_BAR + 6,
+      width: Math.max(1, vw - 8),
+      height: Math.max(1, vh - MENU_BAR - 14),
+    };
   }
 
-  const width = Math.min(requested.width ?? DEFAULT_W, vw - 24);
-  const height = Math.min(requested.height ?? DEFAULT_H, vh - MENU_BAR - 24);
+  const maxWidth = Math.max(1, vw - 16);
+  const maxHeight = Math.max(1, vh - MENU_BAR - 16);
+  const width = Math.min(requested.width ?? DEFAULT_W, maxWidth);
+  const height = Math.min(requested.height ?? DEFAULT_H, maxHeight);
   const offset = (cascadeIndex % 8) * 24;
+  const minY = MENU_BAR + 8;
   const x = clamp(requested.x ?? 90 + offset, 8, Math.max(8, vw - width - 8));
-  const y = clamp(requested.y ?? 50 + offset, MENU_BAR + 6, Math.max(MENU_BAR + 6, vh - height - 8));
+  const y = clamp(requested.y ?? 50 + offset, minY, Math.max(minY, vh - height - 8));
   return { x, y, width, height };
 }
 
@@ -55,6 +72,23 @@ export function WindowManagerProvider({ children }: { children: ReactNode }) {
     windowsRef.current = next;
     setWindows(next);
   }, []);
+
+  // Re-fit open windows after viewport changes, orientation changes, or zooming
+  // the browser. Preserve a maximized window's restore bounds on small screens.
+  useEffect(() => {
+    function onResize() {
+      const smallScreen = window.innerWidth < SMALL_SCREEN;
+      commit(
+        windowsRef.current.map((win, index) => ({
+          ...win,
+          rect: win.isMaximized ? maximizedRect() : fitRect(win.rect, index),
+          prevRect: win.prevRect && !smallScreen ? fitRect(win.prevRect, index) : win.prevRect,
+        }))
+      );
+    }
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [commit]);
 
   const focusWindow = useCallback(
     (id: string) => {
@@ -119,9 +153,18 @@ export function WindowManagerProvider({ children }: { children: ReactNode }) {
 
   const minimizeWindow = useCallback(
     (id: string) => {
-      commit(windowsRef.current.map((w) => (w.id === id ? { ...w, isMinimized: !w.isMinimized } : w)));
+      const win = windowsRef.current.find((w) => w.id === id);
+      if (!win) return;
+      const isMinimized = !win.isMinimized;
+      commit(windowsRef.current.map((w) => (w.id === id ? { ...w, isMinimized } : w)));
+      if (isMinimized && activeWindowId === id) {
+        const next = windowsRef.current
+          .filter((w) => w.id !== id && !w.isMinimized)
+          .sort((a, b) => b.zIndex - a.zIndex)[0];
+        setActiveWindowId(next?.id ?? null);
+      }
     },
-    [commit]
+    [activeWindowId, commit]
   );
 
   const toggleMaximizeWindow = useCallback(
@@ -130,15 +173,9 @@ export function WindowManagerProvider({ children }: { children: ReactNode }) {
         windowsRef.current.map((w) => {
           if (w.id !== id) return w;
           if (w.isMaximized && w.prevRect) {
-            return { ...w, isMaximized: false, rect: w.prevRect, prevRect: undefined };
+            return { ...w, isMaximized: false, rect: fitRect(w.prevRect, 0), prevRect: undefined };
           }
-          const maximizedRect = {
-            x: 8,
-            y: MENU_BAR + 8,
-            width: Math.max(window.innerWidth - 16, 320),
-            height: Math.max(window.innerHeight - MENU_BAR - 16, 240),
-          };
-          return { ...w, isMaximized: true, isMinimized: false, prevRect: w.rect, rect: maximizedRect };
+          return { ...w, isMaximized: true, isMinimized: false, prevRect: w.rect, rect: maximizedRect() };
         })
       );
     },
@@ -147,7 +184,11 @@ export function WindowManagerProvider({ children }: { children: ReactNode }) {
 
   const updateRect = useCallback(
     (id: string, rect: Partial<WindowInstance["rect"]>) => {
-      commit(windowsRef.current.map((w) => (w.id === id ? { ...w, rect: { ...w.rect, ...rect } } : w)));
+      commit(
+        windowsRef.current.map((w) =>
+          w.id === id ? { ...w, rect: fitRect({ ...w.rect, ...rect }, 0) } : w
+        )
+      );
     },
     [commit]
   );
