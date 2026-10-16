@@ -64,6 +64,9 @@ export default function MenuBar() {
         { label: "Achievements", action: () => openApp("achievements") },
         { label: "Contact Me", action: () => openApp("contact") },
         { label: "Guestbook", action: () => openApp("guestbook") },
+        DIVIDER,
+        { label: "Restart", action: () => window.location.reload() },
+        { label: "Shut Down", action: shutDown },
       ],
     },
     {
@@ -108,9 +111,6 @@ export default function MenuBar() {
             label: `${w.id === wallpaperId ? "✓ " : "\u00a0\u00a0 "}${w.name}`,
             action: () => setWallpaperId(w.id),
           })),
-        DIVIDER,
-        { label: "Restart", action: () => window.location.reload() },
-        { label: "Shut Down", action: shutDown },
       ],
     },
   ];
