@@ -11,7 +11,6 @@ import { wallpaperStyle } from "../data/wallpapers";
 import { useCoarsePointer } from "../utils/useCoarsePointer";
 import type { AppId, WindowInstance } from "../types";
 
-// Order on the desktop: top-right first, then down (and wrapping left on short screens).
 const DESKTOP_APPS: AppId[] = [
   "finder",
   "about",
@@ -20,13 +19,14 @@ const DESKTOP_APPS: AppId[] = [
   "skills",
   "experience",
   "education",
+  "achievements",
   "terminal",
   "contact",
   "resume",
 ];
 
-// Window contents only re-render when their own window changes, so dragging or
-// resizing one window doesn't re-render every open app (e.g. the Terminal).
+const DOCK_APPS: AppId[] = ["projects", "achievements", "education", "skills", "terminal"];
+
 const WindowBody = memo(
   function WindowBody({ win }: { win: WindowInstance }) {
     return renderAppContent(win);
@@ -35,10 +35,32 @@ const WindowBody = memo(
 );
 
 export default function Desktop() {
-  const { windows } = useWindowManager();
+  const { windows, activeWindowId, closeWindow, minimizeWindow } = useWindowManager();
   const { wallpaperId, customWallpaperSrc, trashEmpty, isShutDown } = useSystem();
   const openApp = useOpenApp();
   const coarse = useCoarsePointer();
+
+  useEffect(() => {
+    // Keep keyboard shortcuts from overriding normal editing inside form fields.
+    function onShortcut(e: KeyboardEvent) {
+      const target = e.target;
+      const isEditing =
+        target instanceof HTMLElement &&
+        (target.isContentEditable || Boolean(target.closest("input, textarea, select, [contenteditable='true']")));
+      if (isEditing || !(e.metaKey || e.ctrlKey) || e.altKey || e.shiftKey || !activeWindowId) return;
+
+      const key = e.key.toLowerCase();
+      if (key === "w") {
+        e.preventDefault();
+        closeWindow(activeWindowId);
+      } else if (key === "m") {
+        e.preventDefault();
+        minimizeWindow(activeWindowId);
+      }
+    }
+    window.addEventListener("keydown", onShortcut);
+    return () => window.removeEventListener("keydown", onShortcut);
+  }, [activeWindowId, closeWindow, minimizeWindow]);
 
   // Greet visitors with the About window (skipped on phones, where it would fill the screen).
   useEffect(() => {
@@ -52,10 +74,10 @@ export default function Desktop() {
 
   return (
     <div className="fixed inset-0 overflow-hidden" style={style}>
+      <div className="desktop-atmosphere" aria-hidden="true" />
       <MenuBar />
 
-      {/* Desktop icons */}
-      <div className="absolute top-8 right-2 bottom-24 flex flex-col flex-wrap-reverse content-start gap-x-0 gap-y-0 max-sm:right-1 max-sm:left-1 max-sm:grid max-sm:grid-cols-4 max-sm:content-start max-sm:justify-items-center">
+      <div className="absolute top-8 right-2 bottom-24 flex flex-col flex-wrap-reverse content-start gap-x-0 gap-y-0 max-sm:right-1 max-sm:left-1 max-sm:bottom-44 max-sm:grid max-sm:grid-cols-3 max-sm:gap-y-2 max-sm:content-start max-sm:justify-items-center max-sm:overflow-y-auto max-sm:overflow-x-hidden max-sm:overscroll-contain">
         {DESKTOP_APPS.map((id) => (
           <DesktopIcon
             key={id}
@@ -66,7 +88,7 @@ export default function Desktop() {
         ))}
       </div>
 
-      <div className="absolute right-2 bottom-6">
+      <div className="absolute right-2 bottom-6 max-sm:bottom-24">
         <DesktopIcon
           label="Trash"
           icon={<IconTrash className="h-full w-full" full={!trashEmpty} />}
@@ -74,25 +96,43 @@ export default function Desktop() {
         />
       </div>
 
-      {/* Windows */}
+      <nav className="desktop-dock" aria-label="Quick launch">
+        {DOCK_APPS.map((id) => {
+          const running = windows.some((win) => win.appId === id && !win.isMinimized);
+          return (
+            <button
+              key={id}
+              type="button"
+              className="desktop-dock-item focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a96520]"
+              onClick={() => openApp(id)}
+              aria-label={`Open ${APPS[id].label}`}
+              title={APPS[id].label}
+            >
+              <FileIcon kind={APPS[id].icon} className="h-10 w-10" />
+              <span className="dock-tooltip">{APPS[id].label}</span>
+              <span className={`dock-running ${running ? "is-running" : ""}`} aria-hidden="true" />
+            </button>
+          );
+        })}
+      </nav>
+
       {windows.map((win) => (
         <Window key={win.id} win={win}>
           <WindowBody win={win} />
         </Window>
       ))}
 
-      <div
-        className="pointer-events-none absolute bottom-2 left-3 rounded border border-[#8c8068] bg-[#fffaf0]/95 px-2 py-1 text-[13px] font-medium text-[#29271f]"
-        
-      >
-        {coarse ? "Tap an icon to open it" : "Double-click an icon to open it · drag title bars to move windows"}
+      <div className="pointer-events-none absolute bottom-2 left-3 rounded border border-[#8c8068] bg-[#fffaf0]/95 px-2 py-1 text-[13px] font-medium text-[#29271f] max-sm:hidden">
+        {coarse
+          ? "Tap an icon to open it"
+          : "Double-click an icon to open it · drag to snap · ⌘/Ctrl+W close · ⌘/Ctrl+M minimize"}
       </div>
 
       {isShutDown && (
         <button
           type="button"
           onClick={() => window.location.reload()}
-          className="fixed inset-0 z-[100000] flex cursor-pointer items-center justify-center bg-black p-8 text-center"
+          className="fixed inset-0 z-[100000] flex cursor-pointer items-center justify-center bg-black p-8 text-center focus-visible:outline-2 focus-visible:outline-offset-[-8px] focus-visible:outline-[#dca45e]"
         >
           <span className="font-chicago max-w-md text-[18px] leading-relaxed text-white">
             It is now safe to switch off your Macintosh.

@@ -34,27 +34,105 @@ export interface Project {
 export const projects: Project[] = [
   {
     id: "campus-plus", name: "Campus+", year: "2026",
-    tagline: "A text-first home for campus life.",
-    description: "A campus platform concept bringing together student communities, posts, messaging, events, notices, lost and found, rides, housing, and a moderated marketplace. The product direction is deliberately minimal: clear information, useful workflows, and no AI bolted on for its own sake.",
-    tags: ["Next.js", "Supabase", "Product design"], kind: "code",
+    tagline: "A text-first operating layer for campus life.",
+    description: "A campus platform in active development, bringing everyday student workflows into one calm, searchable place: communities, posts, direct messages, events, official notices, lost and found, housing, rides, project teams, and a student marketplace with moderator review. Its product direction prioritizes clear information, lightweight coordination, and institutional identity over unnecessary AI features.",
+    tags: ["Next.js", "Supabase", "Campus platform"],
+    link: "https://setup-pi-ashy.vercel.app/",
+    repo: "https://github.com/sitemango/setup",
+    kind: "code",
   },
   {
-    id: "sitemango", name: "SiteMango", year: "2025",
-    tagline: "A small web studio for local businesses.",
-    description: "A web-development initiative focused on helping local businesses get a polished, practical web presence. The emphasis is on responsive pages, straightforward contact flows, and keeping the solution maintainable.",
-    tags: ["Web design", "Frontend", "Small business"], kind: "web",
+    id: "sitemango", name: "SiteMango", year: "2025—26",
+    tagline: "A small web studio for growing local businesses.",
+    description: "A web-development initiative focused on fast, clean, conversion-minded websites for local businesses. The work emphasizes responsive pages, clear service presentation, useful contact and lead-capture flows, and a practical handoff that small teams can maintain.",
+    tags: ["Web design", "HTML · CSS · JavaScript", "Small business"],
+    link: "https://sitemango.github.io/home/",
+    repo: "https://github.com/sitemango/home",
+    kind: "web",
   },
   {
-    id: "hardware-lab", name: "Hardware Lab", year: "2025",
-    tagline: "Small interfaces with physical-world inputs.",
-    description: "Ongoing experiments around microcontrollers, displays, input controls, and small connected devices. A place to test the line between a useful interface and a fun hardware prototype.",
-    tags: ["ESP32", "Embedded C++", "Prototyping"], kind: "chip",
+    id: "ecoswitch", name: "EcoSwitch", year: "2026",
+    tagline: "Camera-free, zone-level classroom energy management.",
+    description: "A low-cost classroom energy-management prototype pairing PIR motion sensing with 24 GHz mmWave presence detection on an ESP32-S3. The hybrid, three-zone approach is designed to distinguish brief motion from continued occupancy, enabling smarter switching while avoiding cameras.",
+    tags: ["ESP32-S3", "PIR + 24 GHz mmWave", "Energy efficiency", "Embedded systems"],
+    link: "https://aminotkartik.github.io/schematic/",
+    repo: "https://github.com/aminotkartik/ecoswitch",
+    kind: "chip",
   },
   {
-    id: "web-experiments", name: "Web Experiments", year: "2025",
-    tagline: "Motion, interaction, and little details.",
-    description: "A collection of browser experiments exploring responsive layouts, animation, simple games, and interface ideas. The goal is to make the web feel considered without making it harder to use.",
-    tags: ["HTML", "CSS", "JavaScript"], kind: "game",
+    id: "civic-issue", name: "Civic Issue", year: "2026",
+    tagline: "Report it. Track it. Resolve it.",
+    description: "A civic reporting and resolution platform for residents and municipal teams. Residents can submit location-aware reports, follow updates, support existing issues, and give resolution feedback; authorities can verify, assign, and close reports through department-scoped queues and an auditable timeline. It includes map-based workflows and privacy-conscious public location handling.",
+    tags: ["Next.js", "Drizzle ORM", "OpenStreetMap", "Civic tech"],
+    link: "https://civicissue-one.vercel.app",
+    repo: "https://github.com/whatelsekartik/civicissue",
+    kind: "web",
+  },
+];
+
+export interface AchievementRecord {
+  id: string;
+  title: string;
+  category: "Academics" | "Olympiad";
+  result: string;
+  resultLabel: string;
+  note: string;
+  period: string;
+}
+export const achievementRecords: AchievementRecord[] = [
+  {
+    id: "mht-cet",
+    title: "MHT CET",
+    category: "Academics",
+    result: "98.98",
+    resultLabel: "percentile",
+    note: "Entrance examination result.",
+    period: "2026",
+  },
+  {
+    id: "jee-maths",
+    title: "JEE Main · Mathematics",
+    category: "Academics",
+    result: "96.5",
+    resultLabel: "percentile",
+    note: "Mathematics subject percentile — distinct from the overall JEE Main percentile.",
+    period: "2026",
+  },
+  {
+    id: "hsc-maths",
+    title: "HSC Mathematics",
+    category: "Academics",
+    result: "91/100",
+    resultLabel: "marks",
+    note: "Class XII Mathematics subject score.",
+    period: "2026",
+  },
+  {
+    id: "hsc-overall",
+    title: "HSC · Science",
+    category: "Academics",
+    result: "82%",
+    resultLabel: "overall",
+    note: "Maharashtra State Board Higher Secondary Certificate.",
+    period: "2026",
+  },
+  {
+    id: "sof-imo",
+    title: "SOF International Mathematics Olympiad",
+    category: "Olympiad",
+    result: "#791",
+    resultLabel: "international rank",
+    note: "92nd percentile, with full marks in the Achievers' Section.",
+    period: "SOF IMO",
+  },
+  {
+    id: "class-x",
+    title: "Class X board examination",
+    category: "Academics",
+    result: "93%",
+    resultLabel: "overall",
+    note: "Secondary school board examination result.",
+    period: "Board result",
   },
 ];
 
@@ -126,8 +204,10 @@ export const education = {
   }],
   certifications: [],
   achievements: [
+    "JEE Main Mathematics: 96.5 percentile (2026).",
+    "MHT CET: 98.98 percentile (2026).",
     "Class X board examination: 93%.",
-    "SOF International Mathematics Olympiad: 92nd percentile; International Rank 791.",
+    "SOF International Mathematics Olympiad: 92nd percentile; International Rank 791; full marks in the Achievers' Section.",
   ],
 };
 
@@ -157,6 +237,7 @@ export function readmeText(): string {
     "  Skills.exe .... a snapshot of my toolkit",
     "  Experience .... the work behind the projects",
     "  Education ..... the formal side of learning",
+    "  Achievements .. academic results and selected build milestones",
     "  Resume.pdf .... the downloadable résumé",
     "  Contact Me .... ways to get in touch",
     "  Terminal.exe .. a keyboard-friendly route through the portfolio", "",

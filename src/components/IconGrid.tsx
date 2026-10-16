@@ -17,7 +17,7 @@ export default function IconGrid({ items }: { items: GridItem[] }) {
 
   return (
     <div
-      className="grid grid-cols-[repeat(auto-fill,minmax(88px,1fr))] gap-x-2 gap-y-3"
+      className="grid grid-cols-[repeat(auto-fill,minmax(min(100%,104px),1fr))] gap-x-3 gap-y-4"
       onClick={() => setSelected(null)}
     >
       {items.map((it) => {
@@ -26,6 +26,8 @@ export default function IconGrid({ items }: { items: GridItem[] }) {
           <button
             key={it.key}
             type="button"
+            aria-label={`Open ${it.label}`}
+            aria-pressed={isSel}
             onClick={(e) => {
               e.stopPropagation();
               if (coarse) it.onOpen();
@@ -33,16 +35,11 @@ export default function IconGrid({ items }: { items: GridItem[] }) {
             }}
             onDoubleClick={it.onOpen}
             onKeyDown={(e) => e.key === "Enter" && it.onOpen()}
-            className="flex flex-col items-center gap-1 p-1 text-center outline-none focus-visible:outline-1 focus-visible:outline-dotted"
+            className="flex w-full min-w-0 flex-col items-center gap-1 rounded-sm p-1 text-center outline-none focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[#a96520]"
           >
-            <FileIcon kind={it.icon} className={cn("h-8 w-8", isSel && "brightness-[.55]")} />
-            <span
-              className={cn(
-                "font-chicago px-1 text-[13px] leading-tight break-words",
-                isSel && "bg-black text-white"
-              )}
-            >
-              {it.label}
+            <FileIcon kind={it.icon} className={cn("h-8 w-8 shrink-0", isSel && "brightness-[.55]")} />
+            <span className="font-chicago w-full min-w-0 px-1 text-[12px] leading-[1.35] [overflow-wrap:anywhere]">
+              <span className={cn(isSel && "bg-black text-white")}>{it.label}</span>
             </span>
           </button>
         );

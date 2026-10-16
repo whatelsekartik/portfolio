@@ -1,5 +1,5 @@
 import { FileIcon } from "../components/Icons";
-import { projects, socials } from "../data/portfolioData";
+import { projects } from "../data/portfolioData";
 import ScrollReveal from "../components/ScrollReveal";
 
 const linkClass =
@@ -50,11 +50,12 @@ export default function ProjectDetailApp({ payload }: { payload?: Record<string,
         </section>
       </ScrollReveal>
 
-      <div className="mt-auto flex flex-wrap gap-2 border-t border-dashed border-[#d8c9ad] pt-4">
-        {project.link && <a href={project.link} target="_blank" rel="noreferrer" className={linkClass}>Visit site <span aria-hidden="true">↗</span></a>}
-        {project.repo && <a href={project.repo} target="_blank" rel="noreferrer" className={linkClass}>View code <span aria-hidden="true">↗</span></a>}
-        {!project.link && !project.repo && socials.github && <a href={socials.github} target="_blank" rel="noreferrer" className={linkClass}>More on GitHub <span aria-hidden="true">↗</span></a>}
-      </div>
+      {(project.link || project.repo) && (
+        <div className="mt-auto flex flex-wrap gap-2 border-t border-dashed border-[#d8c9ad] pt-4">
+          {project.link && <a href={project.link} target="_blank" rel="noreferrer" className={linkClass}>Visit site <span aria-hidden="true">↗</span></a>}
+          {project.repo && <a href={project.repo} target="_blank" rel="noreferrer" className={linkClass}>View code <span aria-hidden="true">↗</span></a>}
+        </div>
+      )}
     </div>
   );
 }

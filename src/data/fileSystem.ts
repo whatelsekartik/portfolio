@@ -44,6 +44,7 @@ export const root: FsDir = dir("Macintosh HD", [
   }),
   file("README.txt", "readme", "readme", { content: readmeText() }),
   file("Resume.pdf", "pdf", "resume"),
+  file("Achievements", "award", "achievements"),
   file("Contact Me", "phone", "contact"),
   file("Guestbook", "guestbook", "guestbook"),
   dir(
