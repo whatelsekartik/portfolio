@@ -565,7 +565,6 @@ export default function ContributionsApp() {
             ))}
           </div>
         )}
-        </div>
         {contributionGraphLoading && (
           <div className="contrib-map-status" role="status"><span className="contrib-loader" />Loading year-long profile calendars…</div>
         )}
@@ -574,12 +573,12 @@ export default function ContributionsApp() {
             <strong>{hasSelectedContributionGraph ? "Partial contribution history" : "Year-long history is unavailable"}</strong>
             <p>
               {Object.entries(contributionErrors).map(([login, error]) => login + ": " + error).join(" · ")}
-              {!hasSelectedContributionGraph ? " The map falls back to the recent public event feed; older cells are marked unavailable, not treated as zero activity." : " The total covers only the profile calendars that loaded successfully."}
+              {!hasSelectedContributionGraph ? " The daily heatmap is replaced by live profile-chart embeds; no failed request is counted as zero activity." : " The total covers only the profile calendars that loaded successfully."}
             </p>
             <button type="button" onClick={() => setContributionGraphRefresh((key) => key + 1)}>Retry annual calendars</button>
           </div>
         )}
-        {!contributionGraphLoading && !hasContributionErrors && hasSelectedContributionGraph && (
+        {!contributionGraphLoading && !hasContributionErrors && hasSelectedContributionGraph && !showProfileChartFallback && (
           <p className="contrib-map-source">Profile calendars loaded{contributionGraphUpdatedAt ? " · server refreshed " + formatDate(contributionGraphUpdatedAt) : ""}. The linked timeline below is separately sourced from recent public GitHub events.</p>
         )}
       </section>
