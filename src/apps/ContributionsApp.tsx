@@ -251,118 +251,83 @@ export default function ContributionsApp() {
     let cancelled = false;
     setContributionGraphLoading(true);
 
-    async function loadProfileCalendar(login: string): Promise<GitHubContributionDay[]> {
-      // The calendar provider supports browser reads, so use it directly first.
-      // This keeps the graph working on static hosts where /api routes don't exist.
-      const response = await fetch(
-        "https://github-contributions-api.jogruber.de/v4/" + encodeURIComponent(login) + "?y=last",
-        { headers: { Accept: "application/json" }, cache: "no-store" },
-      );
-      if (!response.ok) throw new Error("Calendar provider returned HTTP " + response.status);
-      const payload = (await response.json()) as GitHubContributionResponse;
-      if (!Array.isArray(payload.contributions)) throw new Error("Calendar provider returned no contribution days");
-      const rows = payload.contributions.filter(
-        (row) => row && typeof row.date === "string" && Number.isFinite(row.count),
-      );
-      if (rows.length < 300) throw new Error("Calendar provider returned an incomplete annual calendar");
-      return rows;
-    }
-
-    async function loadCalendars() {
-      const direct = await Promise.all(ACCOUNTS.map(async (account) => {
-        try {
-          return { login: account.login, rows: await loadProfileCalendar(account.login), error: "" };
-        } catch (error) {
-          return {
-            login: account.login,
-            rows: [] as GitHubContributionDay[],
-            error: error instanceof Error ? error.message : "Could not load the public profile calendar",
-          };
+    // Always load through the portfolio's same-origin API. Calendar services can
+    // omit CORS headers, and the API handler validates freshness and tries providers.
+    fetch("/api/contributions?refresh=" + contributionGraphRefresh, {
+      headers: { Accept: "application/json" },
+      cache: "no-store",
+    })
+      .then(async (response) => {
+        const payload: unknown = await response.json().catch(() => null);
+        if (!response.ok) {
+          const detail =
+            payload && typeof payload === "object" && "errors" in payload
+              ? Object.entries((payload as ContributionCalendarResponse).errors ?? {})
+                  .map(([login, error]) => login + ": " + error)
+                  .join(" · ")
+              : "";
+          const message =
+            payload && typeof payload === "object" && "error" in payload
+              ? String((payload as { error?: unknown }).error ?? "")
+              : "";
+          throw new Error(detail || message || "Contribution endpoint returned HTTP " + response.status);
         }
-      }));
-
-      const nextGraphs: Record<string, GitHubContributionDay[]> = {};
-      const nextErrors: Record<string, string> = {};
-      for (const item of direct) {
-        if (item.rows.length) nextGraphs[item.login] = item.rows;
-        else nextErrors[item.login] = item.error;
-      }
-
-      // Fallback to the same-origin Vercel function when the browser provider
-      // is blocked or down. Merge only missing accounts; keep any good calendars.
-      if (Object.keys(nextErrors).length) {
-        try {
-          const response = await fetch("/api/contributions?refresh=" + contributionGraphRefresh, {
-            headers: { Accept: "application/json" },
-            cache: "no-store",
-          });
-          const payload: unknown = await response.json().catch(() => null);
-          if (!response.ok) {
-            const message =
-              payload && typeof payload === "object" && "error" in payload
-                ? String((payload as { error?: unknown }).error ?? "")
-                : "";
-            throw new Error(message || "Fallback calendar endpoint returned HTTP " + response.status);
-          }
-          if (!payload || typeof payload !== "object") throw new Error("Unexpected fallback calendar response");
-          const fallback = payload as ContributionCalendarResponse;
-          for (const login of Object.keys(nextErrors)) {
-            const rows = fallback.accounts?.[login]?.contributions;
-            if (Array.isArray(rows) && rows.length >= 300) {
-              nextGraphs[login] = rows.filter(
-                (row) => typeof row.date === "string" && Number.isFinite(row.count),
-              );
-              delete nextErrors[login];
-            } else if (fallback.errors?.[login]) {
-              nextErrors[login] = nextErrors[login] + "; fallback: " + fallback.errors[login];
-            }
-          }
-        } catch (error) {
-          const reason = error instanceof Error ? error.message : "Fallback endpoint unavailable";
-          for (const login of Object.keys(nextErrors)) nextErrors[login] += "; fallback: " + reason;
+        if (!payload || typeof payload !== "object") {
+          throw new Error("Contribution endpoint returned an unexpected response");
         }
-      }
+        return payload as ContributionCalendarResponse;
+      })
+      .then((payload) => {
+        if (cancelled) return;
+        const nextGraphs: Record<string, GitHubContributionDay[]> = {};
+        const nextErrors: Record<string, string> = { ...(payload.errors ?? {}) };
+        const today = new Date();
+        const todayKey = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()))
+          .toISOString().slice(0, 10);
+        const freshAfter = addDaysKey(todayKey, -14);
 
-      if (cancelled) return;
-      setContributionGraphs(nextGraphs);
-      setContributionErrors(nextErrors);
-      setContributionGraphUpdatedAt(new Date().toISOString());
-      setContributionGraphLoading(false);
-    }
+        for (const account of ACCOUNTS) {
+          const rows = payload.accounts?.[account.login]?.contributions;
+          if (!Array.isArray(rows)) {
+            nextErrors[account.login] ??= "No annual calendar data was returned for this account.";
+            continue;
+          }
+          const validRows = rows.filter(
+            (row) =>
+              typeof row.date === "string" &&
+              /^\\d{4}-\\d{2}-\\d{2}$/.test(row.date) &&
+              Number.isFinite(Number(row.count)) &&
+              row.date <= todayKey,
+          );
+          const dates = validRows.map((row) => row.date).sort();
+          if (dates.length < 300 || !dates.at(-1) || dates.at(-1)! < freshAfter) {
+            nextErrors[account.login] = "The calendar data is incomplete or stale; retry in a moment.";
+            continue;
+          }
+          nextGraphs[account.login] = validRows.map((row) => ({
+            date: row.date,
+            count: Math.max(0, Number(row.count)),
+            level: Number.isFinite(Number(row.level)) ? Number(row.level) : 0,
+          }));
+          delete nextErrors[account.login];
+        }
 
-    loadCalendars().catch((error: unknown) => {
-      if (cancelled) return;
-      const message = error instanceof Error ? error.message : "Could not load annual contribution calendars";
-      setContributionErrors(Object.fromEntries(ACCOUNTS.map((account) => [account.login, message])));
-      setContributionGraphLoading(false);
-    });
+        setContributionGraphs(nextGraphs);
+        setContributionErrors(nextErrors);
+        setContributionGraphUpdatedAt(payload.generatedAt ?? new Date().toISOString());
+      })
+      .catch((error: unknown) => {
+        if (cancelled) return;
+        setContributionGraphs({});
+        const message = error instanceof Error ? error.message : "Could not load annual contribution calendars";
+        setContributionErrors(Object.fromEntries(ACCOUNTS.map((account) => [account.login, message])));
+      })
+      .finally(() => {
+        if (!cancelled) setContributionGraphLoading(false);
+      });
 
     return () => { cancelled = true; };
   }, [contributionGraphRefresh]);
-
-  useEffect(() => {
-    let cancelled = false;
-    setLoading(true);
-    Promise.all(ACCOUNTS.map(async (account) => {
-      try {
-        const events = await loadPublicEvents(account.login);
-        return { login: account.login, items: extractActivities(account.login, events), error: "" };
-      } catch (error) {
-        return {
-          login: account.login,
-          items: [] as ActivityItem[],
-          error: error instanceof Error ? error.message : "Could not load this activity feed",
-        };
-      }
-    })).then((results) => {
-      if (cancelled) return;
-      setActivities(results.flatMap((result) => result.items).sort((a, b) => Date.parse(b.date) - Date.parse(a.date)));
-      setLoadErrors(Object.fromEntries(results.filter((result) => result.error).map((result) => [result.login, result.error])));
-      setLoadedAt(new Date());
-      setLoading(false);
-    });
-    return () => { cancelled = true; };
-  }, [refreshKey]);
 
   const accountActivities = useMemo(
     () => activities.filter((item) => accountFilter === "all" || item.account === accountFilter),
