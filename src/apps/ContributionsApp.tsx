@@ -61,6 +61,21 @@ interface ActivityItem {
   project?: ProjectInfo;
 }
 
+interface GitHubContributionDay {
+  date: string;
+  count: number;
+  level?: number;
+}
+
+interface ContributionCalendarResponse {
+  accounts?: Record<string, {
+    total?: number;
+    contributions?: GitHubContributionDay[];
+  }>;
+  errors?: Record<string, string>;
+  generatedAt?: string;
+}
+
 const publicEventCache = new Map<string, Promise<GitHubPublicEvent[]>>();
 
 function loadPublicEvents(login: string): Promise<GitHubPublicEvent[]> {
@@ -195,6 +210,12 @@ function formatDate(value: string): string {
   return new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short", year: "numeric" }).format(date);
 }
 
+function addDaysKey(value: string, delta: number): string {
+  const date = new Date(value + "T00:00:00Z");
+  date.setUTCDate(date.getUTCDate() + delta);
+  return date.toISOString().slice(0, 10);
+}
+
 function accountLabel(login: string): string {
   return ACCOUNTS.find((account) => account.login === login)?.label ?? login;
 }
@@ -215,6 +236,61 @@ export default function ContributionsApp() {
   const [accountFilter, setAccountFilter] = useState<AccountFilter>("all");
   const [kindFilter, setKindFilter] = useState<KindFilter>("all");
   const [visibleCount, setVisibleCount] = useState(24);
+  const [contributionGraphs, setContributionGraphs] = useState<Record<string, GitHubContributionDay[]>>({});
+  const [contributionErrors, setContributionErrors] = useState<Record<string, string>>({});
+  const [contributionGraphLoading, setContributionGraphLoading] = useState(true);
+  const [contributionGraphUpdatedAt, setContributionGraphUpdatedAt] = useState<string | null>(null);
+  const [contributionGraphRefresh, setContributionGraphRefresh] = useState(0);
+
+  useEffect(() => {
+    let cancelled = false;
+    setContributionGraphLoading(true);
+    fetch("/api/contributions?refresh=" + contributionGraphRefresh, {
+      headers: { Accept: "application/json" },
+      cache: "no-store",
+    })
+      .then(async (response) => {
+        const payload: unknown = await response.json().catch(() => null);
+        if (!response.ok) {
+          const message =
+            payload && typeof payload === "object" && "error" in payload
+              ? String((payload as { error?: unknown }).error ?? "")
+              : "";
+          throw new Error(message || "Contribution calendar endpoint returned HTTP " + response.status);
+        }
+        if (!payload || typeof payload !== "object") throw new Error("Unexpected contribution calendar response");
+        return payload as ContributionCalendarResponse;
+      })
+      .then((payload) => {
+        if (cancelled) return;
+        const nextGraphs: Record<string, GitHubContributionDay[]> = {};
+        for (const account of ACCOUNTS) {
+          const rows = payload.accounts?.[account.login]?.contributions;
+          if (Array.isArray(rows)) {
+            nextGraphs[account.login] = rows.filter(
+              (row) => typeof row.date === "string" && Number.isFinite(row.count),
+            );
+          }
+        }
+        setContributionGraphs(nextGraphs);
+        setContributionErrors(payload.errors ?? {});
+        setContributionGraphUpdatedAt(payload.generatedAt ?? null);
+      })
+      .catch((error: unknown) => {
+        if (cancelled) return;
+        setContributionGraphs({});
+        setContributionErrors(
+          Object.fromEntries(ACCOUNTS.map((account) => [
+            account.login,
+            error instanceof Error ? error.message : "Could not load the annual calendar",
+          ])),
+        );
+      })
+      .finally(() => {
+        if (!cancelled) setContributionGraphLoading(false);
+      });
+    return () => { cancelled = true; };
+  }, [contributionGraphRefresh]);
 
   useEffect(() => {
     let cancelled = false;
@@ -258,14 +334,17 @@ export default function ContributionsApp() {
     releases: accountActivities.filter((item) => item.kind === "release").length,
   }), [accountActivities]);
 
-  const calendarDays = useMemo(() => {
-    const today = new Date();
-    const end = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
-    const start = new Date(end);
-    start.setUTCDate(start.getUTCDate() - 90);
-    start.setUTCDate(start.getUTCDate() - start.getUTCDay());
+  const calendar = useMemo(() => {
+    const now = new Date();
+    const end = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+    const todayKey = end.toISOString().slice(0, 10);
+    const windowStart = new Date(end);
+    windowStart.setUTCDate(windowStart.getUTCDate() - 364);
+    const windowStartKey = windowStart.toISOString().slice(0, 10);
+    const gridStart = new Date(windowStart);
+    gridStart.setUTCDate(gridStart.getUTCDate() - gridStart.getUTCDay());
     const days: string[] = [];
-    const cursor = new Date(start);
+    const cursor = new Date(gridStart);
     while (cursor <= end) {
       days.push(cursor.toISOString().slice(0, 10));
       cursor.setUTCDate(cursor.getUTCDate() + 1);
@@ -274,17 +353,53 @@ export default function ContributionsApp() {
       days.push(cursor.toISOString().slice(0, 10));
       cursor.setUTCDate(cursor.getUTCDate() + 1);
     }
-    return days;
+    return { days, todayKey, windowStartKey };
   }, []);
+
+  const calendarWeeks = useMemo(() => {
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const weeks: Array<{ key: string; days: string[]; monthLabel: string }> = [];
+    for (let i = 0; i < calendar.days.length; i += 7) {
+      const days = calendar.days.slice(i, i + 7);
+      const firstOfMonth = days.find(
+        (day) => day.slice(8, 10) === "01" && day >= calendar.windowStartKey && day <= calendar.todayKey,
+      );
+      const monthLabel = firstOfMonth ? months[Number(firstOfMonth.slice(5, 7)) - 1] : "";
+      weeks.push({ key: days[0], days, monthLabel });
+    }
+    return weeks;
+  }, [calendar]);
+
+  const hasContributionGraph = Object.keys(contributionGraphs).length > 0;
+  const selectedGraphLogins = accountFilter === "all"
+    ? ACCOUNTS.map((account) => account.login)
+    : [accountFilter];
 
   const dayCounts = useMemo(() => {
     const counts: Record<string, number> = {};
-    for (const item of filteredActivities) {
+    if (hasContributionGraph) {
+      for (const login of selectedGraphLogins) {
+        for (const item of contributionGraphs[login] ?? []) {
+          if (item.date < calendar.windowStartKey || item.date > calendar.todayKey) continue;
+          counts[item.date] = (counts[item.date] ?? 0) + item.count;
+        }
+      }
+      return counts;
+    }
+
+    // Fallback only: recent events are not a reliable source for a full-year calendar.
+    for (const item of accountActivities) {
       const key = item.date.slice(0, 10);
+      if (key < calendar.windowStartKey || key > calendar.todayKey) continue;
       counts[key] = (counts[key] ?? 0) + 1;
     }
     return counts;
-  }, [filteredActivities]);
+  }, [hasContributionGraph, selectedGraphLogins, contributionGraphs, calendar, accountActivities]);
+
+  const contributionTotal = Object.values(dayCounts).reduce((total, count) => total + count, 0);
+  const availableContributionProfiles = selectedGraphLogins.filter((login) => Array.isArray(contributionGraphs[login])).length;
+  const selectedProfileCount = selectedGraphLogins.length;
+  const hasContributionErrors = Object.keys(contributionErrors).length > 0;
 
   const repoCounts = useMemo(() => {
     const counts: Record<string, ActivityItem[]> = {};
@@ -337,37 +452,84 @@ export default function ContributionsApp() {
         </div>
       </section>
 
-      <section className="contrib-section" aria-label="Recent activity map">
+      <section className="contrib-section" aria-label="Annual GitHub contribution map">
         <div className="contrib-section-head">
           <div>
-            <p className="editorial-meta text-[#89551e]">Contribution map</p>
-            <h2>Recent work, by day.</h2>
+            <p className="editorial-meta text-[#89551e]">Contribution map / last 12 months</p>
+            <h2>A year of building.</h2>
           </div>
-          <span className="contrib-muted">~13 weeks</span>
+          <span className="contrib-muted">{availableContributionProfiles}/{selectedProfileCount} calendars</span>
         </div>
-        <p className="contrib-explainer">Each square reflects a commit, merged PR, or published release found in the selected public activity feeds. Select an account or activity type to change the map.</p>
-        <div className="contrib-heatmap-scroll">
-          <div className="contrib-weekdays" aria-hidden="true">
-            <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+        <div className="contrib-map-intro">
+          <div>
+            <strong>{contributionTotal.toLocaleString("en-IN")}</strong>
+            <span>{hasContributionGraph ? "profile contributions in this view" : "recent public activity items observed"}</span>
           </div>
-          <div className="contrib-heatmap" role="group" aria-label="Daily public GitHub activity heatmap">
-            {calendarDays.map((day) => {
-              const count = dayCounts[day] ?? 0;
-              const future = day > new Date().toISOString().slice(0, 10);
-              const level = future || count === 0 ? 0 : Math.min(4, count);
-              return <span key={day} className={"contrib-day contrib-level-" + level + (future ? " contrib-day-future" : "")} title={day + ": " + count + " observed activity items"} aria-label={day + ": " + count + " observed activity items"} />;
-            })}
+          <span className="contrib-period">{formatDate(calendar.windowStartKey)} — {formatDate(calendar.todayKey)}</span>
+        </div>
+        <p className="contrib-explainer">
+          Each square is a day from the selected GitHub profile calendar{accountFilter === "all" ? "s, combined across all three accounts" : ""}. Profile totals can include commits, pull requests, issues and other GitHub contributions. Use the account filter above to isolate a profile; activity-type filters apply to the source-linked timeline below.
+        </p>
+        <div className="contrib-heatmap-frame">
+          <div className="contrib-heatmap-scroll">
+            <div className="contrib-weekdays" aria-hidden="true">
+              <span></span><span>Mon</span><span></span><span>Wed</span><span></span><span>Fri</span><span></span>
+            </div>
+            <div className="contrib-heatmap-main">
+              <div className="contrib-months" style={{ gridTemplateColumns: `repeat(${calendarWeeks.length}, 11px)` }} aria-hidden="true">
+                {calendarWeeks.map((week) => <span key={week.key}>{week.monthLabel}</span>)}
+              </div>
+              <div className="contrib-heatmap" role="group" aria-label="Daily GitHub contributions for the last 12 months">
+                {calendarWeeks.flatMap((week) => week.days.map((day) => {
+                  const isOutsideRange = day < calendar.windowStartKey;
+                  const future = day > calendar.todayKey;
+                  const count = dayCounts[day] ?? 0;
+                  const unavailable = !hasContributionGraph && day < addDaysKey(calendar.todayKey, -30);
+                  const level = !hasContributionGraph
+                    ? (count === 0 ? 0 : Math.min(4, count))
+                    : (count === 0 ? 0 : count >= 10 ? 4 : count >= 5 ? 3 : count >= 2 ? 2 : 1);
+                  const classes = [
+                    "contrib-day",
+                    "contrib-level-" + level,
+                    isOutsideRange ? "contrib-day-outside" : "",
+                    future ? "contrib-day-future" : "",
+                    unavailable ? "contrib-day-unavailable" : "",
+                  ].filter(Boolean).join(" ");
+                  const countLabel = hasContributionGraph
+                    ? count + " GitHub contributions"
+                    : unavailable ? "History unavailable from the recent public-events fallback" : count + " observed public activity items";
+                  return <span key={day} className={classes} title={day + ": " + countLabel} aria-label={day + ": " + countLabel} />;
+                }))}
+              </div>
+            </div>
+          </div>
+          <div className="contrib-heatmap-footer">
+            <span className="contrib-muted">Less</span>
+            <span className="contrib-day contrib-level-0" aria-hidden="true" />
+            <span className="contrib-day contrib-level-1" aria-hidden="true" />
+            <span className="contrib-day contrib-level-2" aria-hidden="true" />
+            <span className="contrib-day contrib-level-3" aria-hidden="true" />
+            <span className="contrib-day contrib-level-4" aria-hidden="true" />
+            <span className="contrib-muted">More</span>
+            {!hasContributionGraph && <span className="contrib-unavailable-legend"><i />History unavailable</span>}
           </div>
         </div>
-        <div className="contrib-heatmap-footer">
-          <span className="contrib-muted">Less</span>
-          <span className="contrib-day contrib-level-0" aria-hidden="true" />
-          <span className="contrib-day contrib-level-1" aria-hidden="true" />
-          <span className="contrib-day contrib-level-2" aria-hidden="true" />
-          <span className="contrib-day contrib-level-3" aria-hidden="true" />
-          <span className="contrib-day contrib-level-4" aria-hidden="true" />
-          <span className="contrib-muted">More</span>
-        </div>
+        {contributionGraphLoading && (
+          <div className="contrib-map-status" role="status"><span className="contrib-loader" />Loading year-long profile calendars…</div>
+        )}
+        {!contributionGraphLoading && hasContributionErrors && (
+          <div className="contrib-api-note contrib-map-error" role="status">
+            <strong>{hasContributionGraph ? "Partial contribution history" : "Year-long history is unavailable"}</strong>
+            <p>
+              {Object.entries(contributionErrors).map(([login, error]) => login + ": " + error).join(" · ")}
+              {!hasContributionGraph ? " The map falls back to the recent public event feed; older cells are marked unavailable, not treated as zero activity." : " The total covers only the profile calendars that loaded successfully."}
+            </p>
+            <button type="button" onClick={() => setContributionGraphRefresh((key) => key + 1)}>Retry annual calendars</button>
+          </div>
+        )}
+        {!contributionGraphLoading && !hasContributionErrors && hasContributionGraph && (
+          <p className="contrib-map-source">Profile calendars loaded{contributionGraphUpdatedAt ? " · server refreshed " + formatDate(contributionGraphUpdatedAt) : ""}. The linked timeline below is separately sourced from recent public GitHub events.</p>
+        )}
       </section>
 
       <section className="contrib-stats" aria-label="Observed activity totals">
