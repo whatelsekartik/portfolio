@@ -397,3 +397,129 @@
 .contrib-evidence-label-configured { color: #89551e; }
 .contrib-evidence-label-verify { color: #8c4b36; }
 .contrib-evidence-label-design { color: #756951; }
+
+
+/* A full year of small, aligned daily cells gives the contribution view room to breathe. */
+.contrib-heatmap-frame {
+  border: 1px solid #d8c9ad;
+  background: #fbf5e9;
+  padding: 9px 10px 8px;
+}
+.contrib-map-intro {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-left: 3px solid #bd792f;
+  background: #f4ead8;
+  padding: 9px 12px;
+  margin: 12px 0;
+}
+.contrib-map-intro > div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 7px;
+}
+.contrib-map-intro strong {
+  color: #29271f;
+  font: 800 clamp(22px, 4vw, 29px)/1 var(--display-font);
+  letter-spacing: -.05em;
+}
+.contrib-map-intro > div > span {
+  color: #514c40;
+  font-size: 11px;
+}
+.contrib-period {
+  color: #625b4c;
+  font: 10px/1.5 var(--mono-font);
+}
+.contrib-heatmap-scroll {
+  gap: 8px;
+  padding: 5px 0 7px;
+}
+.contrib-weekdays {
+  grid-template-rows: repeat(7, 8px);
+  gap: 3px;
+  padding-top: 21px;
+  font: 9px/11px var(--mono-font);
+}
+.contrib-weekdays span { visibility: hidden; }
+.contrib-weekdays span:nth-child(2),
+.contrib-weekdays span:nth-child(4),
+.contrib-weekdays span:nth-child(6) { visibility: visible; }
+.contrib-heatmap-main { min-width: 0; flex: 1; }
+.contrib-months {
+  display: grid;
+  align-items: end;
+  height: 15px;
+  margin-bottom: 6px;
+  color: #756951;
+  font: 9px/12px var(--mono-font);
+}
+.contrib-months span {
+  min-width: 0;
+  overflow: visible;
+  white-space: nowrap;
+}
+.contrib-heatmap {
+  grid-template-rows: repeat(7, 8px);
+  grid-auto-columns: 8px;
+  gap: 3px;
+}
+.contrib-day {
+  width: 8px;
+  height: 8px;
+  flex-basis: 8px;
+  border-radius: 1px;
+}
+.contrib-day-outside {
+  visibility: hidden;
+  border-color: transparent;
+  background: transparent;
+}
+.contrib-day-unavailable {
+  border-color: #d8c9ad;
+  background: repeating-linear-gradient(135deg, #eee5d4 0 2px, #e3d7c2 2px 3px);
+}
+.contrib-heatmap-footer .contrib-day {
+  width: 11px;
+  height: 11px;
+  flex-basis: 11px;
+  border-radius: 2px;
+}
+.contrib-unavailable-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 4px;
+  color: #756951;
+  font-size: 10px;
+}
+.contrib-unavailable-legend i {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  border: 1px solid #d8c9ad;
+  background: repeating-linear-gradient(135deg, #eee5d4 0 2px, #e3d7c2 2px 3px);
+}
+.contrib-map-status, .contrib-map-source {
+  margin-top: 10px;
+  color: #625b4c;
+  font-size: 11px;
+  line-height: 1.6;
+}
+.contrib-map-status {
+  border: 1px dashed #d8c9ad;
+  background: #f8f0e1;
+  padding: 8px 10px;
+}
+.contrib-map-error { margin-top: 10px; }
+@media (max-width: 520px) {
+  .contrib-heatmap-frame { padding: 8px 7px 7px; }
+  .contrib-heatmap-scroll { gap: 6px; }
+  .contrib-weekdays { flex-basis: 25px; }
+  .contrib-map-intro { align-items: flex-start; flex-direction: column; }
+  .contrib-period { font-size: 9px; }
+}
