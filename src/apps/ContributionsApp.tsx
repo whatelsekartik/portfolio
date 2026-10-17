@@ -496,7 +496,7 @@ export default function ContributionsApp() {
                     future ? "contrib-day-future" : "",
                     unavailable ? "contrib-day-unavailable" : "",
                   ].filter(Boolean).join(" ");
-                  const countLabel = hasContributionGraph
+                  const countLabel = hasSelectedContributionGraph
                     ? count + " GitHub contributions"
                     : unavailable ? "History unavailable from the recent public-events fallback" : count + " observed public activity items";
                   return <span key={day} className={classes} title={day + ": " + countLabel} aria-label={day + ": " + countLabel} />;
