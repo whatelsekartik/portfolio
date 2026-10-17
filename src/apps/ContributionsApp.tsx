@@ -296,7 +296,7 @@ export default function ContributionsApp() {
           const validRows = rows.filter(
             (row) =>
               typeof row.date === "string" &&
-              /^\\d{4}-\\d{2}-\\d{2}$/.test(row.date) &&
+              /^\d{4}-\d{2}-\d{2}$/.test(row.date) &&
               Number.isFinite(Number(row.count)) &&
               row.date <= todayKey,
           );
