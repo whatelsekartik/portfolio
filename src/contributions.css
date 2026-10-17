@@ -587,3 +587,52 @@
   color: #756951;
   font: 9px/1.5 var(--mono-font);
 }
+
+
+.contrib-account-count-note {
+  margin-top: 9px;
+  color: #756951;
+  font: 10px/1.55 var(--mono-font);
+}
+.contrib-account-breakdown {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 7px;
+  margin: 0 0 12px;
+}
+.contrib-account-total {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+  border: 1px solid #d8c9ad;
+  background: #fff7e8;
+  padding: 9px;
+}
+.contrib-account-total > span {
+  color: #625b4c;
+  font: 9px/1.5 var(--mono-font);
+  overflow-wrap: anywhere;
+}
+.contrib-account-total > strong {
+  color: #29271f;
+  font: 800 clamp(18px, 3vw, 25px)/1 var(--display-font);
+  letter-spacing: -.045em;
+  overflow-wrap: anywhere;
+}
+.contrib-account-total > small {
+  color: #756951;
+  font-size: 10px;
+  line-height: 1.4;
+}
+.contrib-account-total-sum {
+  border-color: #29271f;
+  background: #29271f;
+}
+.contrib-account-total-sum > span,
+.contrib-account-total-sum > small { color: #e7dfcf; }
+.contrib-account-total-sum > strong { color: #e7ad5a; }
+@media (max-width: 640px) {
+  .contrib-account-breakdown { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .contrib-account-total > strong { font-size: 22px; }
+}
