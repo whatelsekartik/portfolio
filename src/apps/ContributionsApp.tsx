@@ -370,14 +370,18 @@ export default function ContributionsApp() {
     return weeks;
   }, [calendar]);
 
-  const hasContributionGraph = Object.keys(contributionGraphs).length > 0;
-  const selectedGraphLogins = accountFilter === "all"
-    ? ACCOUNTS.map((account) => account.login)
-    : [accountFilter];
+  const selectedGraphLogins = useMemo(
+    () => accountFilter === "all" ? ACCOUNTS.map((account) => account.login) : [accountFilter],
+    [accountFilter],
+  );
+  const availableContributionProfiles = selectedGraphLogins.filter((login) => Array.isArray(contributionGraphs[login])).length;
+  const selectedProfileCount = selectedGraphLogins.length;
+  const hasSelectedContributionGraph = availableContributionProfiles > 0;
+  const hasContributionErrors = selectedGraphLogins.some((login) => Boolean(contributionErrors[login]));
 
   const dayCounts = useMemo(() => {
     const counts: Record<string, number> = {};
-    if (hasContributionGraph) {
+    if (hasSelectedContributionGraph) {
       for (const login of selectedGraphLogins) {
         for (const item of contributionGraphs[login] ?? []) {
           if (item.date < calendar.windowStartKey || item.date > calendar.todayKey) continue;
@@ -394,12 +398,9 @@ export default function ContributionsApp() {
       counts[key] = (counts[key] ?? 0) + 1;
     }
     return counts;
-  }, [hasContributionGraph, selectedGraphLogins, contributionGraphs, calendar, accountActivities]);
+  }, [hasSelectedContributionGraph, selectedGraphLogins, contributionGraphs, calendar, accountActivities]);
 
   const contributionTotal = Object.values(dayCounts).reduce((total, count) => total + count, 0);
-  const availableContributionProfiles = selectedGraphLogins.filter((login) => Array.isArray(contributionGraphs[login])).length;
-  const selectedProfileCount = selectedGraphLogins.length;
-  const hasContributionErrors = Object.keys(contributionErrors).length > 0;
 
   const repoCounts = useMemo(() => {
     const counts: Record<string, ActivityItem[]> = {};
@@ -458,12 +459,12 @@ export default function ContributionsApp() {
             <p className="editorial-meta text-[#89551e]">Contribution map / last 12 months</p>
             <h2>A year of building.</h2>
           </div>
-          <span className="contrib-muted">{availableContributionProfiles}/{selectedProfileCount} calendars</span>
+          <span className="contrib-muted">{contributionGraphLoading ? "Loading…" : availableContributionProfiles + "/" + selectedProfileCount + " calendars"}</span>
         </div>
         <div className="contrib-map-intro">
           <div>
             <strong>{contributionTotal.toLocaleString("en-IN")}</strong>
-            <span>{hasContributionGraph ? "profile contributions in this view" : "recent public activity items observed"}</span>
+            <span>{hasSelectedContributionGraph ? "profile contributions in this view" : "recent public activity items observed"}</span>
           </div>
           <span className="contrib-period">{formatDate(calendar.windowStartKey)} — {formatDate(calendar.todayKey)}</span>
         </div>
@@ -484,8 +485,8 @@ export default function ContributionsApp() {
                   const isOutsideRange = day < calendar.windowStartKey;
                   const future = day > calendar.todayKey;
                   const count = dayCounts[day] ?? 0;
-                  const unavailable = !hasContributionGraph && day < addDaysKey(calendar.todayKey, -30);
-                  const level = !hasContributionGraph
+                  const unavailable = !hasSelectedContributionGraph && day < addDaysKey(calendar.todayKey, -30);
+                  const level = !hasSelectedContributionGraph
                     ? (count === 0 ? 0 : Math.min(4, count))
                     : (count === 0 ? 0 : count >= 10 ? 4 : count >= 5 ? 3 : count >= 2 ? 2 : 1);
                   const classes = [
@@ -511,7 +512,7 @@ export default function ContributionsApp() {
             <span className="contrib-day contrib-level-3" aria-hidden="true" />
             <span className="contrib-day contrib-level-4" aria-hidden="true" />
             <span className="contrib-muted">More</span>
-            {!hasContributionGraph && <span className="contrib-unavailable-legend"><i />History unavailable</span>}
+            {!hasSelectedContributionGraph && <span className="contrib-unavailable-legend"><i />History unavailable</span>}
           </div>
         </div>
         {contributionGraphLoading && (
@@ -519,15 +520,15 @@ export default function ContributionsApp() {
         )}
         {!contributionGraphLoading && hasContributionErrors && (
           <div className="contrib-api-note contrib-map-error" role="status">
-            <strong>{hasContributionGraph ? "Partial contribution history" : "Year-long history is unavailable"}</strong>
+            <strong>{hasSelectedContributionGraph ? "Partial contribution history" : "Year-long history is unavailable"}</strong>
             <p>
               {Object.entries(contributionErrors).map(([login, error]) => login + ": " + error).join(" · ")}
-              {!hasContributionGraph ? " The map falls back to the recent public event feed; older cells are marked unavailable, not treated as zero activity." : " The total covers only the profile calendars that loaded successfully."}
+              {!hasSelectedContributionGraph ? " The map falls back to the recent public event feed; older cells are marked unavailable, not treated as zero activity." : " The total covers only the profile calendars that loaded successfully."}
             </p>
             <button type="button" onClick={() => setContributionGraphRefresh((key) => key + 1)}>Retry annual calendars</button>
           </div>
         )}
-        {!contributionGraphLoading && !hasContributionErrors && hasContributionGraph && (
+        {!contributionGraphLoading && !hasContributionErrors && hasSelectedContributionGraph && (
           <p className="contrib-map-source">Profile calendars loaded{contributionGraphUpdatedAt ? " · server refreshed " + formatDate(contributionGraphUpdatedAt) : ""}. The linked timeline below is separately sourced from recent public GitHub events.</p>
         )}
       </section>
