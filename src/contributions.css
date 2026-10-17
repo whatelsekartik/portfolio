@@ -523,3 +523,67 @@
   .contrib-map-intro { align-items: flex-start; flex-direction: column; }
   .contrib-period { font-size: 9px; }
 }
+
+
+.contrib-heatmap-raw-hidden { display: none; }
+.contrib-profile-chart-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+}
+.contrib-profile-chart-card {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid #d8c9ad;
+  background: #fbf5e9;
+  padding: 11px;
+}
+.contrib-profile-chart-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 7px 12px;
+  margin-bottom: 9px;
+}
+.contrib-profile-chart-head h3 {
+  margin-top: 3px;
+  font: 800 16px/1.2 var(--display-font);
+  letter-spacing: -.035em;
+  overflow-wrap: anywhere;
+}
+.contrib-profile-chart-head a {
+  color: #89551e;
+  font-size: 11px;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.contrib-profile-chart-image {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 7px;
+  border: 1px solid #e5d8c2;
+  background: #fffaf0;
+}
+.contrib-profile-chart-image img {
+  display: block;
+  width: 100%;
+  min-width: 490px;
+  max-width: none;
+  height: auto;
+  image-rendering: auto;
+}
+.contrib-profile-chart-missing {
+  border: 1px dashed #c9b895;
+  padding: 12px;
+  color: #625b4c;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.contrib-profile-chart-note {
+  margin-top: 7px;
+  color: #756951;
+  font: 9px/1.5 var(--mono-font);
+}
