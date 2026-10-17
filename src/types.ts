@@ -13,6 +13,7 @@ export type AppId =
   | "contact"
   | "resume"
   | "guestbook"
+  | "contributions"
   | "textfile";
 
 export interface Rect {
