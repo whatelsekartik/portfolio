@@ -16,6 +16,7 @@ const DESKTOP_APPS: AppId[] = [
   "about",
   "readme",
   "projects",
+  "contributions",
   "skills",
   "experience",
   "education",
@@ -25,7 +26,7 @@ const DESKTOP_APPS: AppId[] = [
   "resume",
 ];
 
-const DOCK_APPS: AppId[] = ["projects", "achievements", "education", "skills", "terminal"];
+const DOCK_APPS: AppId[] = ["projects", "contributions", "achievements", "education", "skills", "terminal"];
 
 const WindowBody = memo(
   function WindowBody({ win }: { win: WindowInstance }) {
@@ -105,12 +106,12 @@ export default function Desktop() {
               type="button"
               className="desktop-dock-item focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a96520]"
               onClick={() => openApp(id)}
-              aria-label={`Open ${APPS[id].label}`}
+              aria-label={"Open " + APPS[id].label}
               title={APPS[id].label}
             >
               <FileIcon kind={APPS[id].icon} className="h-10 w-10" />
               <span className="dock-tooltip">{APPS[id].label}</span>
-              <span className={`dock-running ${running ? "is-running" : ""}`} aria-hidden="true" />
+              <span className={"dock-running " + (running ? "is-running" : "")} aria-hidden="true" />
             </button>
           );
         })}
