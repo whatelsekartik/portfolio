@@ -402,6 +402,19 @@ export default function ContributionsApp() {
             const study = projectCaseStudies[project.id];
             const items = repoCounts[project.id] ?? [];
             const latest = items.slice().sort((a, b) => Date.parse(b.date) - Date.parse(a.date))[0];
+            const implementedEvidence = study.evidence.filter((item) => item.state === "built").slice(0, 2);
+            const cautionEvidence = study.evidence.find((item) => item.state === "verify")
+              ?? study.evidence.find((item) => item.state === "configured")
+              ?? study.evidence.find((item) => item.state === "design");
+            const featureEvidence = implementedEvidence.concat(
+              cautionEvidence && !implementedEvidence.includes(cautionEvidence) ? [cautionEvidence] : [],
+            );
+            const evidenceLabels: Record<string, string> = {
+              built: "Implemented in source",
+              configured: "Configured in code",
+              verify: "Needs verification",
+              design: "Design / target",
+            };
             return (
               <article className="contrib-project-card" key={project.id}>
                 <div className="contrib-project-topline">
@@ -414,6 +427,18 @@ export default function ContributionsApp() {
                   <strong>{items.length}</strong> observed linked items
                   {latest && <span>Latest: {formatDate(latest.date)}</span>}
                   {!latest && <span>No matching item in this recent sample</span>}
+                </div>
+                <div className="contrib-feature-evidence">
+                  <span className="editorial-meta">Feature evidence</span>
+                  {featureEvidence.map((evidence) => (
+                    <div className="contrib-feature-item" key={evidence.title}>
+                      <span className={"contrib-evidence-dot contrib-evidence-" + evidence.state} aria-hidden="true" />
+                      <div>
+                        <strong>{evidence.title}</strong>
+                        <span className={"contrib-evidence-label contrib-evidence-label-" + evidence.state}>{evidenceLabels[evidence.state]}</span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
                 <button type="button" onClick={() => openApp("project-detail", { id: project.id })}>Open evidence-led case study ↗</button>
                 <a href={project.repo} target="_blank" rel="noreferrer">Repository ↗</a>
