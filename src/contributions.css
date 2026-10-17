@@ -363,3 +363,37 @@
 @media (prefers-reduced-motion: reduce) {
   .contrib-loader { animation: none; }
 }
+
+
+.contrib-feature-evidence {
+  width: 100%;
+  border-top: 1px dashed #d8c9ad;
+  margin-top: 1px;
+  padding-top: 9px;
+}
+.contrib-feature-evidence > .editorial-meta { color: #89551e; }
+.contrib-feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin-top: 8px;
+}
+.contrib-evidence-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  flex: 0 0 7px;
+  margin-top: 5px;
+  border-radius: 50%;
+}
+.contrib-evidence-built { background: #647448; }
+.contrib-evidence-configured { background: #bd792f; }
+.contrib-evidence-verify { background: #94543e; }
+.contrib-evidence-design { background: #756951; }
+.contrib-feature-item > div { display: flex; min-width: 0; flex-direction: column; gap: 2px; }
+.contrib-feature-item strong { color: #29271f; font-size: 11px; line-height: 1.4; }
+.contrib-evidence-label { color: #625b4c; font-size: 10px; line-height: 1.4; }
+.contrib-evidence-label-built { color: #56633c; }
+.contrib-evidence-label-configured { color: #89551e; }
+.contrib-evidence-label-verify { color: #8c4b36; }
+.contrib-evidence-label-design { color: #756951; }
