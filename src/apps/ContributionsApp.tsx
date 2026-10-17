@@ -415,6 +415,23 @@ export default function ContributionsApp() {
   }, [hasSelectedContributionGraph, selectedGraphLogins, contributionGraphs, calendar, accountActivities]);
 
   const contributionTotal = Object.values(dayCounts).reduce((total, count) => total + count, 0);
+  const profileContributionTotals = useMemo(() => {
+    return Object.fromEntries(ACCOUNTS.map((account) => {
+      const total = (contributionGraphs[account.login] ?? [])
+        .filter((item) => item.date >= calendar.windowStartKey && item.date <= calendar.todayKey)
+        .reduce((sum, item) => sum + Math.max(0, Number(item.count) || 0), 0);
+      return [account.login, total];
+    })) as Record<(typeof ACCOUNTS)[number]["login"], number>;
+  }, [contributionGraphs, calendar]);
+  const loadedSelectedContributionProfiles = selectedGraphLogins.filter(
+    (login) => Array.isArray(contributionGraphs[login]),
+  );
+  const selectedContributionTotal = loadedSelectedContributionProfiles.reduce(
+    (sum, login) => sum + profileContributionTotals[login],
+    0,
+  );
+  const completeSelectedContributionTotal =
+    loadedSelectedContributionProfiles.length === selectedGraphLogins.length;
   const showProfileChartFallback =
     !contributionGraphLoading && (!hasSelectedContributionGraph || contributionTotal === 0);
 
@@ -452,14 +469,17 @@ export default function ContributionsApp() {
         </div>
         <div className="contrib-account-list">
           <button type="button" className={"contrib-account-button" + (accountFilter === "all" ? " is-active" : "")} onClick={() => setAccountFilter("all")}>
-            All accounts <span>{activities.length}</span>
+            All accounts <span>{!contributionGraphLoading && completeSelectedContributionTotal ? selectedContributionTotal.toLocaleString("en-IN") : "—"}</span>
           </button>
           {ACCOUNTS.map((account) => (
             <button key={account.login} type="button" className={"contrib-account-button" + (accountFilter === account.login ? " is-active" : "")} onClick={() => setAccountFilter(account.login)}>
-              {account.login} <span>{activities.filter((item) => item.account === account.login).length}</span>
+              {account.login} <span>{!contributionGraphLoading && Array.isArray(contributionGraphs[account.login]) ? profileContributionTotals[account.login].toLocaleString("en-IN") : "—"}</span>
             </button>
           ))}
         </div>
+        <p className="contrib-account-count-note">
+          Account badges show last-12-month contribution totals. The first tab sums the three profiles; an em dash means that profile calendar has not loaded.
+        </p>
         <div className="contrib-profile-links">
           {ACCOUNTS.map((account) => (
             <a key={account.login} href={account.url} target="_blank" rel="noreferrer">
@@ -479,15 +499,38 @@ export default function ContributionsApp() {
         </div>
         <div className="contrib-map-intro">
           <div>
-            <strong>{showProfileChartFallback ? "—" : contributionTotal.toLocaleString("en-IN")}</strong>
+            <strong>{showProfileChartFallback ? "—" : selectedContributionTotal.toLocaleString("en-IN")}</strong>
             <span>
               {showProfileChartFallback
                 ? "Structured calendar data unavailable; showing GitHub profile charts below"
-                : "profile contributions in this view"}
+                : accountFilter === "all"
+                  ? (completeSelectedContributionTotal
+                    ? "combined contributions across all three accounts"
+                    : "combined total from " + loadedSelectedContributionProfiles.length + " of " + selectedGraphLogins.length + " loaded accounts")
+                  : "contributions from " + accountFilter}
             </span>
           </div>
           <span className="contrib-period">{formatDate(calendar.windowStartKey)} — {formatDate(calendar.todayKey)}</span>
         </div>
+        {accountFilter === "all" && (
+          <div className="contrib-account-breakdown" aria-label="Contribution totals by account">
+            {ACCOUNTS.map((account) => {
+              const available = Array.isArray(contributionGraphs[account.login]);
+              return (
+                <div className="contrib-account-total" key={account.login}>
+                  <span>{account.login}</span>
+                  <strong>{contributionGraphLoading || !available ? "—" : profileContributionTotals[account.login].toLocaleString("en-IN")}</strong>
+                  <small>{available ? "contributions" : contributionGraphLoading ? "loading…" : "unavailable"}</small>
+                </div>
+              );
+            })}
+            <div className="contrib-account-total contrib-account-total-sum">
+              <span>Combined total</span>
+              <strong>{contributionGraphLoading || !completeSelectedContributionTotal ? "—" : selectedContributionTotal.toLocaleString("en-IN")}</strong>
+              <small>{completeSelectedContributionTotal ? "all 3 accounts" : "waiting for all 3 calendars"}</small>
+            </div>
+          </div>
+        )}
         <p className="contrib-explainer">
           Each square is a day from the selected GitHub profile calendar{accountFilter === "all" ? "s, combined across all three accounts" : ""}. Profile totals can include commits, pull requests, issues and other GitHub contributions. Use the account filter above to isolate a profile; activity-type filters apply to the source-linked timeline below.
         </p>
