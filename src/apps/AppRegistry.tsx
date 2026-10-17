@@ -10,6 +10,7 @@ const FinderApp = lazy(() => import("./FinderApp"));
 const TextFileApp = lazy(() => import("./TextFileApp"));
 const ProjectsApp = lazy(() => import("./ProjectsApp"));
 const ProjectDetailApp = lazy(() => import("./ProjectDetailApp"));
+const ContributionsApp = lazy(() => import("./ContributionsApp"));
 const SkillsApp = lazy(() => import("./SkillsApp"));
 const EducationApp = lazy(() => import("./EducationApp"));
 const AchievementsApp = lazy(() => import("./AchievementsApp"));
@@ -35,6 +36,8 @@ function content(win: WindowInstance) {
       return <ProjectsApp />;
     case "project-detail":
       return <ProjectDetailApp payload={win.payload} />;
+    case "contributions":
+      return <ContributionsApp />;
     case "skills":
       return <SkillsApp />;
     case "education":
