@@ -246,6 +246,7 @@ export default function ContributionsApp() {
   const [contributionGraphLoading, setContributionGraphLoading] = useState(true);
   const [contributionGraphUpdatedAt, setContributionGraphUpdatedAt] = useState<string | null>(null);
   const [contributionGraphRefresh, setContributionGraphRefresh] = useState(0);
+  const [failedProfileCharts, setFailedProfileCharts] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     let cancelled = false;
@@ -414,6 +415,8 @@ export default function ContributionsApp() {
   }, [hasSelectedContributionGraph, selectedGraphLogins, contributionGraphs, calendar, accountActivities]);
 
   const contributionTotal = Object.values(dayCounts).reduce((total, count) => total + count, 0);
+  const showProfileChartFallback =
+    !contributionGraphLoading && (!hasSelectedContributionGraph || contributionTotal === 0);
 
   const repoCounts = useMemo(() => {
     const counts: Record<string, ActivityItem[]> = {};
@@ -476,15 +479,19 @@ export default function ContributionsApp() {
         </div>
         <div className="contrib-map-intro">
           <div>
-            <strong>{contributionTotal.toLocaleString("en-IN")}</strong>
-            <span>{hasSelectedContributionGraph ? "profile contributions in this view" : "recent public activity items observed"}</span>
+            <strong>{showProfileChartFallback ? "—" : contributionTotal.toLocaleString("en-IN")}</strong>
+            <span>
+              {showProfileChartFallback
+                ? "Structured calendar data unavailable; showing GitHub profile charts below"
+                : "profile contributions in this view"}
+            </span>
           </div>
           <span className="contrib-period">{formatDate(calendar.windowStartKey)} — {formatDate(calendar.todayKey)}</span>
         </div>
         <p className="contrib-explainer">
           Each square is a day from the selected GitHub profile calendar{accountFilter === "all" ? "s, combined across all three accounts" : ""}. Profile totals can include commits, pull requests, issues and other GitHub contributions. Use the account filter above to isolate a profile; activity-type filters apply to the source-linked timeline below.
         </p>
-        <div className="contrib-heatmap-frame">
+        <div className={"contrib-heatmap-frame" + (showProfileChartFallback ? " contrib-heatmap-raw-hidden" : "")}>
           <div className="contrib-heatmap-scroll">
             <div className="contrib-weekdays" aria-hidden="true">
               <span></span><span>Mon</span><span></span><span>Wed</span><span></span><span>Fri</span><span></span>
@@ -527,6 +534,37 @@ export default function ContributionsApp() {
             <span className="contrib-muted">More</span>
             {!hasSelectedContributionGraph && <span className="contrib-unavailable-legend"><i />History unavailable</span>}
           </div>
+        </div>
+        {showProfileChartFallback && (
+          <div className="contrib-profile-chart-grid" aria-label="Live GitHub contribution charts">
+            {ACCOUNTS.filter((account) => selectedGraphLogins.includes(account.login)).map((account) => (
+              <article className="contrib-profile-chart-card" key={account.login}>
+                <div className="contrib-profile-chart-head">
+                  <div>
+                    <span className="editorial-meta">{account.label} account</span>
+                    <h3>{account.login}</h3>
+                  </div>
+                  <a href={account.url} target="_blank" rel="noreferrer">Open profile ↗</a>
+                </div>
+                {!failedProfileCharts[account.login] ? (
+                  <a className="contrib-profile-chart-image" href={account.url} target="_blank" rel="noreferrer" aria-label={"Open " + account.login + " GitHub profile"}>
+                    <img
+                      src={"https://ghchart.rshah.org/a96520/" + encodeURIComponent(account.login)}
+                      alt={"GitHub contribution calendar for " + account.login}
+                      loading="lazy"
+                      onError={() => setFailedProfileCharts((current) => ({ ...current, [account.login]: true }))}
+                    />
+                  </a>
+                ) : (
+                  <p className="contrib-profile-chart-missing">
+                    The embedded chart service could not load. Open the GitHub profile above to see its live contribution calendar.
+                  </p>
+                )}
+                <p className="contrib-profile-chart-note">Live profile chart · provided by GitHub-chart embed service</p>
+              </article>
+            ))}
+          </div>
+        )}
         </div>
         {contributionGraphLoading && (
           <div className="contrib-map-status" role="status"><span className="contrib-loader" />Loading year-long profile calendars…</div>
