@@ -28,6 +28,7 @@ export const APPS: Record<AppId, AppDef> = {
     height: 390,
     title: (p) => projects.find((x) => x.id === p?.id)?.name ?? "Project",
   },
+  contributions: { label: "Proof of Work", icon: "globe", width: 680, height: 720, minWidth: 320, minHeight: 380, title: () => "Proof of Work — GitHub" },
   skills: { label: "Skills.exe", icon: "skills", width: 500, height: 400 },
   education: { label: "Education", icon: "globe", width: 540, height: 450, minWidth: 320 },
   achievements: { label: "Achievements", icon: "award", width: 560, height: 620, minWidth: 320, minHeight: 360 },
