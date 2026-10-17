@@ -14,7 +14,7 @@ const rows = [
   { label: "LinkedIn", value: pretty(socials.linkedin), href: socials.linkedin },
   { label: "GitHub", value: pretty(socials.github), href: socials.github },
   { label: "Instagram", value: pretty(socials.instagram), href: socials.instagram },
-];
+].filter((row) => Boolean(row.value));
 
 export default function ContactApp() {
   const [name, setName] = useState("");

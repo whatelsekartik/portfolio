@@ -19,10 +19,10 @@ export const profile = {
 };
 
 export const socials = {
-  email: "",
-  phone: "",
+  email: "whatelsekartik@gmail.com",
+  phone: "7066622276",
   github: "https://github.com/whatelsekartik",
-  linkedin: "",
+  linkedin: "https://www.linkedin.com/in/whatelsekartik/",
   instagram: "",
 };
 
