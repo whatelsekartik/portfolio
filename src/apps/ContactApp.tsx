@@ -13,6 +13,7 @@ const rows = [
   { label: "Phone", value: socials.phone, href: `tel:${socials.phone.replace(/[^+\d]/g, "")}` },
   { label: "LinkedIn", value: pretty(socials.linkedin), href: socials.linkedin },
   { label: "GitHub", value: pretty(socials.github), href: socials.github },
+  { label: "Hardcover", value: pretty(socials.hardcover), href: socials.hardcover },
   { label: "Instagram", value: pretty(socials.instagram), href: socials.instagram },
 ].filter((row) => Boolean(row.value));
 
