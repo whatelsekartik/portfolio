@@ -596,3 +596,16 @@ input, textarea, select, button { font-family: inherit; }
     animation: none !important;
   }
 }
+
+
+/* Mobile ergonomics: avoid double-tap zoom on desktop icons and controls.
+   Pinch-to-zoom remains available to visitors who need it. */
+html { touch-action: manipulation; }
+button, a { touch-action: manipulation; }
+
+/* The browser chrome on phones changes the usable viewport as it appears/disappears. */
+.app-viewport {
+  height: 100vh;
+  height: 100dvh;
+  width: 100vw;
+}

@@ -16,6 +16,7 @@ const DESKTOP_APPS: AppId[] = [
   "about",
   "readme",
   "projects",
+  "contributions",
   "skills",
   "experience",
   "education",
@@ -25,7 +26,7 @@ const DESKTOP_APPS: AppId[] = [
   "resume",
 ];
 
-const DOCK_APPS: AppId[] = ["projects", "achievements", "education", "skills", "terminal"];
+const DOCK_APPS: AppId[] = ["projects", "contributions", "achievements", "education", "skills", "terminal"];
 
 const WindowBody = memo(
   function WindowBody({ win }: { win: WindowInstance }) {
@@ -105,12 +106,12 @@ export default function Desktop() {
               type="button"
               className="desktop-dock-item focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a96520]"
               onClick={() => openApp(id)}
-              aria-label={`Open ${APPS[id].label}`}
+              aria-label={"Open " + APPS[id].label}
               title={APPS[id].label}
             >
               <FileIcon kind={APPS[id].icon} className="h-10 w-10" />
               <span className="dock-tooltip">{APPS[id].label}</span>
-              <span className={`dock-running ${running ? "is-running" : ""}`} aria-hidden="true" />
+              <span className={"dock-running " + (running ? "is-running" : "")} aria-hidden="true" />
             </button>
           );
         })}
@@ -122,7 +123,7 @@ export default function Desktop() {
         </Window>
       ))}
 
-      <div className="pointer-events-none absolute bottom-2 left-3 rounded border border-[#8c8068] bg-[#fffaf0]/95 px-2 py-1 text-[13px] font-medium text-[#29271f] max-sm:hidden">
+      <div className="pointer-events-none absolute bottom-2 left-3 rounded border border-[#8c8068] bg-[#fffaf0]/95 px-2 py-1 text-[13px] font-medium text-[#29271f] max-sm:bottom-[64px] max-sm:left-1/2 max-sm:right-auto max-sm:-translate-x-1/2 max-sm:whitespace-nowrap max-sm:px-2 max-sm:py-0.5 max-sm:text-[10px]">
         {coarse
           ? "Tap an icon to open it"
           : "Double-click an icon to open it · drag to snap · ⌘/Ctrl+W close · ⌘/Ctrl+M minimize"}

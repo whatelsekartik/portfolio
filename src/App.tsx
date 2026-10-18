@@ -15,7 +15,7 @@ export default function App() {
   }, []);
 
   return (
-    <div className="h-screen w-screen overflow-hidden">
+    <div className="app-viewport w-screen overflow-hidden">
       {/* inert: nothing on the desktop can be clicked or tabbed to until the boot screen is done */}
       <div className="h-full w-full" inert={!booted}>
         <SystemProvider customWallpaperSrc={assets.wallpaperSrc}>
