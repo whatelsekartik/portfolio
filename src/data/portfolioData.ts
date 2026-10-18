@@ -23,6 +23,7 @@ export const socials = {
   phone: "7066622276",
   github: "https://github.com/whatelsekartik",
   linkedin: "https://www.linkedin.com/in/whatelsekartik/",
+  hardcover: "https://hardcover.app/@whatelsekartik",
   instagram: "",
 };
 
