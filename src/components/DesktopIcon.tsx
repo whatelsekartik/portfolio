@@ -22,7 +22,7 @@ export default function DesktopIcon({ label, icon, onOpen }: DesktopIconProps) {
       onDoubleClick={onOpen}
       onBlur={() => setSelected(false)}
       onKeyDown={(e) => e.key === "Enter" && onOpen()}
-      className="group flex w-[104px] min-w-0 flex-col items-center gap-1 p-0.5 outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a96520] max-sm:w-[88px]"
+      className="group touch-manipulation flex w-[104px] min-w-0 flex-col items-center gap-1 p-0.5 outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a96520] max-sm:w-[88px]"
     >
       <div className={cn("h-12 w-12 shrink-0 transition-transform duration-150 group-hover:-translate-y-0.5", selected && "brightness-[.55]")}>
         {icon}
