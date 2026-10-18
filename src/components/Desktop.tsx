@@ -123,7 +123,7 @@ export default function Desktop() {
         </Window>
       ))}
 
-      <div className="pointer-events-none absolute bottom-2 left-3 rounded border border-[#8c8068] bg-[#fffaf0]/95 px-2 py-1 text-[13px] font-medium text-[#29271f] max-sm:hidden">
+      <div className="pointer-events-none absolute bottom-2 left-3 rounded border border-[#8c8068] bg-[#fffaf0]/95 px-2 py-1 text-[13px] font-medium text-[#29271f] max-sm:bottom-[64px] max-sm:left-1/2 max-sm:right-auto max-sm:-translate-x-1/2 max-sm:whitespace-nowrap max-sm:px-2 max-sm:py-0.5 max-sm:text-[10px]">
         {coarse
           ? "Tap an icon to open it"
           : "Double-click an icon to open it · drag to snap · ⌘/Ctrl+W close · ⌘/Ctrl+M minimize"}
