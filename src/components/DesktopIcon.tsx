@@ -18,7 +18,14 @@ export default function DesktopIcon({ label, icon, onOpen }: DesktopIconProps) {
       type="button"
       aria-label={`Open ${label}`}
       aria-pressed={selected}
-      onClick={() => (coarse ? onOpen() : setSelected(true))}
+      onPointerUp={(e) => {
+        // Open on an actual touch even when the browser reports a fine primary pointer
+        // (for example, a phone/tablet with a connected mouse or trackpad).
+        if (e.pointerType === "touch") onOpen();
+      }}
+      onClick={() => {
+        if (!coarse) setSelected(true);
+      }}
       onDoubleClick={onOpen}
       onBlur={() => setSelected(false)}
       onKeyDown={(e) => e.key === "Enter" && onOpen()}
