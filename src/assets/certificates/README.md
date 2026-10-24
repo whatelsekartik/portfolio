@@ -1,19 +1,15 @@
-# Certificate images
+# Certificate wall assets
 
-Drop certificate scans or screenshots into this folder. The Achievements app discovers these files automatically during the next Vite build.
+Copy these files into the repository at `src/assets/certificates/`.
+The Achievements gallery discovers `.webp` files in this folder automatically at build time.
 
-Supported file types: `.jpg`, `.jpeg`, `.png`, `.webp`, and `.avif`.
+- `certificate1.webp` — GitHub Hands-On Workshop
+- `certificate2.webp` — WCC Launchpad 30
+- `certificate3.webp` — Promptify / Anveshan 3.0
+- `certificate4.webp` — PRAXIS 2026 / Storyverse
+- `certificate5.webp` — CodeSprint 2026
+- `certificate6.webp` — Code Variant, Round 1 Idea Submission
 
-Suggested names:
+WCC verification: https://wecodecoders.in/verify/L30-7J4M8C
 
-- `certificate1.jpeg`
-- `certificate2.jpeg`
-- `certificate3.jpeg`
-
-Numeric names are sorted naturally. You do not need to edit a file list when you add another image.
-
-## Optional display details
-
-For a custom certificate title, issuer, date, or verification URL, add an entry keyed by the exact filename in `CERTIFICATE_DETAILS` near the top of `src/apps/AchievementsApp.tsx`. When no metadata is supplied, the filename is used to derive a readable title.
-
-Keep the images optimized for the web. Do not commit private verification codes or other sensitive information visible on a certificate.
+Note: the Code Variant source currently contains the placeholder “Insert Team Name”; use a corrected certificate if the organizer can issue one.
