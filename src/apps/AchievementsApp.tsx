@@ -28,13 +28,36 @@ const certificateAssets = import.meta.glob(
 
 /** Optional human-friendly metadata, keyed by the exact image filename. */
 const CERTIFICATE_DETAILS: Record<string, CertificateDetails> = {
-  // Example:
-  // "certificate1.jpeg": {
-  //   title: "Introduction to ...",
-  //   issuer: "Issuing organisation",
-  //   date: "2026",
-  //   credentialUrl: "https://...",
-  // },
+  "certificate1.webp": {
+    title: "GitHub Hands-On Workshop",
+    issuer: "Microsoft Learning Student Chapter · PCCOE IEEE Branch",
+    date: "1 Oct 2026",
+  },
+  "certificate2.webp": {
+    title: "WCC Launchpad 30",
+    issuer: "WeCodeCoders · National Online Hackathon",
+    date: "4–5 Oct 2026",
+    credentialUrl: "https://wecodecoders.in/verify/L30-7J4M8C",
+  },
+  "certificate3.webp": {
+    title: "Promptify · Anveshan 3.0",
+    issuer: "PCCOE · Computer Engineering (Regional Language)",
+    date: "9–10 Oct 2026",
+  },
+  "certificate4.webp": {
+    title: "PRAXIS 2026 · Storyverse",
+    issuer: "MLSC · Department of Information Technology, PCCOE",
+    date: "9–10 Oct 2026",
+  },
+  "certificate5.webp": {
+    title: "CodeSprint 2026",
+    issuer: "RANKUP · Certificate ID RNK-CS26-118",
+    date: "21 Oct 2026",
+  },
+  "certificate6.webp": {
+    title: "Code Variant · Round 1 Idea Submission",
+    issuer: "Code Variant",
+  },
 };
 
 function titleFromFilename(filename: string): string {
