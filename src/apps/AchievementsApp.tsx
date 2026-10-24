@@ -171,6 +171,52 @@ export default function AchievementsApp() {
           </div>
         </header>
 
+        <section className="cert-commit-card" aria-labelledby="cert-commit-title">
+          <div className="cert-commit-copy">
+            <span className="cert-commit-kicker">GitHub / Commit leaderboard</span>
+            <h2 id="cert-commit-title">A little proof of consistency.</h2>
+            <p>
+              Ranked in the top 11% by GitHub commits, with 258 all-time commits.
+            </p>
+            <a
+              className="cert-commit-profile-link"
+              href="https://ghcommits.com/u/whatelsekartik"
+              target="_blank"
+              rel="noreferrer"
+            >
+              View commit profile <span aria-hidden="true">↗</span>
+            </a>
+            <a
+              className="cert-commit-badge"
+              href="https://ghcommits.com/u/whatelsekartik"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Open the GitHub commits profile for whatelsekartik"
+            >
+              <img
+                src="https://ghcommits.com/api/badge/whatelsekartik.svg"
+                alt="GitHub Commits badge for whatelsekartik"
+                loading="lazy"
+                decoding="async"
+              />
+            </a>
+          </div>
+          <div className="cert-commit-metrics" aria-label="GitHub commit ranking statistics">
+            <div className="cert-commit-metric">
+              <strong>#368</strong>
+              <span>Rank</span>
+            </div>
+            <div className="cert-commit-metric">
+              <strong>Top 11%</strong>
+              <span>By commits</span>
+            </div>
+            <div className="cert-commit-metric">
+              <strong>258</strong>
+              <span>All-time commits</span>
+            </div>
+          </div>
+        </section>
+
         {certificates.length > 0 ? (
           <section className="cert-gallery" aria-label="Certificate wall">
             {certificates.map((certificate, index) => {
