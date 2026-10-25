@@ -78,7 +78,7 @@ export default function Desktop() {
       <div className="desktop-atmosphere" aria-hidden="true" />
       <MenuBar />
 
-      <div className="absolute top-8 right-2 bottom-24 flex flex-col flex-wrap-reverse content-start gap-x-0 gap-y-0 max-sm:right-1 max-sm:left-1 max-sm:bottom-44 max-sm:grid max-sm:grid-cols-3 max-sm:gap-y-2 max-sm:content-start max-sm:justify-items-center max-sm:overflow-y-auto max-sm:overflow-x-hidden max-sm:overscroll-contain">
+      <div className="desktop-icon-grid absolute top-8 right-2 bottom-24 flex flex-col flex-wrap-reverse content-start gap-x-0 gap-y-0 max-sm:right-1 max-sm:left-1 max-sm:bottom-44 max-sm:grid max-sm:grid-cols-3 max-sm:gap-y-2 max-sm:content-start max-sm:justify-items-center max-sm:overflow-y-auto max-sm:overflow-x-hidden max-sm:overscroll-contain">
         {DESKTOP_APPS.map((id) => (
           <DesktopIcon
             key={id}
