@@ -137,7 +137,7 @@ export default function MenuBar() {
             {openIndex === i && (
               <div
                 role="menu"
-                className="absolute top-[22px] left-0 min-w-[200px] border-2 border-black bg-white py-0.5 shadow-[3px_3px_0_rgba(0,0,0,0.45)]"
+                className="menu-dropdown absolute top-[22px] left-0 min-w-[200px] border-2 border-black bg-white py-0.5 shadow-[3px_3px_0_rgba(0,0,0,0.45)]"
               >
                 {menu.items.map((item, j) =>
                   item.divider ? (

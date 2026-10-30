@@ -55,8 +55,9 @@ const CERTIFICATE_DETAILS: Record<string, CertificateDetails> = {
     date: "21 Oct 2026",
   },
   "certificate6.webp": {
-    title: "Code Variant · Round 1 Idea Submission",
-    issuer: "Code Variant",
+    title: "Code Variant · Top 50 Achievers",
+    issuer: "Code Variant · Build 01",
+    date: "28 Oct 2026",
   },
 };
 
