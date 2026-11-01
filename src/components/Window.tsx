@@ -163,7 +163,9 @@ export default function Window({ win, children }: WindowProps) {
       tabIndex={-1}
       data-window-id={win.id}
       className={cn(
-        "absolute flex min-w-0 flex-col border-2 border-[#302d25] bg-[#f0e6d3] shadow-[4px_4px_0_rgba(41,39,31,0.24)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a96520]",
+        "portfolio-window absolute flex min-w-0 flex-col border-2 border-[#302d25] bg-[#f0e6d3] shadow-[4px_4px_0_rgba(41,39,31,0.24)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a96520]",
+        isActive && "is-active",
+        shaded && "is-minimized",
         window.innerWidth < MOBILE_BREAKPOINT && "shadow-none"
       )}
       style={{

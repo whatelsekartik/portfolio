@@ -34,7 +34,7 @@ export default function BootScreen({ assets, onDone }: { assets: BootAssets; onD
         fading ? "opacity-0" : "opacity-100"
       } ${ready ? "cursor-pointer" : "cursor-progress"}`}
     >
-      <IconHappyMac className="h-24 w-24" />
+      <IconHappyMac className="boot-logo-mark h-24 w-24" />
       <p className="font-chicago text-[20px] text-[#29271f]">Welcome to Macintosh</p>
 
       <div className="h-3 w-56 overflow-hidden border-2 border-[#29271f] bg-[#fbf7ee] p-[1px]">
