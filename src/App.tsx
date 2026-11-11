@@ -22,6 +22,18 @@ export default function App() {
       : `${profile.name} — Portfolio`;
   }, [recruiterView]);
 
+  // The desktop uses a fixed viewport and deliberately locks page scrolling.
+  // Recruiter mode is a conventional document, so restore normal page flow.
+  useEffect(() => {
+    document.documentElement.classList.toggle("recruiter-mode", recruiterView);
+    document.body.classList.toggle("recruiter-mode", recruiterView);
+    if (recruiterView) window.scrollTo(0, 0);
+    return () => {
+      document.documentElement.classList.remove("recruiter-mode");
+      document.body.classList.remove("recruiter-mode");
+    };
+  }, [recruiterView]);
+
   // Keep the view mode in the URL so recruiter mode can be shared directly
   // and browser Back/Forward restores the previous experience.
   useEffect(() => {
