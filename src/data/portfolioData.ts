@@ -203,7 +203,7 @@ export const education = {
     period: "2026",
     details: ["Class XII · 82% overall", "Mathematics · 91/100"],
   }],
-  certifications: [],
+  certifications: [] as Array<{ name: string; issuer: string; year: string }> ,
   achievements: [
     "JEE Main Mathematics: 96.5 percentile (2026).",
     "MHT CET: 98.98 percentile (2026).",
