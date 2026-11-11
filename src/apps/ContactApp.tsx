@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FileIcon } from "../components/Icons";
 import { profile, socials } from "../data/portfolioData";
+import { useToast } from "../context/ToastContext";
 
 const btn =
   "border-2 border-black bg-[#dfdfdf] px-2 py-0.5 text-[13px] shadow-[2px_2px_0_rgba(0,0,0,0.6)] hover:bg-black hover:text-white";
@@ -18,6 +19,7 @@ const rows = [
 ].filter((row) => Boolean(row.value));
 
 export default function ContactApp() {
+  const { showToast } = useToast();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
@@ -29,8 +31,9 @@ export default function ContactApp() {
       await navigator.clipboard.writeText(value);
       setCopied(label);
       setTimeout(() => setCopied((c) => (c === label ? null : c)), 1500);
+      showToast({ title: "Copied to clipboard", description: label, tone: "success" });
     } catch {
-      /* clipboard can be blocked; the link still works */
+      showToast({ title: "Couldn't copy", description: "Clipboard access was blocked by this browser.", tone: "error" });
     }
   }
 
@@ -40,6 +43,11 @@ export default function ContactApp() {
     const body = encodeURIComponent(`${message}\n\n— ${name} (${email})`);
     window.location.href = `mailto:${socials.email}?subject=${subject}&body=${body}`;
     setSent(true);
+    showToast({
+      title: "Your mail app is opening",
+      description: "The message is not sent until you review and send it in your mail app.",
+      tone: "info",
+    });
   }
 
   return (
@@ -64,7 +72,7 @@ export default function ContactApp() {
             >
               {r.value}
             </a>
-            <button type="button" onClick={() => copy(r.label, r.value)} className="border border-black bg-[#efefef] px-1.5 text-[12px] hover:bg-black hover:text-white">
+            <button type="button" aria-label={`Copy ${r.label}`} onClick={() => copy(r.label, r.value)} className="border border-black bg-[#efefef] px-1.5 text-[12px] hover:bg-black hover:text-white">
               {copied === r.label ? "Copied" : "Copy"}
             </button>
           </li>

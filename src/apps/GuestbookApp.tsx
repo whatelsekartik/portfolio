@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import { BACKEND_URL, backendGet, backendPost } from "../utils/backend";
+import { useToast } from "../context/ToastContext";
 
 interface Entry {
   name: string;
@@ -55,6 +56,7 @@ function secondsLeft(): number {
 }
 
 export default function GuestbookApp() {
+  const { showToast } = useToast();
   const [entries, setEntries] = useState<Entry[]>(ENDPOINT ? loadCached : loadLocal);
   const [loading, setLoading] = useState(Boolean(ENDPOINT));
   const [loadError, setLoadError] = useState(false);
@@ -80,11 +82,14 @@ export default function GuestbookApp() {
         /* ignore */
       }
     } catch {
-      if (alive.current) setLoadError(true);
+      if (alive.current) {
+        setLoadError(true);
+        showToast({ title: "Guestbook unavailable", description: "Messages could not be refreshed. Try again shortly.", tone: "error" });
+      }
     } finally {
       if (alive.current) setLoading(false);
     }
-  }, []);
+  }, [showToast]);
 
   useEffect(() => {
     alive.current = true;
@@ -126,13 +131,16 @@ export default function GuestbookApp() {
       setName("");
       setMessage("");
       setNotice({ text: "Thanks for signing!" });
+      showToast({ title: "Thanks for signing", description: "Your message has been added to the guestbook.", tone: "success" });
       try {
         localStorage.setItem(LAST_POST_KEY, String(Date.now()));
       } catch {
         /* ignore */
       }
     } catch (err) {
-      setNotice({ text: err instanceof Error ? err.message : "Could not save your message. Try again.", bad: true });
+      const errorMessage = err instanceof Error ? err.message : "Could not save your message. Try again.";
+      setNotice({ text: errorMessage, bad: true });
+      showToast({ title: "Couldn't save your message", description: errorMessage, tone: "error" });
     } finally {
       setSending(false);
     }
@@ -187,7 +195,7 @@ export default function GuestbookApp() {
             {message.length}/{MAX_MESSAGE}
           </span>
           {notice && (
-            <span role="status" className={`text-[12px] ${notice.bad ? "text-[#b00020]" : "text-[#1a6b1a]"}`}>
+            <span role={notice.bad ? "alert" : "status"} aria-live={notice.bad ? "assertive" : "polite"} className={`text-[12px] ${notice.bad ? "text-[#b00020]" : "text-[#1a6b1a]"}`}>
               {notice.text}
             </span>
           )}
