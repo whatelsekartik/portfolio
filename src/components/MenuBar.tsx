@@ -63,7 +63,7 @@ function ShortcutGuideDialog({open,onClose}:{open:boolean;onClose:()=>void}){
 }
 
 
-export default function MenuBar() {
+export default function MenuBar({ onOpenRecruiterView }: { onOpenRecruiterView: () => void }) {
   const { windows, activeWindowId, closeWindow } = useWindowManager();
   const { wallpaperId, setWallpaperId, shutDown, customWallpaperSrc } = useSystem();
   const openApp = useOpenApp();
@@ -97,6 +97,8 @@ export default function MenuBar() {
     {
       label: "",
       items: [
+        { label: "Recruiter View ↗", action: onOpenRecruiterView },
+        DIVIDER,
         { label: "About This Macintosh", action: () => openApp("about") },
         DIVIDER,
         { label: "Terminal.exe", action: () => openApp("terminal") },
@@ -216,10 +218,11 @@ export default function MenuBar() {
       </div>
 
       <div className="flex items-center gap-3 pr-2 max-sm:hidden">
+        <button type="button" onClick={onOpenRecruiterView} className="rounded border border-black/35 px-2 py-0 text-[11px] hover:bg-black hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a96520]">Recruiter view ↗</button>
         <span>{now.toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" })}</span>
         <span>{now.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</span>
       </div>
-      <div className="pr-2 sm:hidden">{now.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</div>
+      <div className="flex items-center gap-2 pr-2 sm:hidden"><button type="button" onClick={onOpenRecruiterView} className="rounded border border-black/35 px-1.5 text-[10px]">CV ↗</button><span>{now.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</span></div>
       <ShortcutGuideDialog open={shortcutsOpen} onClose={() => setShortcutsOpen(false)} />
     </div>
   );
