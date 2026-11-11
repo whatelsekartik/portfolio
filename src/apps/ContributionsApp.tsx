@@ -268,7 +268,9 @@ export default function ContributionsApp() {
         .sort((a, b) => Date.parse(b.date) - Date.parse(a.date)));
       const nextErrors: Record<string, string> = {};
       for (const result of results) {
-        if ("error" in result) nextErrors[result.login] = result.error;
+        if ("error" in result && typeof result.error === "string") {
+          nextErrors[result.login] = result.error;
+        }
       }
       setLoadErrors(nextErrors);
       setLoadedAt(new Date());
