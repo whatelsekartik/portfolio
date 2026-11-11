@@ -21,6 +21,21 @@
 * { box-sizing: border-box; }
 html, body, #root { height: 100%; }
 
+/* The desktop is a fixed, non-scrolling workspace; recruiter mode is a
+   conventional long-form document and must own the page scroll instead. */
+html.recruiter-mode,
+body.recruiter-mode {
+  height: auto;
+  min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+html.recruiter-mode #root {
+  height: auto;
+  min-height: 100vh;
+  overflow: visible;
+}
+
 body {
   margin: 0;
   overflow: hidden;
