@@ -29,13 +29,54 @@ function useClock() {
 
 const DIVIDER: MenuItem = { divider: true, label: "" };
 
-export default function MenuBar() {
+function ShortcutGuideDialog({open,onClose}:{open:boolean;onClose:()=>void}){
+  const ref=useRef<HTMLDialogElement>(null);
+  useEffect(()=>{
+    const dialog=ref.current;if(!dialog)return;
+    if(open&&!dialog.open)dialog.showModal();else if(!open&&dialog.open)dialog.close();
+  },[open]);
+  const rows=[
+    ["⌘ / Ctrl + W","Close the active window"],
+    ["⌘ / Ctrl + M","Roll up or restore the active window"],
+    ["F1","Open this shortcut guide"],
+    ["Tab","Complete terminal commands or file names"],
+    ["↑ / ↓","Browse terminal command history"],
+    ["Ctrl + L","Clear terminal output"],
+    ["Drag title bar","Move a window; drag near an edge to snap"],
+    ["Resize handle","Focus the bottom-right handle and use arrow keys"],
+    ["Double-click title bar","Roll up or restore a window"],
+  ];
+  return <dialog ref={ref} className="shortcut-guide" aria-labelledby="shortcut-guide-title" onClose={onClose} onCancel={onClose}
+    onClick={event=>{if(event.target===event.currentTarget)onClose();}}>
+    <div className="shortcut-guide-inner">
+      <div className="flex items-start justify-between gap-4 border-b border-[#d8c9ad] pb-3">
+        <div><p className="editorial-meta text-[#89551e]">System help / navigation</p>
+          <h2 id="shortcut-guide-title" className="font-display mt-1 text-[26px] tracking-[-0.05em] text-[#29271f]">Keyboard shortcuts</h2>
+          <p className="mt-1 text-[12px] leading-relaxed text-[#625b4c]">A quick guide to getting around this little desktop.</p>
+        </div>
+        <button type="button" onClick={onClose} className="shortcut-guide-close" aria-label="Close keyboard shortcuts">×</button>
+      </div>
+      <dl className="shortcut-guide-list">{rows.map(([keys,description])=><div key={keys} className="shortcut-guide-row"><dt><kbd>{keys}</kbd></dt><dd>{description}</dd></div>)}</dl>
+      <p className="mt-3 border-t border-dashed border-[#d8c9ad] pt-3 text-[10px] text-[#756951]">On touch screens, tap an icon to open it. Dragging and hover effects are desktop-only.</p>
+    </div>
+  </dialog>;
+}
+
+
+export default function MenuBar({ onOpenRecruiterView }: { onOpenRecruiterView: () => void }) {
   const { windows, activeWindowId, closeWindow } = useWindowManager();
   const { wallpaperId, setWallpaperId, shutDown, customWallpaperSrc } = useSystem();
   const openApp = useOpenApp();
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const now = useClock();
+
+  useEffect(() => {
+    function onHelpKey(e: KeyboardEvent) { if (e.key === "F1") { e.preventDefault(); setShortcutsOpen(true); } }
+    window.addEventListener("keydown", onHelpKey);
+    return () => window.removeEventListener("keydown", onHelpKey);
+  }, []);
 
   useEffect(() => {
     function onDown(e: PointerEvent) {
@@ -56,6 +97,8 @@ export default function MenuBar() {
     {
       label: "",
       items: [
+        { label: "Recruiter View ↗", action: onOpenRecruiterView },
+        DIVIDER,
         { label: "About This Macintosh", action: () => openApp("about") },
         DIVIDER,
         { label: "Terminal.exe", action: () => openApp("terminal") },
@@ -113,6 +156,13 @@ export default function MenuBar() {
           })),
       ],
     },
+    {
+      label: "Help",
+      items: [
+        { label: "Keyboard Shortcuts…", action: () => setShortcutsOpen(true) },
+        { label: "Open Terminal.exe", action: () => openApp("terminal") },
+      ],
+    },
   ];
 
   return (
@@ -168,10 +218,12 @@ export default function MenuBar() {
       </div>
 
       <div className="flex items-center gap-3 pr-2 max-sm:hidden">
+        <button type="button" onClick={onOpenRecruiterView} className="rounded border border-black/35 px-2 py-0 text-[11px] hover:bg-black hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a96520]">Recruiter view ↗</button>
         <span>{now.toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" })}</span>
         <span>{now.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</span>
       </div>
-      <div className="pr-2 sm:hidden">{now.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</div>
+      <div className="flex items-center gap-2 pr-2 sm:hidden"><button type="button" onClick={onOpenRecruiterView} className="rounded border border-black/35 px-1.5 text-[10px]">CV ↗</button><span>{now.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</span></div>
+      <ShortcutGuideDialog open={shortcutsOpen} onClose={() => setShortcutsOpen(false)} />
     </div>
   );
 }

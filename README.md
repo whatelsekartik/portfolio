@@ -120,3 +120,15 @@ Asset paths are relative (`base: "./"`), so the same build works for a project p
   right-hand box (or double-click the title bar).
 - On touch devices a single tap opens icons and windows open full-screen.
 - Add a link-preview image by adding an `og:image` tag in `index.html` (there's a comment showing where).
+
+
+## Desktop navigation and workspace
+
+- The desktop saves open windows, positions, sizes, roll-up state and the last active window in this browser. Saved workspace data stays on the visitor's device.
+- App URLs use static-host-compatible hash routes. Share an app with `/#/app/contact`, or a project case study with `/#/projects/campus-plus`; opening the link launches the relevant window.
+- Use **Help > Keyboard Shortcuts** or press **F1** for the shortcut guide.
+- In Terminal.exe, `current` shows project status and next steps, `shortcuts` lists navigation keys, and `copy github`, `copy email`, `copy phone` or `copy portfolio` copy common details.
+
+## Quality checks
+
+Run `npm run check` before submitting changes. It performs a strict TypeScript check followed by a production Vite build. Pull requests run the same check in GitHub Actions.

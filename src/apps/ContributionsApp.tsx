@@ -67,11 +67,6 @@ interface GitHubContributionDay {
   level?: number;
 }
 
-interface GitHubContributionResponse {
-  total?: Record<string, number>;
-  contributions?: GitHubContributionDay[];
-}
-
 interface ContributionCalendarResponse {
   accounts?: Record<string, {
     total?: number;
@@ -247,6 +242,45 @@ export default function ContributionsApp() {
   const [contributionGraphUpdatedAt, setContributionGraphUpdatedAt] = useState<string | null>(null);
   const [contributionGraphRefresh, setContributionGraphRefresh] = useState(0);
   const [failedProfileCharts, setFailedProfileCharts] = useState<Record<string, boolean>>({});
+
+  // Recent public events feed the observed activity totals and timeline. Each
+  // account fails independently so one rate-limited profile does not hide the rest.
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+
+    async function loadActivity() {
+      const results = await Promise.all(ACCOUNTS.map(async (account) => {
+        try {
+          const events = await loadPublicEvents(account.login);
+          return { login: account.login, activities: extractActivities(account.login, events) };
+        } catch (error) {
+          return {
+            login: account.login,
+            activities: [] as ActivityItem[],
+            error: error instanceof Error ? error.message : "Could not load this public activity feed.",
+          };
+        }
+      }));
+
+      if (cancelled) return;
+      setActivities(results.flatMap((result) => result.activities)
+        .sort((a, b) => Date.parse(b.date) - Date.parse(a.date)));
+      const nextErrors: Record<string, string> = {};
+      for (const result of results) {
+        if ("error" in result && typeof result.error === "string") {
+          nextErrors[result.login] = result.error;
+        }
+      }
+      setLoadErrors(nextErrors);
+      setLoadedAt(new Date());
+    }
+
+    void loadActivity().finally(() => {
+      if (!cancelled) setLoading(false);
+    });
+    return () => { cancelled = true; };
+  }, [refreshKey]);
 
   useEffect(() => {
     let cancelled = false;

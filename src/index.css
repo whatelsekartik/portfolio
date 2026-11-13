@@ -21,6 +21,21 @@
 * { box-sizing: border-box; }
 html, body, #root { height: 100%; }
 
+/* The desktop is a fixed, non-scrolling workspace; recruiter mode is a
+   conventional long-form document and must own the page scroll instead. */
+html.recruiter-mode,
+body.recruiter-mode {
+  height: auto;
+  min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+html.recruiter-mode #root {
+  height: auto;
+  min-height: 100vh;
+  overflow: visible;
+}
+
 body {
   margin: 0;
   overflow: hidden;
@@ -1189,3 +1204,59 @@ button, a { touch-action: manipulation; }
   }
   .portfolio-window { transition: none !important; }
 }
+
+
+/* Portfolio product details: current workbench, keyboard help and contextual toasts. */
+.current-build-card { border-left: 3px solid #a96520; }
+.shortcut-guide {
+  width: min(92vw, 520px); max-width: 92vw; max-height: min(84dvh, 720px);
+  overflow: auto; margin: auto; border: 1px solid #29271f;
+  background: #fffaf0; color: #29271f; padding: 0;
+  box-shadow: 0 22px 70px rgba(41,39,31,.28);
+}
+.shortcut-guide::backdrop { background: rgba(25,23,18,.58); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+.shortcut-guide-inner { padding: clamp(14px,3vw,22px); }
+.shortcut-guide-close {
+  display: grid; width: 32px; height: 32px; flex: 0 0 32px; place-items: center;
+  border: 1px solid #c9b895; background: #f1e8d6; color: #29271f; font-size: 22px; line-height: 1;
+}
+.shortcut-guide-close:hover { border-color: #a96520; background: #e7ad5a; }
+.shortcut-guide-list { display: flex; flex-direction: column; margin-top: 12px; }
+.shortcut-guide-row {
+  display: grid; grid-template-columns: minmax(118px,.8fr) minmax(0,1.2fr);
+  align-items: center; gap: 12px; border-bottom: 1px solid #e8deca; padding: 9px 0;
+}
+.shortcut-guide-row kbd {
+  display: inline-block; width: fit-content; border: 1px solid #c9b895;
+  background: #f8f0e1; padding: 3px 6px; color: #514c40; font: 9px/1.5 var(--mono-font);
+}
+.shortcut-guide-row dd { color: #514c40; font-size: 11px; line-height: 1.5; }
+.toast-viewport {
+  position: fixed; z-index: 200000; right: 18px; bottom: 18px;
+  display: flex; width: min(360px,calc(100vw - 28px)); flex-direction: column; gap: 8px;
+  pointer-events: none;
+}
+.toast-card {
+  display: flex; align-items: flex-start; gap: 10px;
+  border: 1px solid #29271f; background: rgba(255,250,240,.97); padding: 10px 11px;
+  color: #29271f; box-shadow: 3px 4px 0 rgba(41,39,31,.17),0 10px 28px rgba(41,39,31,.12);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); pointer-events: auto;
+  animation: toast-arrive 220ms cubic-bezier(.2,.8,.2,1) both;
+}
+.toast-card--success { border-left: 3px solid #66704a; }
+.toast-card--error { border-left: 3px solid #94543e; }
+.toast-card--info { border-left: 3px solid #a96520; }
+.toast-card-mark {
+  display: grid; width: 20px; height: 20px; flex: 0 0 20px; place-items: center;
+  border: 1px solid #d8c9ad; background: #f1e8d6; color: #89551e; font: 700 11px/1 var(--mono-font);
+}
+.toast-card-title { font: 700 12px/1.35 var(--display-font); }
+.toast-card-description { margin-top: 3px; color: #625b4c; font-size: 11px; line-height: 1.45; }
+.toast-card-close { width: 22px; height: 22px; flex: 0 0 22px; color: #756951; font-size: 17px; line-height: 1; }
+.toast-card-close:hover { color: #29271f; background: #f1e8d6; }
+@keyframes toast-arrive { from { opacity: 0; transform: translateY(7px) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@media (max-width: 640px) {
+  .toast-viewport { right: 10px; bottom: 88px; width: calc(100vw - 20px); }
+  .shortcut-guide-row { grid-template-columns: minmax(110px,.75fr) minmax(0,1.25fr); gap: 8px; }
+}
+@media (prefers-reduced-motion: reduce) { .toast-card { animation: none !important; } }

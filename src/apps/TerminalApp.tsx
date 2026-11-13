@@ -7,6 +7,8 @@ import { askAssistant, type ChatMessage } from "../utils/assistant";
 import { BACKEND_URL } from "../utils/backend";
 import type { AppId } from "../types";
 import { useOpenApp } from "./appDefs";
+import { projectCaseStudies } from "../data/projectCaseStudies";
+import { useToast } from "../context/ToastContext";
 
 type Kind = "in" | "out" | "err";
 interface Line {
@@ -24,8 +26,8 @@ const THEMES = {
 type ThemeName = keyof typeof THEMES;
 
 const COMMANDS = [
-  "help", "about", "whoami", "skills", "projects", "experience", "education", "contact", "resume",
-  "ls", "cd", "pwd", "cat", "open", "github", "linkedin", "neofetch", "theme", "date", "echo",
+  "help", "about", "whoami", "skills", "projects", "current", "experience", "education", "contact", "resume",
+  "ls", "cd", "pwd", "cat", "open", "copy", "shortcuts", "github", "linkedin", "neofetch", "theme", "date", "echo",
   "history", "clear", "exit", "ask", "chat",
 ];
 
@@ -85,6 +87,7 @@ const pad = (s: string, n: number) => s.padEnd(n, " ");
 export default function TerminalApp({ windowId }: { windowId: string }) {
   const openApp = useOpenApp();
   const { closeWindow } = useWindowManager();
+  const { showToast } = useToast();
   const [lines, setLines] = useState<Line[]>(() => [
     { id: 0, kind: "out", text: "Terminal.exe — portfolio shell 1.0" },
     { id: 1, kind: "out", text: 'Type "help" to see what I can do. Try "projects" or "neofetch".' },
@@ -223,13 +226,16 @@ export default function TerminalApp({ windowId }: { windowId: string }) {
           "  whoami           one-line intro",
           "  skills           skill levels",
           "  projects         things I've built",
+          "  current          project status and next steps",
           "  experience       where I've worked",
           "  education        where I've studied",
           "  contact          how to reach me",
           "  resume           open Resume.pdf",
           "  ls [dir]         list files       cd <dir>   change folder",
           "  cat <file>       print a file     pwd        where am I",
-          "  open <name>      open a window (open readme, open skills...)",
+          "  open <name>      open an app or project case study",
+          "  copy <target>    copy email, github, linkedin, phone or portfolio URL",
+          "  shortcuts        list desktop keyboard shortcuts",
           "  github, linkedin open the profile in a new tab",
           "  ask <question>   ask the AI assistant about me",
           "  chat             talk to the AI assistant (type exit to leave)",
@@ -258,6 +264,57 @@ export default function TerminalApp({ windowId }: { windowId: string }) {
       case "projects":
         push("out", projects.flatMap((p) => [`${p.name} (${p.year}) — ${p.tagline}`, ...(p.link ? [`  ${p.link}`] : []), ...(p.repo ? [`  ${p.repo}`] : [])]));
         break;
+
+      case "current":
+        push("out", projects.flatMap((project) => {
+          const study = projectCaseStudies[project.id];
+          return study ? [
+            `${project.name} — ${study.stageLabel}`,
+            `  ${study.stageNote}`,
+            `  Next: ${study.nextSteps[0] ?? "See the case study for current details."}`,
+            "",
+          ] : [];
+        }));
+        break;
+
+      case "shortcuts":
+        push("out", [
+          "Keyboard shortcuts:",
+          "  ⌘/Ctrl + W     close the active window",
+          "  ⌘/Ctrl + M     roll up / restore the active window",
+          "  F1             open the shortcut guide",
+          "  Tab            complete terminal commands or file names",
+          "  ↑ / ↓          browse terminal command history",
+          "  Ctrl + L       clear terminal output",
+          "  Drag titlebar  move a window; drag near an edge to snap",
+          "  Resize handle  focus it, then use arrow keys",
+        ]);
+        break;
+
+      case "copy": {
+        const targets: Record<string, string> = {
+          email: socials.email,
+          phone: socials.phone,
+          github: socials.github,
+          linkedin: socials.linkedin,
+          portfolio: window.location.href.split("#")[0],
+          url: window.location.href,
+        };
+        const value = targets[arg.toLowerCase()];
+        if (!value) return push("err", ["copy: choose email, phone, github, linkedin, portfolio or url"]);
+        void (async () => {
+          try {
+            if (!navigator.clipboard?.writeText) throw new Error("Clipboard access is unavailable.");
+            await navigator.clipboard.writeText(value);
+            push("out", [`Copied ${arg.toLowerCase()} to clipboard.`]);
+            showToast({ title: "Copied to clipboard", description: arg.toLowerCase(), tone: "success" });
+          } catch {
+            push("err", ["Clipboard access was blocked by this browser."]);
+            showToast({ title: "Couldn't copy", description: "Clipboard access was blocked by this browser.", tone: "error" });
+          }
+        })();
+        break;
+      }
 
       case "experience":
         push("out", experience.map((e) => `${pad(e.period, 16)} ${e.role}, ${e.org} [${e.kind}]`));
@@ -331,6 +388,14 @@ export default function TerminalApp({ windowId }: { windowId: string }) {
         if (alias) {
           push("out", [`Opening ${arg}…`]);
           openApp(alias);
+          break;
+        }
+        const project = projects.find((item) =>
+          item.id.toLowerCase() === arg.toLowerCase() || normName(item.name) === normName(arg)
+        );
+        if (project) {
+          push("out", [`Opening ${project.name} case study…`]);
+          openApp("project-detail", { id: project.id });
           break;
         }
         const target = resolvePath(cwd, arg);
@@ -472,13 +537,15 @@ export default function TerminalApp({ windowId }: { windowId: string }) {
 
   return (
     <div
+      role="region"
+      aria-label="Interactive terminal"
       className="relative h-full bg-[#0b0d0b]"
       style={{ color: t.color, fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace', fontSize: 15, lineHeight: 1.55 }}
       onClick={() => {
         if (!window.getSelection()?.toString()) inputRef.current?.focus();
       }}
     >
-      <div ref={scrollRef} className="mac-scroll-dark h-full overflow-y-auto p-3 select-text" style={{ textShadow: "none" }}>
+      <div ref={scrollRef} role="log" aria-label="Terminal output" aria-live="off" className="mac-scroll-dark h-full overflow-y-auto p-3 select-text" style={{ textShadow: "none" }}>
         {lines.map((l) => (
           <div key={l.id} className="break-words whitespace-pre-wrap" style={l.kind === "err" ? { color: "#ff8a7a" } : undefined}>
             {l.kind === "in" ? (
