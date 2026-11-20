@@ -39,6 +39,10 @@ const skillsText = (g: (typeof skillGroups)[number]) =>
   [g.name, "-".repeat(g.name.length), ...g.items.map((i) => `${i.name.padEnd(16)} ${"#".repeat(i.level)}${".".repeat(10 - i.level)}`)].join("\n");
 
 export const root: FsDir = dir("Macintosh HD", [
+  file("My Projects", "folder", "projects"),
+  file("Proof of Work", "globe", "contributions"),
+  file("Terminal.exe", "terminal", "terminal"),
+  file("Trash", "trash", "trash"),
   file("About Me", "about", "about", {
     content: [profile.name, profile.title, "", ...profile.bio].join("\n"),
   }),

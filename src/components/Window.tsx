@@ -172,14 +172,15 @@ export default function Window({ win, children }: WindowProps) {
         left: win.rect.x,
         top: win.rect.y,
         width: win.rect.width,
-        height: shaded ? TITLE_H + 4 : win.rect.height,
+        height: shaded ? (window.innerWidth < MOBILE_BREAKPOINT ? 48 : TITLE_H + 4) : win.rect.height,
         zIndex: win.zIndex,
       }}
       onPointerDownCapture={() => focusWindow(win.id)}
+      onFocusCapture={() => { if (!isActive) focusWindow(win.id); }}
     >
       <div
         className={cn(
-          "flex h-6 shrink-0 touch-none items-center gap-1.5 px-1.5 select-none",
+          "flex h-6 shrink-0 touch-none items-center gap-1.5 px-1.5 select-none max-sm:h-11 max-sm:gap-0 max-sm:px-0",
           !shaded && "border-b-2 border-black",
           isActive ? "scanline-title" : "bg-[#f0e6d3]"
         )}
@@ -197,10 +198,10 @@ export default function Window({ win, children }: WindowProps) {
           title="Close window"
           onClick={() => closeWindow(win.id)}
           className={cn(
-            "h-3.5 w-3.5 shrink-0 border border-[#302d25] bg-[#fffaf0] active:bg-[#a96520] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a96520]",
+            "flex h-3.5 w-3.5 shrink-0 items-center justify-center border border-[#302d25] bg-[#fffaf0] active:bg-[#a96520] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a96520] max-sm:h-11 max-sm:w-11 max-sm:border-0 max-sm:bg-transparent",
             !isActive && "invisible"
           )}
-        />
+        ><span className="hidden h-4 w-4 border border-[#302d25] bg-[#fffaf0] max-sm:block" aria-hidden="true" /></button>
         <div
           id={`window-title-${win.id}`}
           className={cn(
@@ -228,11 +229,11 @@ export default function Window({ win, children }: WindowProps) {
           title={shaded ? "Unroll window" : "Roll up window"}
           onClick={() => minimizeWindow(win.id)}
           className={cn(
-            "flex h-3.5 w-3.5 shrink-0 items-center justify-center border border-black bg-[#dfdfdf] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a96520]",
+            "flex h-3.5 w-3.5 shrink-0 items-center justify-center border border-black bg-[#dfdfdf] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a96520] max-sm:h-11 max-sm:w-11 max-sm:border-0 max-sm:bg-transparent",
             !isActive && "invisible"
           )}
         >
-          <span className="block h-[2px] w-2 bg-black" />
+          <span className="block h-[2px] w-2 bg-black max-sm:h-4 max-sm:w-4 max-sm:border max-sm:border-black max-sm:bg-[#dfdfdf] max-sm:before:block max-sm:before:h-[2px] max-sm:before:w-2 max-sm:before:translate-x-[3px] max-sm:before:translate-y-[6px] max-sm:before:bg-black" />
         </button>
       </div>
 

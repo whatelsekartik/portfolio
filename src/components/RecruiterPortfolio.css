@@ -24,8 +24,9 @@
 .rv-wordmark { display: inline-flex; align-items: baseline; flex: 0 0 auto; font-size: 22px; font-weight: 800; letter-spacing: -.09em; }
 .rv-wordmark span, .rv-section-heading h2 span { color: var(--rv-link); }
 .rv-nav { display: flex; align-items: center; justify-content: center; gap: clamp(16px, 2.4vw, 28px); }
-.rv-nav a, .rv-mode-link { color: #55574f; font-size: 12px; font-weight: 600; transition: color .15s ease; }
+.rv-nav a, .recruiter-view .rv-mode-link { color: #55574f; font-size: 12px; font-weight: 600; transition: color .15s ease; }
 .rv-nav a:hover, .rv-mode-link:hover { color: var(--rv-link); }
+.rv-mode-links { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 4px 14px; }
 .rv-mode-link { border: 0; border-bottom: 1px solid #a9aa9f; padding: 4px 0; background: transparent; cursor: pointer; white-space: nowrap; }
 .rv-hero { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(230px, .6fr); align-items: center; gap: 10%; min-height: 600px; padding-top: 94px; padding-bottom: 110px; }
 .rv-eyebrow { margin: 0; color: var(--rv-accent); font-size: 12px; font-weight: 650; letter-spacing: .015em; }
@@ -106,7 +107,7 @@
   .rv-nav { justify-content: flex-start; gap: 14px; overflow-x: auto; scrollbar-width: none; }
   .rv-nav::-webkit-scrollbar { display: none; }
   .rv-nav a { flex: 0 0 auto; font-size: 10px; }
-  .rv-mode-link { font-size: 10px; }
+  .recruiter-view .rv-mode-link { font-size: 10px; }
   .rv-hero { grid-template-columns: 1fr; gap: 45px; min-height: auto; padding-top: 76px; padding-bottom: 74px; }
   .rv-hero-aside { max-width: 460px; }
   .rv-section { padding-top: 56px; padding-bottom: 60px; }
@@ -120,11 +121,12 @@
 }
 @media (max-width: 480px) {
   .rv-shell { width: calc(100% - 32px); }
-  .rv-topbar { padding-inline: 14px; }
+  .rv-topbar { display: grid; grid-template-columns: auto 1fr; gap: 0 12px; padding: 0 14px; }
   .rv-wordmark { font-size: 19px; }
-  .rv-nav { gap: 10px; }
-  .rv-nav a { font-size: 9px; }
-  .rv-mode-link { font-size: 9px; white-space: nowrap; }
+  .rv-mode-links { grid-column: 2; grid-row: 1; gap: 0 14px; }
+  .recruiter-view .rv-mode-link { display: inline-flex; align-items: center; min-height: 40px; font-size: 10px; white-space: nowrap; }
+  .rv-nav { grid-column: 1 / -1; grid-row: 2; gap: 18px; padding-bottom: 8px; }
+  .rv-nav a { font-size: 10px; }
   .rv-hero { padding-top: 62px; }
   .rv-hero h1 { font-size: clamp(66px, 18vw, 86px); }
   .rv-hero-actions { align-items: stretch; flex-direction: column; }

@@ -32,13 +32,15 @@ export default function RecruiterPortfolio({ onReturnToDesktop }: RecruiterPortf
           <a href="#education">Education</a>
           <a href="#contact">Contact</a>
         </nav>
-        <button className="rv-mode-link" type="button" onClick={onReturnToDesktop}>Desktop version ↗</button>
+        <div className="rv-mode-links" aria-label="Other portfolio views">
+          <button className="rv-mode-link" type="button" onClick={onReturnToDesktop} title="Explore the interactive Macintosh desktop">Interactive desktop ↗</button>
+        </div>
       </header>
 
       <div id="main-content">
         <section className="rv-hero rv-shell" id="top" aria-labelledby="rv-hero-title">
           <div className="rv-hero-copy">
-            <p className="rv-eyebrow">Student developer <span>·</span> Pune, India</p>
+            <p className="rv-eyebrow">Quick portfolio <span>·</span> A straightforward overview</p>
             <h1 id="rv-hero-title">Kartik<br /><span>Gaikwad.</span></h1>
             <p className="rv-lead">I spend most of my time building web projects, working through product ideas and occasionally getting into electronics.</p>
             <div className="rv-hero-actions">
@@ -168,7 +170,7 @@ export default function RecruiterPortfolio({ onReturnToDesktop }: RecruiterPortf
       <footer className="rv-footer rv-shell">
         <a className="rv-wordmark" href="#top">KG<span>.</span></a>
         <p>{profile.name} · Pune, India</p>
-        <button type="button" onClick={onReturnToDesktop}>Back to the desktop version ↗</button>
+        <button type="button" onClick={onReturnToDesktop}>Interactive desktop ↗</button>
       </footer>
     </main>
   );

@@ -66,7 +66,7 @@ export default function App() {
           <div className="h-full w-full" inert={!booted}>
             <SystemProvider customWallpaperSrc={assets.wallpaperSrc}>
               <WindowManagerProvider>
-                <Desktop onOpenRecruiterView={() => changeView("recruiter")} />
+                <Desktop ready={booted} onOpenRecruiterView={() => changeView("recruiter")} />
               </WindowManagerProvider>
             </SystemProvider>
           </div>

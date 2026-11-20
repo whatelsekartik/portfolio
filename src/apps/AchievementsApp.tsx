@@ -1,11 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-interface CertificateDetails {
-  title?: string;
-  issuer?: string;
-  date?: string;
-  credentialUrl?: string;
-}
+import { CERTIFICATE_DETAILS, selectCertificates, type CertificateCategory, type CertificateFilter, type CertificateSort } from "../data/certificates";
 
 interface Certificate {
   filename: string;
@@ -13,6 +8,9 @@ interface Certificate {
   title: string;
   issuer?: string;
   date?: string;
+  sortDate?: string;
+  category: CertificateCategory;
+  outcome: string;
   credentialUrl?: string;
 }
 
@@ -25,56 +23,6 @@ const certificateAssets = import.meta.glob(
   "../assets/certificates/*.{jpg,jpeg,png,webp,avif}",
   { eager: true, import: "default", query: "?url" },
 ) as Record<string, string>;
-
-/** Optional human-friendly metadata, keyed by the exact image filename. */
-const CERTIFICATE_DETAILS: Record<string, CertificateDetails> = {
-  "certificate1.webp": {
-    title: "GitHub Hands-On Workshop",
-    issuer: "Microsoft Learning Student Chapter · PCCOE IEEE Branch",
-    date: "1 Oct 2026",
-  },
-  "certificate2.webp": {
-    title: "WCC Launchpad 30",
-    issuer: "WeCodeCoders · National Online Hackathon",
-    date: "4–5 Oct 2026",
-    credentialUrl: "https://wecodecoders.in/verify/L30-7J4M8C",
-  },
-  "certificate3.webp": {
-    title: "Promptify · Anveshan 3.0",
-    issuer: "PCCOE · Computer Engineering (Regional Language)",
-    date: "9–10 Oct 2026",
-  },
-  "certificate4.webp": {
-    title: "PRAXIS 2026 · Storyverse",
-    issuer: "MLSC · Department of Information Technology, PCCOE",
-    date: "9–10 Oct 2026",
-  },
-  "certificate5.webp": {
-    title: "CodeSprint 2026",
-    issuer: "RANKUP · Certificate ID RNK-CS26-118",
-    date: "21 Oct 2026",
-  },
-  "certificate6.webp": {
-    title: "Code Variant · Top 50 Achievers",
-    issuer: "Code Variant · Build 01",
-    date: "28 Oct 2026",
-  },
-  "certificate7.webp": {
-    title: "Pixel Perfect",
-    issuer: "PCCOE · Computer Science & Engineering (AI & ML)",
-    date: "9–11 Oct 2026",
-  },
-  "certificate8.webp": {
-    title: "Prompt Relay",
-    issuer: "PCCOE · Computer Science & Engineering (AI & ML)",
-    date: "9–11 Oct 2026",
-  },
-  "certificate9.webp": {
-    title: "Houdini Heist",
-    issuer: "PCCOE · Computer Science & Engineering (AI & ML)",
-    date: "9–11 Oct 2026",
-  },
-};
 
 function titleFromFilename(filename: string): string {
   const stem = filename.replace(/\.[^.]+$/, "");
@@ -98,6 +46,9 @@ const certificates: Certificate[] = Object.entries(certificateAssets)
       title: details.title || titleFromFilename(filename),
       issuer: details.issuer,
       date: details.date,
+      sortDate: details.sortDate,
+      category: details.category ?? "uncategorized",
+      outcome: details.outcome ?? "Certificate",
       credentialUrl: details.credentialUrl,
     };
   })
@@ -108,6 +59,17 @@ export default function AchievementsApp() {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [activeCertificate, setActiveCertificate] = useState<Certificate | null>(null);
   const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
+  const [filter, setFilter] = useState<CertificateFilter>("all");
+  const [sort, setSort] = useState<CertificateSort>("newest");
+  const visibleCertificates = selectCertificates(certificates, filter, sort);
+  const filters: { id: CertificateFilter; label: string }[] = [
+    { id: "all", label: "All" },
+    { id: "workshops", label: "Workshops" },
+    { id: "events", label: "Events" },
+    { id: "achievements", label: "Achievements" },
+    ...(certificates.some((certificate) => certificate.category === "uncategorized")
+      ? [{ id: "uncategorized" as const, label: "Other" }] : []),
+  ];
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -187,9 +149,29 @@ export default function AchievementsApp() {
           </div>
         </header>
 
-        {certificates.length > 0 ? (
+        {certificates.length > 0 && (
+          <div className="cert-controls">
+            <div className="cert-filters" role="group" aria-label="Filter certificates">
+              {filters.map((item) => (
+                <button key={item.id} type="button" aria-pressed={filter === item.id}
+                  className={filter === item.id ? "is-selected" : ""} onClick={() => setFilter(item.id)}>
+                  {item.label}
+                </button>
+              ))}
+            </div>
+            <div className="cert-sort-row">
+              <p aria-live="polite">Showing {visibleCertificates.length} of {certificates.length}</p>
+              <label>Sort <select value={sort} onChange={(event) => setSort(event.target.value as CertificateSort)}>
+                <option value="newest">Newest first</option>
+                <option value="archive">Archive order</option>
+              </select></label>
+            </div>
+          </div>
+        )}
+
+        {visibleCertificates.length > 0 ? (
           <section className="cert-gallery" aria-label="Certificate wall">
-            {certificates.map((certificate, index) => {
+            {visibleCertificates.map((certificate, index) => {
               const failed = Boolean(failedImages[certificate.filename]);
               return (
                 <article className="cert-item" key={certificate.filename}>
@@ -239,6 +221,9 @@ export default function AchievementsApp() {
                       <h2>{certificate.title}</h2>
                       <span>{String(index + 1).padStart(2, "0")}</span>
                     </div>
+                    <span className={"cert-outcome" + (certificate.category === "achievements" ? " cert-outcome--achievement" : "")}>
+                      {certificate.outcome}
+                    </span>
                     {(certificate.issuer || certificate.date) && (
                       <p>
                         {[certificate.issuer, certificate.date].filter(Boolean).join(" · ")}
@@ -249,6 +234,8 @@ export default function AchievementsApp() {
               );
             })}
           </section>
+        ) : certificates.length > 0 ? (
+          <p className="cert-no-results" role="status">No certificates in this category yet. Try another filter.</p>
         ) : (
           <section className="cert-wall-empty" aria-labelledby="cert-empty-title">
             <div className="cert-empty-mark" aria-hidden="true">▧</div>
@@ -294,7 +281,7 @@ export default function AchievementsApp() {
               <div className="min-w-0">
                 <span className="cert-wall-kicker">Certificate / Full view</span>
                 <h2>{activeCertificate.title}</h2>
-                {activeCertificate.issuer && <p>{activeCertificate.issuer}</p>}
+                <p>{activeCertificate.outcome}{activeCertificate.issuer ? ` · ${activeCertificate.issuer}` : ""}{activeCertificate.date ? ` · ${activeCertificate.date}` : ""}</p>
               </div>
               <button
                 type="button"

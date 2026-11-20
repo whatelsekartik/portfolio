@@ -1,0 +1,87 @@
+/* The first-run guide lives alongside the desktop, not over an inert backdrop. */
+.welcome-card {
+  position: absolute;
+  z-index: 5000;
+  top: 50%;
+  left: 50%;
+  width: min(610px, calc(100% - 28px));
+  max-height: min(720px, calc(100% - 58px));
+  display: flex;
+  flex-direction: column;
+  transform: translate(-50%, -50%);
+  border: 2px solid #302d25;
+  background: #fffaf0;
+  color: #29271f;
+  box-shadow: 7px 7px 0 rgba(41,39,31,.28), 0 20px 60px rgba(41,39,31,.2);
+  outline: none;
+}
+.welcome-card:focus-visible { outline: 3px solid #a96520; outline-offset: 3px; }
+.welcome-titlebar {
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 2px solid #302d25;
+  padding: 0 5px 0 10px;
+  background: #f0e6d3;
+  font: 14px/1 var(--mono-font);
+}
+.welcome-titlebar-lines { height: 13px; flex: 1; background: repeating-linear-gradient(to bottom, #514c40 0 1px, transparent 1px 3px); opacity: .55; }
+.welcome-titlebar button { width: 30px; height: 30px; border: 1px solid #302d25; background: #fffaf0; font-size: 20px; line-height: 1; }
+.welcome-body { min-height: 0; overflow-y: auto; padding: clamp(18px, 4vw, 28px); }
+.welcome-intro { position: relative; padding-bottom: 22px; }
+.welcome-kicker, .welcome-section-label, .welcome-footer > span { font: 700 10px/1.4 var(--mono-font); letter-spacing: .1em; color: #89551e; }
+.welcome-kicker span { color: #a96520; font-size: 15px; }
+.welcome-intro h1 { margin: 12px 0 8px; font: 800 clamp(34px, 6vw, 51px)/.95 var(--display-font); letter-spacing: -.07em; }
+.welcome-intro h1 span { color: #a96520; }
+.welcome-intro p { max-width: 390px; font-size: 13px; line-height: 1.6; color: #625b4c; }
+.welcome-section-label { display: flex; justify-content: space-between; gap: 8px; margin: 0 0 9px; color: #514c40; }
+.welcome-section-label > span { color: #8b806d; font-weight: 400; }
+.welcome-shortcuts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.welcome-shortcuts button { min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; border: 1px solid #b6a88f; background: #f6ecda; padding: 10px; text-align: left; transition: border-color .15s, background .15s; }
+.welcome-shortcuts button:hover, .welcome-view-list button:hover, .welcome-view-list a:hover { border-color: #a96520; background: #fff5df; }
+.welcome-shortcut-icon { display: grid; width: 40px; height: 40px; place-items: center; border: 1px solid #d8c9ad; background: #fffaf0; }
+.welcome-shortcut-copy { display: grid; gap: 2px; }
+.welcome-shortcut-copy strong { font: 700 15px/1.2 var(--display-font); }
+.welcome-shortcut-copy small { color: #625b4c; font-size: 10px; line-height: 1.3; }
+.welcome-shortcut-arrow { align-self: flex-end; margin-top: auto; color: #89551e; font: 10px/1 var(--mono-font); }
+.welcome-views { margin-top: 22px; border-top: 1px dashed #b6a88f; padding-top: 17px; }
+.welcome-view-list { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 7px; }
+.welcome-view-list > * { min-width: 0; display: block; border: 1px solid #dfd3be; background: #fffaf0; padding: 9px; text-align: left; text-decoration: none; color: #29271f; }
+.welcome-view-list > div { background: #eee1ca; border-color: #c3b296; }
+.welcome-view-list strong { display: block; font-size: 11px; line-height: 1.35; }
+.welcome-view-list strong span { color: #89551e; font: 9px/1.3 var(--mono-font); }
+.welcome-view-list p, .welcome-view-list small { display: block; margin-top: 4px; color: #625b4c; font-size: 10px; line-height: 1.45; }
+.welcome-footer { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; margin-top: 22px; border-top: 1px solid #d8c9ad; padding-top: 12px; }
+.welcome-footer > span { color: #8b806d; }
+.welcome-footer button { min-height: 38px; border: 1px solid #29271f; background: #29271f; padding: 6px 11px; color: #fffaf0; font-size: 12px; font-weight: 700; }
+.welcome-footer button:hover { background: #89551e; }
+.welcome-card button:focus-visible, .welcome-card a:focus-visible, .cert-controls button:focus-visible, .cert-controls select:focus-visible { outline: 2px solid #a96520; outline-offset: 2px; }
+
+.cert-controls { margin-top: 18px; border-bottom: 1px solid #d8c9ad; padding-bottom: 12px; }
+.cert-filters { display: flex; flex-wrap: wrap; gap: 6px; }
+.cert-filters button { min-height: 34px; border: 1px solid #c7b99f; background: #fffaf0; padding: 5px 10px; color: #514c40; font: 700 11px/1.2 var(--body-font); }
+.cert-filters button:hover { border-color: #89551e; }
+.cert-filters button.is-selected { border-color: #29271f; background: #29271f; color: #fffaf0; }
+.cert-sort-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-top: 10px; color: #625b4c; font-size: 11px; }
+.cert-sort-row label { display: flex; align-items: center; gap: 6px; font-weight: 700; }
+.cert-sort-row select { min-height: 34px; border: 1px solid #c7b99f; background: #fffaf0; padding: 4px 7px; color: #29271f; }
+.cert-outcome { display: inline-block; margin-top: 7px; border: 1px solid #cabb9f; background: #f3ebdc; padding: 3px 6px; color: #625b4c; font: 700 9px/1.2 var(--mono-font); text-transform: uppercase; letter-spacing: .03em; }
+.cert-outcome--achievement { border-color: #89551e; background: #f6dfb8; color: #714015; }
+.cert-no-results { margin: 18px 0; border: 1px dashed #c7b99f; padding: 16px; font-size: 13px; color: #514c40; }
+@media (max-width: 639px) {
+  .desktop-dock { display: none; }
+  .menu-dropdown [role="menuitem"] { min-height: 44px; white-space: normal; }
+  .welcome-titlebar button { width: 44px; height: 44px; }
+  .welcome-card { top: calc(50% + 12px); width: calc(100% - 16px); max-height: calc(100dvh - 42px); }
+  .welcome-titlebar { min-height: 44px; }
+  .welcome-body { padding: 17px; }
+  .welcome-shortcuts button { padding: 8px; }
+  .welcome-shortcut-copy small { font-size: 9px; }
+  .welcome-view-list { grid-template-columns: 1fr; }
+  .welcome-view-list > * { padding: 8px 10px; }
+  .welcome-view-list p, .welcome-view-list small { margin-top: 2px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .welcome-shortcuts button { transition: none; }
+}
