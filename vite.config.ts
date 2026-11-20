@@ -12,6 +12,9 @@ export default defineConfig({
   // "./" makes every asset path relative, so the same build works on
   // username.github.io/repo-name/, username.github.io, or a custom domain.
   base: "./",
+  // Permit the hosted development and preview URLs, without disabling host checks.
+  server: { allowedHosts: [".e2b.app"] },
+  preview: { allowedHosts: [".e2b.app"] },
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {

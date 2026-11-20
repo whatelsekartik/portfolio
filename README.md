@@ -13,8 +13,9 @@ npm run optimize-wallpaper  # shrink src/assets/wallpaper.* (see Wallpaper)
 
 ## Make it yours
 
-Everything on the desktop reads from **one file: `src/data/portfolioData.ts`**.
-Portfolio facts and project summaries live in one data file; avoid publishing private contact details or unverified claims.
+The desktop reads its portfolio facts and project summaries from **`src/data/portfolioData.ts`**.
+The separate motion portfolio has its own static content (see below); keep it in sync when facts change.
+Avoid publishing private contact details or unverified claims.
 
 | Icon | What opens | Edit in `portfolioData.ts` |
 | --- | --- | --- |
@@ -49,6 +50,16 @@ picked up automatically and becomes the default desktop ("My Wallpaper" in the S
   2560x1440, quality 82) and keeps your original as `wallpaper-original.*`, which git ignores.
   A 7 MB wallpaper usually drops to a few hundred KB. Without a custom image, pick a built-in
   pattern from the Special menu or set `desktop.defaultPattern`.
+
+## Motion portfolio
+
+The original motion-driven design is available from the Apple menu as **Motion Portfolio**,
+or at `motion/` relative to the site root. It is isolated from the React desktop so their
+styles and scripts do not interfere. Its HTML, CSS and JavaScript live in `public/motion/`
+and are copied unchanged into production builds, including GitHub Pages project sites.
+Use the **Desktop view** link to return. The page remains readable if JavaScript or the
+optional GSAP CDN is unavailable, and honors reduced-motion preferences. Because its content
+is static, update `public/motion/index.html` when changing portfolio facts or contact details.
 
 ## The backend (Google Sheet + AI assistant)
 
@@ -131,4 +142,4 @@ Asset paths are relative (`base: "./"`), so the same build works for a project p
 
 ## Quality checks
 
-Run `npm run check` before submitting changes. It performs a strict TypeScript check followed by a production Vite build. Pull requests run the same check in GitHub Actions.
+Run `npm run check` before submitting changes. It performs a strict TypeScript check, a production Vite build, and the integration regression tests. Run `npm test` for the tests alone. Pull requests run the same check in GitHub Actions.

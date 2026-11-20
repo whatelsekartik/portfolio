@@ -162,34 +162,8 @@ main,
 }
 #stickman-scene { width: 100%; overflow: visible; }
 
-#stickman {
-    transform-origin: 50% 85%;
-    animation: characterBob 3.2s ease-in-out infinite;
-}
-
-#head-group {
-    transform-origin: 50% 50%;
-    animation: headNod 4.2s ease-in-out infinite;
-}
-
-.cursor-orb {
-    animation: orbPulse 1.8s ease-in-out infinite;
-}
-
-@keyframes characterBob {
-    0%, 100% { transform: translateY(0) rotate(0deg); }
-    50% { transform: translateY(-12px) rotate(-1.3deg); }
-}
-
-@keyframes headNod {
-    0%, 100% { transform: rotate(0deg) translateY(0); }
-    50% { transform: rotate(-2deg) translateY(3px); }
-}
-
-@keyframes orbPulse {
-    0%, 100% { transform: translate(-50%, -50%) scale(1); }
-    50% { transform: translate(-50%, -50%) scale(1.18); }
-}
+#stickman { transform-origin: 50% 85%; }
+#head-group { transform-origin: 50% 50%; }
 
 #character-shadow { fill: rgba(255, 255, 255, 0.08); }
 #torso, #neck, #head-outline, #ear-l, #ear-r {
@@ -423,10 +397,8 @@ main {
     text-decoration: none;
 }
 
-.reveal {
-    opacity: 0;
-    transform: translateY(30px);
-}
+/* Content stays readable when JavaScript or the animation CDN is unavailable. */
+.reveal { opacity: 1; }
 
 @media (max-width: 900px) {
     .browser-shell { width: calc(100% - 18px); margin: 9px auto; }
@@ -451,4 +423,14 @@ main {
     .hero-side { justify-self: start; }
     .timeline-line { min-height: 240px; }
     .contact-grid { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    .cursor-orb { display: none; }
 }

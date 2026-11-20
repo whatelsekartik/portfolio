@@ -98,6 +98,7 @@ export default function MenuBar({ onOpenRecruiterView }: { onOpenRecruiterView: 
       label: "",
       items: [
         { label: "Recruiter View ↗", action: onOpenRecruiterView },
+        { label: "Motion Portfolio ↗", action: () => window.location.assign(`${import.meta.env.BASE_URL}motion/`) },
         DIVIDER,
         { label: "About This Macintosh", action: () => openApp("about") },
         DIVIDER,

@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     gsap.registerPlugin(ScrollTrigger);
+    const media = gsap.matchMedia();
+    media.add('(prefers-reduced-motion: no-preference)', () => {
 
     const cursorOrb = document.querySelector('.cursor-orb');
     const head = document.getElementById('head-group');
@@ -18,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     gsap.set(character, { xPercent: -50, yPercent: -50 });
 
-    window.addEventListener('mousemove', (event) => {
+    const onMouseMove = (event) => {
         gsap.to(cursorOrb, {
             x: event.clientX,
             y: event.clientY,
@@ -42,7 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
             duration: 0.25,
             ease: 'power2.out'
         });
-    });
+    };
+    window.addEventListener('mousemove', onMouseMove);
 
     gsap.timeline({ repeat: -1, yoyo: true })
         .to(character, { y: -14, duration: 1.8, ease: 'sine.inOut' })
@@ -68,9 +71,9 @@ document.addEventListener('DOMContentLoaded', () => {
         .to('#mouth-line', { attr: { d: 'M142 198 Q170 208 198 198' }, duration: 1.1, ease: 'sine.inOut' }, 0);
 
     gsap.utils.toArray('.reveal').forEach((element) => {
-        gsap.to(element, {
-            opacity: 1,
-            y: 0,
+        gsap.from(element, {
+            opacity: 0,
+            y: 30,
             duration: 0.9,
             ease: 'power3.out',
             scrollTrigger: {
@@ -102,47 +105,10 @@ document.addEventListener('DOMContentLoaded', () => {
         .to('#character-container', { left: '50%', top: '50%', scale: 1.06, duration: 1.2 })
         .to('#head-group', { scale: 1.12, transformOrigin: '50% 50%', duration: 0.8 }, '<')
         .to('#head-group', { scale: 1, duration: 0.8 });
+
+    return () => {
+        window.removeEventListener('mousemove', onMouseMove);
+        gsap.killTweensOf([cursorOrb, head, leftEye, rightEye]);
+    };
+    });
 });
-gsap.registerPlugin(ScrollTrigger);
-
-// 1. HEAD FOLLOWS MOUSE
-window.addEventListener('mousemove', (e) => {
-    const x = (e.clientX / window.innerWidth - 0.5) * 25;
-    const y = (e.clientY / window.innerHeight - 0.5) * 25;
-    gsap.to("#head", { x: x, y: y, duration: 0.6, ease: "power2.out" });
-});
-
-// 2. SCROLL MASTER TIMELINE
-const mainTl = gsap.timeline({
-    scrollTrigger: {
-        trigger: "main",
-        start: "top top",
-        end: "bottom bottom",
-        scrub: 1.5
-    }
-});
-
-// Scene 1 -> 2: Move to Left for About Section
-mainTl.to("#character-container", {
-    left: "20%",
-    scale: 0.8,
-    duration: 2
-})
-
-// Scene 2 -> 3: The Desk Transition
-.to("#desk-setup", { opacity: 1, duration: 0.5 })
-.to("#monitor-glow", { 
-    opacity: 0.5, 
-    onStart: () => document.getElementById('monitor-glow').classList.add('glow-active'),
-    onReverseComplete: () => document.getElementById('monitor-glow').classList.remove('glow-active'),
-    duration: 0.5 
-}, "<")
-// Morph legs into sitting position
-.to("#legs", { attr: { d: "M30,85 L50,70 L70,85" }, duration: 1 }, "<")
-.to("#character-container", { left: "75%", duration: 2 })
-
-// Scene 3 -> 4: Stand back up for Journey
-.to("#desk-setup", { opacity: 0, duration: 0.5 })
-.to("#monitor-glow", { opacity: 0, duration: 0.5 }, "<")
-.to("#legs", { attr: { d: "M40,95 L50,70 L60,95" }, duration: 1 })
-.to("#character-container", { left: "50%", scale: 1.2, duration: 2 });
