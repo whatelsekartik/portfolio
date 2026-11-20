@@ -63,8 +63,8 @@ function ShortcutGuideDialog({open,onClose}:{open:boolean;onClose:()=>void}){
 }
 
 
-export default function MenuBar({ onOpenRecruiterView }: { onOpenRecruiterView: () => void }) {
-  const { windows, activeWindowId, closeWindow } = useWindowManager();
+export default function MenuBar({ onOpenRecruiterView, onOpenWelcome }: { onOpenRecruiterView: () => void; onOpenWelcome: () => void }) {
+  const { windows, activeWindowId, closeWindow, focusWindow, minimizeWindow } = useWindowManager();
   const { wallpaperId, setWallpaperId, shutDown, customWallpaperSrc } = useSystem();
   const openApp = useOpenApp();
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -97,8 +97,8 @@ export default function MenuBar({ onOpenRecruiterView }: { onOpenRecruiterView: 
     {
       label: "",
       items: [
-        { label: "Recruiter View ↗", action: onOpenRecruiterView },
-        { label: "Motion Portfolio ↗", action: () => window.location.assign(`${import.meta.env.BASE_URL}motion/`) },
+        { label: "Welcome & choose a view…", action: onOpenWelcome },
+        { label: "Quick portfolio ↗", action: onOpenRecruiterView },
         DIVIDER,
         { label: "About This Macintosh", action: () => openApp("about") },
         DIVIDER,
@@ -108,6 +108,7 @@ export default function MenuBar({ onOpenRecruiterView }: { onOpenRecruiterView: 
         { label: "Achievements", action: () => openApp("achievements") },
         { label: "Contact Me", action: () => openApp("contact") },
         { label: "Guestbook", action: () => openApp("guestbook") },
+        { label: "Keyboard Shortcuts…", action: () => setShortcutsOpen(true) },
         DIVIDER,
         { label: "Restart", action: () => window.location.reload() },
         { label: "Shut Down", action: shutDown },
@@ -158,6 +159,16 @@ export default function MenuBar({ onOpenRecruiterView }: { onOpenRecruiterView: 
       ],
     },
     {
+      label: "Windows",
+      items: windows.length ? [...windows].sort((a, b) => b.zIndex - a.zIndex).map((win) => ({
+        label: `${win.isMinimized ? "↥ " : win.id === activeWindowId ? "✓ " : "  "}${win.title}${win.isMinimized ? " (rolled up)" : ""}`,
+        action: () => {
+          if (win.isMinimized) minimizeWindow(win.id); else focusWindow(win.id);
+          window.requestAnimationFrame(() => document.querySelector<HTMLElement>(`[data-window-id="${win.id}"]`)?.focus());
+        },
+      })) : [{ label: "No open windows", disabled: true }],
+    },
+    {
       label: "Help",
       items: [
         { label: "Keyboard Shortcuts…", action: () => setShortcutsOpen(true) },
@@ -173,7 +184,7 @@ export default function MenuBar({ onOpenRecruiterView }: { onOpenRecruiterView: 
     >
       <div className="flex h-full items-center">
         {menus.map((menu, i) => (
-          <div key={i} className="relative h-full">
+          <div key={i} className={cn("relative h-full", ["File", "Edit", "View", "Special", "Help"].includes(menu.label) && "max-sm:hidden")}>
             <button
               type="button"
               aria-haspopup="menu"
@@ -188,7 +199,7 @@ export default function MenuBar({ onOpenRecruiterView }: { onOpenRecruiterView: 
             {openIndex === i && (
               <div
                 role="menu"
-                className="menu-dropdown absolute top-[22px] left-0 min-w-[200px] border-2 border-black bg-white py-0.5 shadow-[3px_3px_0_rgba(0,0,0,0.45)]"
+                className="menu-dropdown absolute top-[22px] left-0 max-h-[min(70vh,420px)] min-w-[200px] max-w-[calc(100vw-20px)] overflow-auto border-2 border-black bg-white py-0.5 shadow-[3px_3px_0_rgba(0,0,0,0.45)]"
               >
                 {menu.items.map((item, j) =>
                   item.divider ? (
@@ -219,11 +230,11 @@ export default function MenuBar({ onOpenRecruiterView }: { onOpenRecruiterView: 
       </div>
 
       <div className="flex items-center gap-3 pr-2 max-sm:hidden">
-        <button type="button" onClick={onOpenRecruiterView} className="rounded border border-black/35 px-2 py-0 text-[11px] hover:bg-black hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a96520]">Recruiter view ↗</button>
+        <button type="button" onClick={onOpenRecruiterView} className="rounded border border-black/35 px-2 py-0 text-[11px] hover:bg-black hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a96520]">Quick portfolio ↗</button>
         <span>{now.toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" })}</span>
         <span>{now.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</span>
       </div>
-      <div className="flex items-center gap-2 pr-2 sm:hidden"><button type="button" onClick={onOpenRecruiterView} className="rounded border border-black/35 px-1.5 text-[10px]">CV ↗</button><span>{now.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</span></div>
+      <div className="flex items-center gap-2 pr-2 sm:hidden"><button type="button" onClick={onOpenRecruiterView} className="rounded border border-black/35 px-1.5 text-[10px]">Quick view ↗</button><span>{now.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</span></div>
       <ShortcutGuideDialog open={shortcutsOpen} onClose={() => setShortcutsOpen(false)} />
     </div>
   );

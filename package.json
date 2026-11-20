@@ -10,7 +10,8 @@
     "optimize-wallpaper": "node scripts/optimize-wallpaper.mjs",
     "typecheck": "tsc --noEmit",
     "test": "node --test tests/*.test.mjs",
-    "check": "npm run typecheck && npm run build && npm test"
+    "check": "npm run typecheck && npm run build && npm test && npm run test:ui",
+    "test:ui": "vitest run tests/desktop.ui.test.tsx"
   },
   "dependencies": {
     "@fontsource/pixelify-sans": "5.3.0",
@@ -22,13 +23,17 @@
   },
   "devDependencies": {
     "@tailwindcss/vite": "4.1.17",
+    "@testing-library/react": "16.3.3",
+    "@testing-library/user-event": "14.6.13",
     "@types/node": "22.19.17",
     "@types/react": "19.2.7",
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "5.1.1",
+    "jsdom": "26.1.0",
     "sharp": "^0.35.4",
     "tailwindcss": "4.1.17",
     "typescript": "5.9.3",
-    "vite": "7.3.2"
+    "vite": "7.3.2",
+    "vitest": "3.2.4"
   }
 }

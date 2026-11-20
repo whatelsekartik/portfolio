@@ -34,7 +34,7 @@ export default function IconGrid({ items }: { items: GridItem[] }) {
               else setSelected(it.key);
             }}
             onDoubleClick={it.onOpen}
-            onKeyDown={(e) => e.key === "Enter" && it.onOpen()}
+            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); it.onOpen(); } }}
             className="flex w-full min-w-0 flex-col items-center gap-1 rounded-sm p-1 text-center outline-none focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[#a96520]"
           >
             <FileIcon kind={it.icon} className={cn("h-8 w-8 shrink-0", isSel && "brightness-[.55]")} />
