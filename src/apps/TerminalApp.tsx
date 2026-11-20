@@ -1,0 +1,597 @@
+import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
+import { useWindowManager } from "../context/WindowManagerContext";
+import { getDir, normName, resolvePath, slugName } from "../data/fileSystem";
+import { aiContext } from "../data/aiContext";
+import { ai, education, experience, profile, projects, readmeText, skillGroups, socials } from "../data/portfolioData";
+import { askAssistant, type ChatMessage } from "../utils/assistant";
+import { BACKEND_URL } from "../utils/backend";
+import type { AppId } from "../types";
+import { useOpenApp } from "./appDefs";
+import { projectCaseStudies } from "../data/projectCaseStudies";
+import { useToast } from "../context/ToastContext";
+
+type Kind = "in" | "out" | "err";
+interface Line {
+  id: number;
+  kind: Kind;
+  text: string;
+  prompt?: string;
+}
+
+const THEMES = {
+  green: { color: "#62f27a", dim: "#2f8a41" },
+  amber: { color: "#ffb84a", dim: "#a06a14" },
+  white: { color: "#e8e8e8", dim: "#8a8a8a" },
+} as const;
+type ThemeName = keyof typeof THEMES;
+
+const COMMANDS = [
+  "help", "about", "whoami", "skills", "projects", "current", "experience", "education", "contact", "resume",
+  "ls", "cd", "pwd", "cat", "open", "copy", "shortcuts", "github", "linkedin", "neofetch", "theme", "date", "echo",
+  "history", "clear", "exit", "ask", "chat",
+];
+
+/** Names that `open` understands, mapped to the window they open. */
+const OPEN_ALIASES: Record<string, AppId> = {
+  about: "about", aboutme: "about",
+  readme: "readme", "readme.txt": "readme",
+  resume: "resume", "resume.pdf": "resume", cv: "resume",
+  projects: "projects", myprojects: "projects",
+  skills: "skills", "skills.exe": "skills",
+  education: "education", "education.htm": "education",
+  experience: "experience", "experience.dsk": "experience",
+  contact: "contact", contactme: "contact",
+  trash: "trash", finder: "finder", computer: "finder", mycomputer: "finder",
+  guestbook: "guestbook", terminal: "terminal", "terminal.exe": "terminal",
+};
+
+const URL_RE = /(https?:\/\/[^\s]+)/g;
+
+function Linkified({ text }: { text: string }) {
+  return (
+    <>
+      {text.split(URL_RE).map((part, i) =>
+        i % 2 === 1 ? (
+          <a key={i} href={part} target="_blank" rel="noreferrer" className="underline">
+            {part}
+          </a>
+        ) : (
+          <span key={i}>{part}</span>
+        )
+      )}
+    </>
+  );
+}
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const EXIT_WORDS = ["exit", "quit", "/exit", "/quit", "bye"];
+const MAX_QUESTION = 500;
+
+/** Animated "thinking…" line shown while the assistant is answering. */
+function Thinking({ label }: { label: string }) {
+  const [dots, setDots] = useState(1);
+  useEffect(() => {
+    const t = setInterval(() => setDots((d) => (d % 3) + 1), 350);
+    return () => clearInterval(t);
+  }, []);
+  return (
+    <div role="status" aria-live="polite">
+      {label} is thinking{".".repeat(dots)}
+    </div>
+  );
+}
+
+const bar = (level: number) => "█".repeat(level) + "░".repeat(10 - level);
+const pad = (s: string, n: number) => s.padEnd(n, " ");
+
+export default function TerminalApp({ windowId }: { windowId: string }) {
+  const openApp = useOpenApp();
+  const { closeWindow } = useWindowManager();
+  const { showToast } = useToast();
+  const [lines, setLines] = useState<Line[]>(() => [
+    { id: 0, kind: "out", text: "Terminal.exe — portfolio shell 1.0" },
+    { id: 1, kind: "out", text: 'Type "help" to see what I can do. Try "projects" or "neofetch".' },
+  ]);
+  const [cwd, setCwd] = useState<string[]>([]);
+  const [input, setInput] = useState("");
+  const [history, setHistory] = useState<string[]>([]);
+  const [histIdx, setHistIdx] = useState<number | null>(null);
+  const [theme, setTheme] = useState<ThemeName>("green");
+  const [chatMode, setChatMode] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const convo = useRef<ChatMessage[]>([]);
+  const alive = useRef(true);
+  const nextId = useRef(2);
+  const bootTime = useRef(Date.now());
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const promptFor = (path: string[]) =>
+    chatMode ? "you>" : `${profile.handle}@macintosh:~${path.length ? "/" + path.join("/") : ""}$`;
+  const t = THEMES[theme];
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [lines]);
+
+  useEffect(() => {
+    alive.current = true;
+    return () => {
+      alive.current = false;
+    };
+  }, []);
+
+  // Put the cursor back in the input after each answer (and on first open).
+  useEffect(() => {
+    if (!busy) inputRef.current?.focus();
+  }, [busy]);
+
+  function push(kind: Kind, texts: string[], prompt?: string) {
+    setLines((prev) => [
+      ...prev,
+      ...texts.map((text) => ({ id: nextId.current++, kind, text, prompt })),
+    ]);
+  }
+
+  function neofetch(): string[] {
+    const art = [
+      "   .-------.   ",
+      "   | .---. |   ",
+      "   | | : | |   ",
+      "   | '---' |   ",
+      "   | ===== |   ",
+      "   '-------'   ",
+      "                ",
+    ];
+    const total = skillGroups.reduce((n, g) => n + g.items.length, 0);
+    const mins = Math.max(1, Math.round((Date.now() - bootTime.current) / 60000));
+    const info = [
+      `${profile.handle}@macintosh`,
+      "-".repeat(profile.handle.length + 10),
+      "OS: System 7.everscroll",
+      `Host: ${profile.name}`,
+      `Role: ${profile.title}`,
+      `Projects: ${projects.length}   Skills: ${total}`,
+      `Uptime: ${mins} min`,
+      `Screen: ${window.innerWidth}x${window.innerHeight}`,
+    ];
+    return info.map((row, i) => `${art[i] ?? "                "}${row}`);
+  }
+
+  /** Reveals the reply a few characters at a time, like a slow terminal. */
+  async function typeOut(text: string) {
+    const id = nextId.current++;
+    const full = `${ai.name}: ${text}`;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setLines((prev) => [...prev, { id, kind: "out", text: full }]);
+      return;
+    }
+    setLines((prev) => [...prev, { id, kind: "out", text: "" }]);
+    const step = Math.max(2, Math.ceil(full.length / 90));
+    for (let i = step; i < full.length + step; i += step) {
+      if (!alive.current) return;
+      const shown = full.slice(0, i);
+      setLines((prev) => prev.map((l) => (l.id === id ? { ...l, text: shown } : l)));
+      await sleep(18);
+    }
+  }
+
+  async function ask(question: string) {
+    const q = question.trim().slice(0, MAX_QUESTION);
+    if (!q) return push("err", ["ask: what would you like to know? Try: ask what has he built?"]);
+    if (!BACKEND_URL) {
+      return push("err", ["The AI assistant isn't connected yet. (Site owner: see README > AI assistant.)"]);
+    }
+    setBusy(true);
+    const messages: ChatMessage[] = [...convo.current, { role: "user" as const, content: q }].slice(-8);
+    try {
+      const reply = await askAssistant(messages, aiContext());
+      convo.current = [...messages, { role: "assistant" as const, content: reply }].slice(-8);
+      if (alive.current) await typeOut(reply);
+    } catch (e) {
+      if (alive.current) push("err", [e instanceof Error ? e.message : "Something went wrong. Try again."]);
+    } finally {
+      if (alive.current) setBusy(false);
+    }
+  }
+
+  function run(raw: string) {
+    const line = raw.trim();
+    push("in", [raw], promptFor(cwd));
+    if (!line) return;
+    setHistory((h) => [...h, line]);
+    setHistIdx(null);
+
+    // In chat mode everything you type goes to the assistant.
+    if (chatMode) {
+      if (EXIT_WORDS.includes(line.toLowerCase())) {
+        setChatMode(false);
+        push("out", ["Left chat mode."]);
+      } else {
+        void ask(line);
+      }
+      return;
+    }
+
+    const [cmdRaw, ...args] = line.split(/\s+/);
+    const cmd = cmdRaw.toLowerCase();
+    const arg = args.join(" ");
+
+    switch (cmd) {
+      case "help":
+        push("out", [
+          "Commands:",
+          "  about            who I am",
+          "  whoami           one-line intro",
+          "  skills           skill levels",
+          "  projects         things I've built",
+          "  current          project status and next steps",
+          "  experience       where I've worked",
+          "  education        where I've studied",
+          "  contact          how to reach me",
+          "  resume           open Resume.pdf",
+          "  ls [dir]         list files       cd <dir>   change folder",
+          "  cat <file>       print a file     pwd        where am I",
+          "  open <name>      open an app or project case study",
+          "  copy <target>    copy email, github, linkedin, phone or portfolio URL",
+          "  shortcuts        list desktop keyboard shortcuts",
+          "  github, linkedin open the profile in a new tab",
+          "  ask <question>   ask the AI assistant about me",
+          "  chat             talk to the AI assistant (type exit to leave)",
+          "  neofetch         system info",
+          "  theme <name>     green | amber | white",
+          "  date, echo, history, clear, exit",
+          "Tip: press Tab to complete names, ↑ for previous commands.",
+        ]);
+        break;
+
+      case "whoami":
+        push("out", [`${profile.name} — ${profile.title}`, profile.tagline]);
+        break;
+
+      case "about":
+        push("out", [profile.name, profile.title, "", ...profile.bio, "", `Interests: ${profile.interests.join(", ")}`, `Personality: ${profile.personality.join(", ")}`]);
+        break;
+
+      case "skills":
+        push(
+          "out",
+          skillGroups.flatMap((g) => [g.name, ...g.items.map((i) => `  ${pad(i.name, 16)} ${bar(i.level)}  ${i.level}/10`), ""]).slice(0, -1)
+        );
+        break;
+
+      case "projects":
+        push("out", projects.flatMap((p) => [`${p.name} (${p.year}) — ${p.tagline}`, ...(p.link ? [`  ${p.link}`] : []), ...(p.repo ? [`  ${p.repo}`] : [])]));
+        break;
+
+      case "current":
+        push("out", projects.flatMap((project) => {
+          const study = projectCaseStudies[project.id];
+          return study ? [
+            `${project.name} — ${study.stageLabel}`,
+            `  ${study.stageNote}`,
+            `  Next: ${study.nextSteps[0] ?? "See the case study for current details."}`,
+            "",
+          ] : [];
+        }));
+        break;
+
+      case "shortcuts":
+        push("out", [
+          "Keyboard shortcuts:",
+          "  ⌘/Ctrl + W     close the active window",
+          "  ⌘/Ctrl + M     roll up / restore the active window",
+          "  F1             open the shortcut guide",
+          "  Tab            complete terminal commands or file names",
+          "  ↑ / ↓          browse terminal command history",
+          "  Ctrl + L       clear terminal output",
+          "  Drag titlebar  move a window; drag near an edge to snap",
+          "  Resize handle  focus it, then use arrow keys",
+        ]);
+        break;
+
+      case "copy": {
+        const targets: Record<string, string> = {
+          email: socials.email,
+          phone: socials.phone,
+          github: socials.github,
+          linkedin: socials.linkedin,
+          portfolio: window.location.href.split("#")[0],
+          url: window.location.href,
+        };
+        const value = targets[arg.toLowerCase()];
+        if (!value) return push("err", ["copy: choose email, phone, github, linkedin, portfolio or url"]);
+        void (async () => {
+          try {
+            if (!navigator.clipboard?.writeText) throw new Error("Clipboard access is unavailable.");
+            await navigator.clipboard.writeText(value);
+            push("out", [`Copied ${arg.toLowerCase()} to clipboard.`]);
+            showToast({ title: "Copied to clipboard", description: arg.toLowerCase(), tone: "success" });
+          } catch {
+            push("err", ["Clipboard access was blocked by this browser."]);
+            showToast({ title: "Couldn't copy", description: "Clipboard access was blocked by this browser.", tone: "error" });
+          }
+        })();
+        break;
+      }
+
+      case "experience":
+        push("out", experience.map((e) => `${pad(e.period, 16)} ${e.role}, ${e.org} [${e.kind}]`));
+        break;
+
+      case "education":
+        push("out", [
+          ...education.schools.map((s) => `${pad(s.period, 12)} ${s.degree}, ${s.school}`),
+          ...education.certifications.map((c) => `${pad(c.year, 12)} ${c.name} (${c.issuer})`),
+        ]);
+        break;
+
+      case "contact":
+        push("out", [
+          `Email      ${socials.email}`,
+          `Phone      ${socials.phone}`,
+          `GitHub     ${socials.github}`,
+          `LinkedIn   ${socials.linkedin}`,
+          `Instagram  ${socials.instagram}`,
+        ]);
+        break;
+
+      case "resume":
+        push("out", ["Opening Resume.pdf…"]);
+        openApp("resume");
+        break;
+
+      case "github":
+      case "linkedin":
+        push("out", [`Opening ${socials[cmd]}…`]);
+        window.open(socials[cmd], "_blank", "noopener,noreferrer");
+        break;
+
+      case "pwd":
+        push("out", [`/${cwd.join("/")}`]);
+        break;
+
+      case "ls": {
+        const target = arg ? resolvePath(cwd, arg) : { node: getDir(cwd), dirPath: cwd };
+        if (!target) return push("err", [`ls: ${arg}: no such file or folder`]);
+        if (target.node.type === "file") return push("out", [slugName(target.node.name)]);
+        const names = target.node.children.map((c) => slugName(c.name) + (c.type === "dir" ? "/" : ""));
+        push("out", [names.join("   ") || "(empty)"]);
+        break;
+      }
+
+      case "cd": {
+        if (!arg) return setCwd([]);
+        const target = resolvePath(cwd, arg);
+        if (!target) return push("err", [`cd: ${arg}: no such folder`]);
+        if (target.node.type === "file") return push("err", [`cd: ${arg}: not a folder`]);
+        setCwd(target.dirPath);
+        break;
+      }
+
+      case "cat": {
+        if (!arg) return push("err", ["cat: which file? Try: cat README.txt"]);
+        const target = resolvePath(cwd, arg);
+        if (!target) return push("err", [`cat: ${arg}: no such file`]);
+        if (target.node.type === "dir") return push("err", [`cat: ${arg}: is a folder (try ls)`]);
+        const f = target.node;
+        if (f.app === "readme") return push("out", readmeText().split("\n"));
+        if (f.content) return push("out", f.content.split("\n"));
+        push("err", [`cat: ${slugName(f.name)}: not a text file — try: open ${slugName(f.name)}`]);
+        break;
+      }
+
+      case "open": {
+        if (!arg) return push("err", ["open: what? Try: open readme, open projects, open skills"]);
+        const alias = OPEN_ALIASES[normName(arg)];
+        if (alias) {
+          push("out", [`Opening ${arg}…`]);
+          openApp(alias);
+          break;
+        }
+        const project = projects.find((item) =>
+          item.id.toLowerCase() === arg.toLowerCase() || normName(item.name) === normName(arg)
+        );
+        if (project) {
+          push("out", [`Opening ${project.name} case study…`]);
+          openApp("project-detail", { id: project.id });
+          break;
+        }
+        const target = resolvePath(cwd, arg);
+        if (!target) return push("err", [`open: ${arg}: not found`]);
+        if (target.node.type === "dir") {
+          push("out", ["Opening My Computer…"]);
+          openApp("finder");
+        } else {
+          push("out", [`Opening ${target.node.name}…`]);
+          openApp(target.node.app, target.node.payload);
+        }
+        break;
+      }
+
+      case "ask":
+        void ask(arg);
+        break;
+
+      case "chat":
+        if (!BACKEND_URL) {
+          push("err", ["The AI assistant isn't connected yet. (Site owner: see README > AI assistant.)"]);
+        } else {
+          setChatMode(true);
+          push("out", [
+            `${ai.name} online. Ask me anything about ${profile.name} — projects, skills, experience.`,
+            'Type "exit" to go back to the shell.',
+          ]);
+        }
+        break;
+
+      case "neofetch":
+        push("out", neofetch());
+        break;
+
+      case "theme": {
+        const name = arg.toLowerCase() as ThemeName;
+        if (!(name in THEMES)) return push("err", ["theme: choose green, amber or white"]);
+        setTheme(name);
+        push("out", [`Theme set to ${name}.`]);
+        break;
+      }
+
+      case "date":
+        push("out", [new Date().toString()]);
+        break;
+
+      case "echo":
+        push("out", [arg]);
+        break;
+
+      case "history":
+        push("out", history.length ? history.map((h, i) => `${String(i + 1).padStart(3)}  ${h}`) : ["(nothing yet)"]);
+        break;
+
+      case "clear":
+        setLines([]);
+        break;
+
+      case "exit":
+        closeWindow(windowId);
+        break;
+
+      case "sudo":
+        push("err", [`${profile.handle} is not in the sudoers file. This incident will be reported.`]);
+        break;
+
+      case "rm":
+        push("err", [/-rf?\s+\/|-fr\s+\//.test(line) ? "Nice try. The Trash is watching." : "rm: permission denied (this is a portfolio, not a sandbox)"]);
+        break;
+
+      case "hi":
+      case "hello":
+        push("out", [`Hello, visitor! I'm ${profile.name}. Type "help" to look around.`]);
+        break;
+
+      default:
+        push("err", [
+          `sh: command not found: ${cmdRaw}. Type "help" for a list${BACKEND_URL ? ', or ask the assistant: ask <question>' : ""}.`,
+        ]);
+    }
+  }
+
+  function onSubmit(e: FormEvent) {
+    e.preventDefault();
+    run(input);
+    setInput("");
+  }
+
+  function complete() {
+    if (chatMode) return;
+    const parts = input.split(/\s+/);
+    const last = parts[parts.length - 1] ?? "";
+    let candidates: string[];
+    if (parts.length <= 1) {
+      candidates = COMMANDS;
+    } else {
+      const slashAt = last.lastIndexOf("/");
+      const base = slashAt >= 0 ? last.slice(0, slashAt + 1) : "";
+      const dirNode = base ? resolvePath(cwd, base) : { node: getDir(cwd), dirPath: cwd };
+      if (!dirNode || dirNode.node.type !== "dir") return;
+      candidates = dirNode.node.children.map((c) => base + slugName(c.name) + (c.type === "dir" ? "/" : ""));
+    }
+    const matches = candidates.filter((c) => c.toLowerCase().startsWith(last.toLowerCase()));
+    if (matches.length === 1) {
+      parts[parts.length - 1] = matches[0];
+      setInput(parts.join(" ") + (matches[0].endsWith("/") ? "" : " "));
+    } else if (matches.length > 1) {
+      push("in", [input], promptFor(cwd));
+      push("out", [matches.join("   ")]);
+    }
+  }
+
+  function onKeyDown(e: KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Tab") {
+      e.preventDefault();
+      complete();
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      if (!history.length) return;
+      const idx = histIdx === null ? history.length - 1 : Math.max(0, histIdx - 1);
+      setHistIdx(idx);
+      setInput(history[idx]);
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      if (histIdx === null) return;
+      const idx = histIdx + 1;
+      if (idx >= history.length) {
+        setHistIdx(null);
+        setInput("");
+      } else {
+        setHistIdx(idx);
+        setInput(history[idx]);
+      }
+    } else if (e.key === "l" && e.ctrlKey) {
+      e.preventDefault();
+      setLines([]);
+    }
+  }
+
+  return (
+    <div
+      role="region"
+      aria-label="Interactive terminal"
+      className="relative h-full bg-[#0b0d0b]"
+      style={{ color: t.color, fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace', fontSize: 15, lineHeight: 1.55 }}
+      onClick={() => {
+        if (!window.getSelection()?.toString()) inputRef.current?.focus();
+      }}
+    >
+      <div ref={scrollRef} role="log" aria-label="Terminal output" aria-live="off" className="mac-scroll-dark h-full overflow-y-auto p-3 select-text" style={{ textShadow: "none" }}>
+        {lines.map((l) => (
+          <div key={l.id} className="break-words whitespace-pre-wrap" style={l.kind === "err" ? { color: "#ff8a7a" } : undefined}>
+            {l.kind === "in" ? (
+              <>
+                <span style={{ color: t.dim }}>{l.prompt} </span>
+                {l.text}
+              </>
+            ) : (
+              <Linkified text={l.text} />
+            )}
+          </div>
+        ))}
+        {busy ? (
+          <Thinking label={ai.name} />
+        ) : (
+        <form onSubmit={onSubmit} className="flex items-baseline gap-2">
+          <label htmlFor="term-input" className="shrink-0" style={{ color: t.dim }}>
+            {promptFor(cwd)}
+          </label>
+          <input
+            id="term-input"
+            ref={inputRef}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={onKeyDown}
+            autoComplete="off"
+            autoCapitalize="off"
+            autoCorrect="off"
+            spellCheck={false}
+            aria-label="Terminal input"
+            className="min-w-0 flex-1 bg-transparent outline-none"
+            maxLength={chatMode ? MAX_QUESTION : 200}
+            style={{ caretColor: t.color, font: "inherit", color: "inherit", textShadow: "inherit" }}
+          />
+        </form>
+        )}
+      </div>
+      {/* CRT scanlines */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "repeating-linear-gradient(to bottom, rgba(0,0,0,.08) 0, rgba(0,0,0,.08) 1px, transparent 1px, transparent 3px), radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,.12) 100%)",
+        }}
+      />
+    </div>
+  );
+}
