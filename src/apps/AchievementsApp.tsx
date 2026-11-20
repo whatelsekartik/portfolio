@@ -59,6 +59,21 @@ const CERTIFICATE_DETAILS: Record<string, CertificateDetails> = {
     issuer: "Code Variant · Build 01",
     date: "28 Oct 2026",
   },
+  "certificate7.webp": {
+    title: "Pixel Perfect",
+    issuer: "PCCOE · Computer Science & Engineering (AI & ML)",
+    date: "9–11 Oct 2026",
+  },
+  "certificate8.webp": {
+    title: "Prompt Relay",
+    issuer: "PCCOE · Computer Science & Engineering (AI & ML)",
+    date: "9–11 Oct 2026",
+  },
+  "certificate9.webp": {
+    title: "Houdini Heist",
+    issuer: "PCCOE · Computer Science & Engineering (AI & ML)",
+    date: "9–11 Oct 2026",
+  },
 };
 
 function titleFromFilename(filename: string): string {
