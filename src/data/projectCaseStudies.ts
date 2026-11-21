@@ -47,10 +47,10 @@ const liveCapture = (url: string) =>
 
 export const projectCaseStudies: Record<string, ProjectCaseStudy> = {
   "campus-plus": {
-    stageLabel: "Application built · cloud setup pending",
+    stageLabel: "Deployment observed · configuration not verified",
     stageTone: "amber",
     stageNote:
-      "The repository documents passing code and database checks against a local test harness. A production Supabase project, OAuth configuration, and a live security run are still explicit deployment tasks; those are not claimed as verified here.",
+      "A supplied analytics snapshot shows traffic to the deployed site. The repository documents passing code and database checks against a local test harness, but production Supabase, OAuth and live security configuration have not been independently verified here.",
     problem:
       "Campus communication often scatters useful information across chats, notices, groups and informal marketplaces. Campus+ explores one calmer place for those workflows while keeping student identity and permissions carefully scoped.",
     approach:
@@ -97,7 +97,7 @@ export const projectCaseStudies: Record<string, ProjectCaseStudy> = {
     evidence: [
       { state: "built", title: "Application surface", detail: "The implementation report lists 58 page routes, route handlers, responsive states and staff areas." },
       { state: "built", title: "Automated verification", detail: "The report dated 13 Oct 2026 records 193 Vitest tests passing, 24 migrations across 10 database suites, and 54 database audit assertions passing." },
-      { state: "verify", title: "Live service configuration", detail: "A live Supabase project is not configured in the inspected checkout. Google OAuth, production environment variables and a live security probe remain deployment steps." },
+      { state: "verify", title: "Live service configuration", detail: "The analytics snapshot does not establish the production Supabase, Google OAuth or security configuration. Those still need independent verification." },
     ],
     tradeoffs: [
       { title: "Database-enforced permissions", detail: "Mirroring authorization in server actions and Postgres RLS/RPCs adds implementation work, but a hidden UI button is never the security boundary." },
@@ -110,7 +110,7 @@ export const projectCaseStudies: Record<string, ProjectCaseStudy> = {
       "Designing anonymous Random conversations, reporting and moderation without exposing participant identity unnecessarily.",
     ],
     nextSteps: [
-      "Create/configure the production Supabase project, migrations, institutional Google OAuth and the first admin role.",
+      "Review the production Supabase project, migrations, institutional Google OAuth and admin role configuration.",
       "Run the security probe and deployment checklist against the live service.",
       "Complete physical-device checks; the repository's browser evidence is headless Chromium rather than a Safari/Firefox pass.",
     ],
