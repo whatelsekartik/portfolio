@@ -328,3 +328,20 @@
 @media (prefers-reduced-motion: reduce) {
   .case-shot-image { transition: none !important; }
 }
+
+/* A deliberately cropped historical usage snapshot, not a live counter. */
+.case-analytics { min-width: 0; border: 1px solid #c7b99f; background: #f6eedf; padding: 16px; }
+.case-analytics-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: start; gap: 10px; }
+.case-analytics-header h2 { margin: 5px 0 0; font: 700 24px/1.1 var(--display-font); letter-spacing: -.04em; }
+.case-analytics-header h2 span { color: #a96520; }
+.case-analytics-period { border: 1px solid #c7b99f; padding: 5px 7px; color: #625b4c; font: 10px/1.4 var(--mono-font); }
+.case-analytics-intro { margin: 9px 0 0; color: #625b4c; font-size: 12px; line-height: 1.5; }
+.case-analytics-metrics { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 1px; margin: 14px 0; border: 1px solid #d8c9ad; background: #d8c9ad; }
+.case-analytics-metrics > div { min-width: 0; background: #fffaf0; padding: 10px; }
+.case-analytics-metrics dt { color: #756951; font: 10px/1.4 var(--mono-font); }
+.case-analytics-metrics dd { margin: 3px 0 0; color: #29271f; font: 700 clamp(17px, 3vw, 24px)/1.1 var(--display-font); letter-spacing: -.04em; }
+.case-analytics-figure { margin: 0; }
+.case-analytics-figure a { display: block; border: 1px solid #29271f; background: #0a0a0a; }
+.case-analytics-figure a:focus-visible { outline: 2px solid #a96520; outline-offset: 3px; }
+.case-analytics-figure img { display: block; width: 100%; height: auto; }
+.case-analytics-figure figcaption { margin-top: 7px; color: #756951; font: 10px/1.5 var(--mono-font); }

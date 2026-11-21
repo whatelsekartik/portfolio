@@ -2,6 +2,8 @@ import { useState } from "react";
 import { FileIcon } from "../components/Icons";
 import ScrollReveal from "../components/ScrollReveal";
 import { projects } from "../data/portfolioData";
+import { campusAnalytics } from "../data/campusAnalytics";
+import campusAnalyticsImage from "../assets/projects/campus-plus-analytics.webp";
 import { projectCaseStudies, type CaseStudyScreenshot, type EvidenceState } from "../data/projectCaseStudies";
 
 const linkClass =
@@ -130,6 +132,32 @@ export default function ProjectDetailApp({ payload }: { payload?: Record<string,
           </div>
         </section>
       </ScrollReveal>
+
+      {project.id === "campus-plus" && (
+        <ScrollReveal>
+          <section className="case-analytics" aria-labelledby="campus-analytics-title">
+            <div className="case-analytics-header">
+              <div>
+                <p className="editorial-meta text-[#89551e]">Campus+ / Vercel analytics</p>
+                <h2 id="campus-analytics-title">A snapshot of usage<span>.</span></h2>
+              </div>
+              <span className="case-analytics-period">{campusAnalytics.period}</span>
+            </div>
+            <p className="case-analytics-intro">A historical snapshot supplied by the project owner, not a live counter.</p>
+            <dl className="case-analytics-metrics">
+              {campusAnalytics.metrics.map((metric) => <div key={metric.label}>
+                <dt>{metric.label}</dt><dd>{metric.value}</dd>
+              </div>)}
+            </dl>
+            <figure className="case-analytics-figure">
+              <a href={campusAnalyticsImage} target="_blank" rel="noreferrer" aria-label="Open the cropped Campus+ analytics snapshot in a new tab">
+                <img src={campusAnalyticsImage} alt="Vercel analytics snapshot showing visitors, page views, bounce rate and a page-view chart for the selected 30-day period" loading="lazy" decoding="async" />
+              </a>
+              <figcaption>Vercel Analytics · selected 30-day period · open image to enlarge ↗</figcaption>
+            </figure>
+          </section>
+        </ScrollReveal>
+      )}
 
       <ScrollReveal>
         <section className="case-study-section">

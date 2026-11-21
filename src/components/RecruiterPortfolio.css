@@ -139,3 +139,10 @@
 @media (prefers-reduced-motion: reduce) {
   .recruiter-view *, .recruiter-view *::before, .recruiter-view *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
 }
+
+.rv-analytics { margin: 0 0 18px; border-top: 1px solid var(--rv-line); border-bottom: 1px solid var(--rv-line); padding: 11px 0; }
+.rv-analytics > p, .rv-analytics small { display: block; margin: 0; color: var(--rv-muted); font-size: 10px; line-height: 1.5; }
+.rv-analytics dl { display: flex; flex-wrap: wrap; gap: 10px 16px; margin: 8px 0; }
+.rv-analytics dl > div { min-width: 65px; }
+.rv-analytics dt { color: var(--rv-muted); font-size: 10px; }
+.rv-analytics dd { margin: 0; font-weight: 700; font-size: 16px; line-height: 1.3; }

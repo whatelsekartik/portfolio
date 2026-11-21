@@ -129,6 +129,7 @@ Asset paths are relative (`base: "./"`), so the same build works for a project p
 - On a first visit, the welcome guide offers Projects, Résumé and Contact shortcuts and explains both portfolio views. Reopen it from the Apple menu.
 - On phones, the desktop highlights four essentials; find the other apps in **My Computer**. The **Windows** menu lists open and rolled-up windows and lets you restore them.
 - The certificate wall can be filtered by category and sorted newest-first; labels distinguish participation from ranked achievements.
+- Campus+ usage numbers are a historical, owner-supplied 30-day snapshot in `src/data/campusAnalytics.ts`, not live counters. Its case-study image is a cropped, metadata-free copy; keep traffic-source details out of any replacement image.
 - Use **Help > Keyboard Shortcuts** or press **F1** for the shortcut guide.
 - In Terminal.exe, `current` shows project status and next steps, `shortcuts` lists navigation keys, and `copy github`, `copy email`, `copy phone` or `copy portfolio` copy common details.
 
