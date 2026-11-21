@@ -5,6 +5,7 @@ import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-li
 import userEvent from "@testing-library/user-event";
 import Desktop from "../src/components/Desktop";
 import RecruiterPortfolio from "../src/components/RecruiterPortfolio";
+import ProjectDetailApp from "../src/apps/ProjectDetailApp";
 import { SystemProvider } from "../src/context/SystemContext";
 import { ToastProvider } from "../src/context/ToastContext";
 import { WindowManagerProvider } from "../src/context/WindowManagerContext";
@@ -126,7 +127,7 @@ describe("certificate wall", () => {
     const items = Object.entries(CERTIFICATE_DETAILS).map(([filename, details]) => ({
       filename, category: details.category ?? "uncategorized" as const, sortDate: details.sortDate,
     }));
-    expect(selectCertificates(items, "events", "newest")).toHaveLength(7);
+    expect(selectCertificates(items, "events", "newest")).toHaveLength(8);
     expect(selectCertificates(items, "workshops", "newest")).toHaveLength(1);
     expect(selectCertificates(items, "achievements", "newest").map((item) => item.filename)).toEqual(["certificate6.webp"]);
     expect(selectCertificates(items, "all", "newest")[0].filename).toBe("certificate6.webp");
@@ -134,6 +135,9 @@ describe("certificate wall", () => {
     expect(items[0].filename).toBe("certificate1.webp");
     expect(CERTIFICATE_DETAILS["certificate7.webp"].outcome).toBe("Participation");
     expect(CERTIFICATE_DETAILS["certificate6.webp"].outcome).toBe("Top 50");
+    expect(CERTIFICATE_DETAILS["certificate10.webp"]).toMatchObject({ category: "events", outcome: "Participation" });
+    expect(CERTIFICATE_DETAILS["certificate10.webp"].sortDate).toBeUndefined();
+    expect(selectCertificates(items, "all", "newest").at(-1)?.filename).toBe("certificate10.webp");
   });
 
   it("changes the displayed results and order with accessible controls", async () => {
@@ -143,15 +147,40 @@ describe("certificate wall", () => {
     await user.click(within(screen.getByRole("navigation", { name: "Quick launch" })).getByRole("button", { name: "Open Achievements" }));
     await screen.findByRole("heading", { name: /Proof,.*framed/ });
     await user.click(screen.getByRole("button", { name: "Achievements", exact: true }));
-    expect(screen.getByText("Showing 1 of 9")).toBeTruthy();
+    expect(screen.getByText("Showing 1 of 10")).toBeTruthy();
     expect(screen.getByText("Top 50", { exact: true })).toBeTruthy();
     await user.click(screen.getByRole("button", { name: "Events", exact: true }));
-    expect(screen.getByText("Showing 7 of 9")).toBeTruthy();
+    expect(screen.getByText("Showing 8 of 10")).toBeTruthy();
+    expect(screen.getByText("Code star 30 · National-Level Hackathon")).toBeTruthy();
     expect(screen.queryByText("Top 50", { exact: true })).toBeNull();
     await user.click(screen.getByRole("button", { name: "All", exact: true }));
     await user.selectOptions(screen.getByLabelText("Sort"), "archive");
     expect(document.querySelector(".cert-caption h2")?.textContent).toBe("GitHub Hands-On Workshop");
     await user.selectOptions(screen.getByLabelText("Sort"), "newest");
     expect(document.querySelector(".cert-caption h2")?.textContent).toBe("Code Variant · Top 50 Achievers");
+  });
+});
+
+
+describe("Campus+ analytics snapshot", () => {
+  it("shows the captured numbers and cropped chart in the case study without traffic sources", () => {
+    render(<ProjectDetailApp payload={{ id: "campus-plus" }} />);
+    const section = screen.getByRole("region", { name: /A snapshot of usage/ });
+    expect(within(section).getByText("1,522")).toBeTruthy();
+    expect(within(section).getByText("6,665")).toBeTruthy();
+    expect(within(section).getByText("38%")).toBeTruthy();
+    expect(within(section).getByText(/30-day snapshot.*Nov 21, 2026/)).toBeTruthy();
+    expect(within(section).getByText(/not a live counter/i)).toBeTruthy();
+    expect(within(section).getByRole("img", { name: /Vercel analytics snapshot/ })).toBeTruthy();
+    expect(section.textContent).not.toMatch(/referr?ers|reddit|instagram/i);
+  });
+
+  it("includes the same historical metrics in the quick portfolio", () => {
+    render(<RecruiterPortfolio onReturnToDesktop={() => {}} />);
+    const snapshot = screen.getByLabelText("Campus+ usage snapshot");
+    expect(within(snapshot).getByText("1,522")).toBeTruthy();
+    expect(within(snapshot).getByText("6,665")).toBeTruthy();
+    expect(within(snapshot).getByText("38%")).toBeTruthy();
+    expect(snapshot.textContent).not.toMatch(/referr?ers|reddit|instagram/i);
   });
 });

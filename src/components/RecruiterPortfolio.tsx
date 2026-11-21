@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { education, profile, projects, resume, skillGroups, socials } from "../data/portfolioData";
 import { projectCaseStudies } from "../data/projectCaseStudies";
+import { campusAnalytics } from "../data/campusAnalytics";
 import "./RecruiterPortfolio.css";
 
 interface RecruiterPortfolioProps {
@@ -8,7 +9,7 @@ interface RecruiterPortfolioProps {
 }
 
 const projectSummaries: Record<string, string> = {
-  "campus-plus": "A campus platform for posts, communities, direct messages, events, notices and a student marketplace. Built with Next.js and Supabase. The application work is in place; production OAuth and deployment checks remain.",
+  "campus-plus": "A campus platform for posts, communities, direct messages, events, notices and a student marketplace. Built with Next.js and Supabase. A supplied analytics snapshot shows deployment traffic; production configuration and security checks still need verification.",
   sitemango: "A small web studio focused on websites for local businesses. The site uses plain HTML, CSS and JavaScript. The enquiry flow is connected to Apps Script and Sheets, but still needs a live submission check.",
   ecoswitch: "A classroom energy-control concept using PIR and 24 GHz mmWave sensors with an ESP32-S3. The current work is an interactive design; the hardware prototype and measured results are still pending.",
   "civic-issue": "A reporting workflow for residents and municipal teams, from submitting an issue to assigning and tracking its resolution. The local demo is working; production database and service integrations still need validation.",
@@ -87,6 +88,13 @@ export default function RecruiterPortfolio({ onReturnToDesktop }: RecruiterPortf
                   </div>
                   <aside className="rv-project-meta">
                     <p className="rv-project-status">{study.stageLabel}</p>
+                    {project.id === "campus-plus" && <div className="rv-analytics" aria-label="Campus+ usage snapshot">
+                      <p>{campusAnalytics.period}</p>
+                      <dl>{campusAnalytics.metrics.map((metric) => <div key={metric.label}>
+                        <dt>{metric.label}</dt><dd>{metric.value}</dd>
+                      </div>)}</dl>
+                      <small>Historical Vercel Analytics snapshot, not live data.</small>
+                    </div>}
                     <details className="rv-project-details">
                       <summary>More on the current state</summary>
                       <p>{study.stageNote}</p>
