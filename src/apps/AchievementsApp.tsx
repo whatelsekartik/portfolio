@@ -301,6 +301,9 @@ export default function AchievementsApp() {
             </div>
             <div className="cert-lightbox-footer">
               <span>{activeCertificate.filename}</span>
+              <a href={activeCertificate.src} target="_blank" rel="noreferrer">
+                Open image at full resolution ↗
+              </a>
               {activeCertificate.credentialUrl && (
                 <a href={activeCertificate.credentialUrl} target="_blank" rel="noreferrer">
                   Verify credential ↗

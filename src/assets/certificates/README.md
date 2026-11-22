@@ -17,6 +17,7 @@ newest-first is selected. Use the event end date for multi-day events.
 - `certificate9.webp` — Houdini Heist
 - `certificate10.webp` — Code star 30, participation (no date shown on certificate)
 - `certificate11.webp` — Codex 48, participation (no date shown on certificate)
+- `certificate12.webp` — Affecio Hacks '26, participation (no full date shown on certificate)
 
 WCC verification: https://wecodecoders.in/verify/L30-7J4M8C
 
