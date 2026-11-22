@@ -127,7 +127,7 @@ describe("certificate wall", () => {
     const items = Object.entries(CERTIFICATE_DETAILS).map(([filename, details]) => ({
       filename, category: details.category ?? "uncategorized" as const, sortDate: details.sortDate,
     }));
-    expect(selectCertificates(items, "events", "newest")).toHaveLength(8);
+    expect(selectCertificates(items, "events", "newest")).toHaveLength(9);
     expect(selectCertificates(items, "workshops", "newest")).toHaveLength(1);
     expect(selectCertificates(items, "achievements", "newest").map((item) => item.filename)).toEqual(["certificate6.webp"]);
     expect(selectCertificates(items, "all", "newest")[0].filename).toBe("certificate6.webp");
@@ -137,7 +137,9 @@ describe("certificate wall", () => {
     expect(CERTIFICATE_DETAILS["certificate6.webp"].outcome).toBe("Top 50");
     expect(CERTIFICATE_DETAILS["certificate10.webp"]).toMatchObject({ category: "events", outcome: "Participation" });
     expect(CERTIFICATE_DETAILS["certificate10.webp"].sortDate).toBeUndefined();
-    expect(selectCertificates(items, "all", "newest").at(-1)?.filename).toBe("certificate10.webp");
+    expect(CERTIFICATE_DETAILS["certificate11.webp"]).toMatchObject({ title: "Codex 48 · National-Level Hackathon", issuer: "WeCodeCoders", category: "events", outcome: "Participation" });
+    expect(CERTIFICATE_DETAILS["certificate11.webp"].sortDate).toBeUndefined();
+    expect(selectCertificates(items, "all", "newest").slice(-2).map((item) => item.filename)).toEqual(["certificate10.webp", "certificate11.webp"]);
   });
 
   it("changes the displayed results and order with accessible controls", async () => {
@@ -147,11 +149,16 @@ describe("certificate wall", () => {
     await user.click(within(screen.getByRole("navigation", { name: "Quick launch" })).getByRole("button", { name: "Open Achievements" }));
     await screen.findByRole("heading", { name: /Proof,.*framed/ });
     await user.click(screen.getByRole("button", { name: "Achievements", exact: true }));
-    expect(screen.getByText("Showing 1 of 10")).toBeTruthy();
+    expect(screen.getByText("Showing 1 of 11")).toBeTruthy();
     expect(screen.getByText("Top 50", { exact: true })).toBeTruthy();
     await user.click(screen.getByRole("button", { name: "Events", exact: true }));
-    expect(screen.getByText("Showing 8 of 10")).toBeTruthy();
+    expect(screen.getByText("Showing 9 of 11")).toBeTruthy();
     expect(screen.getByText("Code star 30 · National-Level Hackathon")).toBeTruthy();
+    expect(screen.getByText("Codex 48 · National-Level Hackathon")).toBeTruthy();
+    await user.click(screen.getByRole("button", { name: "View Codex 48 · National-Level Hackathon full size" }));
+    const preview = screen.getByRole("dialog", { name: "Codex 48 · National-Level Hackathon" });
+    expect(within(preview).getByText("Participation · WeCodeCoders")).toBeTruthy();
+    await user.click(within(preview).getByRole("button", { name: "Close certificate preview" }));
     expect(screen.queryByText("Top 50", { exact: true })).toBeNull();
     await user.click(screen.getByRole("button", { name: "All", exact: true }));
     await user.selectOptions(screen.getByLabelText("Sort"), "archive");
