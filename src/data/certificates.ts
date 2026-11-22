@@ -26,6 +26,7 @@ export const CERTIFICATE_DETAILS: Record<string, CertificateDetails> = {
   "certificate9.webp": { title: "Houdini Heist", issuer: "PCCOE · Computer Science & Engineering (AI & ML)", date: "9–11 Oct 2026", sortDate: "2026-10-11", category: "events", outcome: "Participation" },
   "certificate10.webp": { title: "Code star 30 · National-Level Hackathon", issuer: "WeCodeCoders", category: "events", outcome: "Participation" },
   "certificate11.webp": { title: "Codex 48 · National-Level Hackathon", issuer: "WeCodeCoders", category: "events", outcome: "Participation" },
+  "certificate12.webp": { title: "Affecio Hacks '26", issuer: "Affecio", category: "events", outcome: "Participation" },
 };
 
 export function selectCertificates<T extends { filename: string; category: CertificateCategory; sortDate?: string }>(

@@ -37,3 +37,10 @@ test("Campus+ analytics image is the reviewed, metadata-free crop", async () => 
   assert.equal(metadata.exif, undefined);
   assert.equal(metadata.xmp, undefined);
 });
+
+
+test("Code Variant certificate uses a readable high-resolution image", async () => {
+  const metadata = await sharp("src/assets/certificates/certificate6.webp").metadata();
+  assert.ok(metadata.width >= 1491);
+  assert.ok(metadata.height >= 1055);
+});
