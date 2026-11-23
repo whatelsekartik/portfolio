@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from "react";
+import { Analytics } from "@vercel/analytics/react";
 import BootScreen from "./components/BootScreen";
 import Desktop from "./components/Desktop";
 import { SystemProvider } from "./context/SystemContext";
@@ -54,6 +55,7 @@ export default function App() {
 
   return (
     <ToastProvider>
+      <Analytics />
       {recruiterView ? (
         <div className="min-h-screen w-full">
           <Suspense fallback={<div className="min-h-screen bg-[#f6f4ee]" aria-label="Loading portfolio" />}>
